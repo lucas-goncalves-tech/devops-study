@@ -23,28 +23,38 @@ securepay-devops/
 ├── infra/                      # Terraform IaC
 │   ├── provider.tf             # AWS provider + LocalStack endpoints
 │   └── vpc.tf                  # VPC multi-tier + subnets
-├── .tracker/                   # Obsidian-compatible issue tracker (uma pasta por trilha)
-│   ├── BOARD.md
-│   ├── 00-visao-geral.md       # contexto consolidado
-│   ├── trilha-1-core/          # 01–09 — Core & DevSecOps (app, infra, CI, gates, obs)
-│   ├── trilha-2-micro-k8s/     # 10–13 — microsserviços, K8s e nuvem
-│   └── trilha-3-vps/           # 14–18 — produção VPS econômica
+├── .tracker/                   # Obsidian-compatible issue tracker
+│   ├── BOARD.md                # status e ordem de execução (01 → 18)
+│   ├── 00-visao-geral.md       # contexto consolidado, template, política de status
+│   ├── issues/                 # 01–18 — uma Issue por capacidade (template fixo)
+│   └── estudos/                # material de estudo por Issue — fora do escopo das Issues
 └── .agents/skills/             # Matt Pocock engineering skills
 ```
 
 ## DevOps Pipeline
 
-| Stage | Focus | Status |
-|-------|-------|--------|
+Issues numbered `01 → 18` in `.tracker/issues/`. Status lives in `.tracker/BOARD.md`.
+
+| # | Focus | Status |
+|---|-------|--------|
 | 01 | Linux runtime, env vars, healthcheck, POSIX signals | Done |
 | 02 | Multi-stage Dockerfile, Docker Compose, non-root user | Done |
-| 03 | Terraform HCL, VPC multi-tier, ALB, LocalStack | To Do |
-| 04 | S3 Reports Infra — bucket, IAM, endpoint | To Do |
-| 05 | GitHub Actions CI/CD, Trivy scanning, IaC gates | To Do |
-| 06 | Secrets hygiene — Gitleaks gate in CI | To Do |
-| 07 | SAST Semgrep — blocking static analysis | To Do |
-| 08 | Pipeline hardening — least-privilege, SHA pin | To Do |
-| 09 | Prometheus, Grafana dashboards, k6 load testing | To Do |
+| 03 | Terraform HCL, VPC multi-tier, ALB, LocalStack | Done |
+| 04 | VPS hardening — key-only SSH, minimal firewall, swap | To Do |
+| 05 | Reverse proxy — Caddy, TLS, security headers | To Do |
+| 06 | Prometheus, Grafana dashboards, k6 load testing | To Do |
+| 07 | Multi-service Compose, Redis Streams, webhook gateway | To Do |
+| 08 | Network isolation, DB/Redis lockdown, resource limits | To Do |
+| 09 | Off-site DB backups with retention + tested restore | To Do |
+| 10 | GitHub Actions CI, image scanning, IaC gate | To Do |
+| 11 | S3 Reports Infra — bucket, IAM, endpoint | Parked |
+| 12 | AWS production — remote state, minimal compute | To Do |
+| 13 | Secrets hygiene — blocking secret scan | To Do |
+| 14 | SAST Semgrep — blocking static analysis | To Do |
+| 15 | Pipeline hardening — least-privilege, SHA pin | To Do |
+| 16 | Consolidated DevSecOps gates, per-gate timing | To Do |
+| 17 | CI/CD to VPS — gated deploy, rollback, audit trail | To Do |
+| 18 | Kubernetes multi-node, Helm chart, probes, limits | To Do |
 
 ## Backend Architecture
 
@@ -87,6 +97,7 @@ Invoke `using-superpowers` at session start to load the skill framework. The use
 - Doubt → teach: dúvida, não entendi, explica, como funciona, me ensina → tutor via `.agents/skills/teach-devops/SKILL.md` (READ-ONLY BLOCO → EXPLICAÇÃO in chat, never touches files; only `.md` via consolidate).
 - Write scope (outside teaching): implement only in `backend/` and `.tracker/` — other paths are read-only (read, plan, propose diff, wait for explicit request). While teaching, skill overrides scope: zero writes everywhere.
 - Grilling: when using `grilling` or `grill-me` skills, always use the `question` tool to ask questions — never output questions as plain text in the response.
+- Tracker: every card in `.tracker/issues/` follows the fixed template described in `00-visao-geral.md` (Contexto → Limitações / notas). Never add tutorials, FAQ, nav links (`Prev`/`Next`) or sub-steps (`1A`, `2B`) to an Issue — study material belongs in `.tracker/estudos/`.
 
 ## Conventions
 
