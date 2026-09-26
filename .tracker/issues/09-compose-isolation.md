@@ -1,11 +1,11 @@
 ---
-aliases: [issue-08, compose-isolation]
+aliases: [issue-09, compose-isolation]
 tags: [tracker, issue, todo, study-needed]
 status: todo
 prioridade: alta
 ---
 
-# Issue 08 — Compose em redes segmentadas com banco inacessível e limites anti-OOM
+# Issue 09 — Compose em redes segmentadas com banco inacessível e limites anti-OOM
 
 ## Contexto
 
@@ -18,7 +18,7 @@ Estado final: três redes separando fronteira, aplicação e dados; banco e Redi
 ## Dependências
 
 - Requer Issue 05 — a rede pública existe por causa do proxy, que é o único alcançável de fora
-- Requer Issue 07 — Redis já está na stack e precisa entrar na rede isolada
+- Requer Issue 08 — Redis já está na stack e precisa entrar na rede isolada
 - Requer Issue 02 — composição base e healthcheck do banco
 
 ## Escopo
@@ -31,8 +31,8 @@ Estado final: três redes separando fronteira, aplicação e dados; banco e Redi
 ## Fora de escopo
 
 - Alteração do proxy ou do TLS — Issue 05
-- Backup do banco — Issue 09
-- Monitoramento — Issue 06
+- Backup do banco — Issue 06
+- Monitoramento — Issue 07
 - Kubernetes e Cloud — Issues 18 e 12
 
 ## Conhecimentos envolvidos

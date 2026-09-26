@@ -1,11 +1,11 @@
 ---
-aliases: [issue-09, db-backups-s3]
+aliases: [issue-06, db-backups-s3]
 tags: [tracker, issue, todo, study-needed]
 status: todo
 prioridade: alta
 ---
 
-# Issue 09 — Backup off-site com retenção e restore provado
+# Issue 06 — Backup off-site com retenção e restore provado
 
 ## Contexto
 
@@ -17,7 +17,7 @@ Estado final: dump diário comprimido, criptografado e enviado para storage fora
 
 ## Dependências
 
-- Requer Issue 08 — o banco isolado é o alvo do dump
+- Requer Issue 02 — o banco de dados existe desde a Issue 02; o isolamento de rede do banco não é pré-requisito do dump, só do desenho final
 
 ## Escopo
 
@@ -30,7 +30,7 @@ Estado final: dump diário comprimido, criptografado e enviado para storage fora
 
 - Provisionamento da infraestrutura de nuvem e do Terraform — Issues 11 e 12
 - Bucket e IAM da Issue 11 — são para relatórios financeiros, com outro ciclo de retenção e outra política de custo
-- Monitoramento e alertas — Issue 06
+- Monitoramento e alertas — Issue 07
 - Kubernetes — Issue 18
 
 ## Conhecimentos envolvidos

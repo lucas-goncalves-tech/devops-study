@@ -1,11 +1,11 @@
 ---
-aliases: [issue-06, observability]
+aliases: [issue-07, observability]
 tags: [tracker, issue, todo, study-needed]
 status: todo
 prioridade: alta
 ---
 
-# Issue 06 — Coleta de golden signals, dashboards e prova de carga com SLO
+# Issue 07 — Coleta de golden signals, dashboards e prova de carga com SLO
 
 ## Contexto
 
@@ -88,5 +88,5 @@ Estado final: Prometheus coletando do `/actuator/prometheus`, Grafana com quatro
 
 - **Invariante:** `management.endpoints.web.exposure.include` precisa continuar contendo `prometheus` e `health`; `/actuator/**` precisa continuar `permitAll` — senão o scraping e o healthcheck param de funcionar
 - `show-details: always` e `probes.enabled: true` precisam permanecer ligados: `healthcheck.sh` faz grep literal em `"status":"UP"`
-- Os containers de coletor e dashboard entram na stack do Compose e passam a fazer parte da topologia de rede — por isso esta Issue vem antes da Issue 08, que segmenta as redes e precisa cobrir todos eles
+- Os containers de coletor e dashboard entram na stack do Compose e passam a fazer parte da topologia de rede — por isso esta Issue vem antes da Issue 09, que segmenta as redes e precisa cobrir todos eles
 - O teste de carga depende de Docker disponível para os testes de contêiner do projeto

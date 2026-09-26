@@ -28,7 +28,7 @@ Estado final: o tráfego externo entra por um único reverse proxy na porta 80/4
 
 ## Fora de escopo
 
-- Isolamento de redes do Compose e limites de recursos — Issue 08
+- Isolamento de redes do Compose e limites de recursos — Issue 09
 - Alteração do compose do backend — a API continua em `backend/docker-compose.yaml`
 - Backup e monitoramento — Issues 09 e 06
 - Kubernetes, Cloud e Terraform

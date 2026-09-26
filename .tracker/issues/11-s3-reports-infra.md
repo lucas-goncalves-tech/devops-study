@@ -33,7 +33,7 @@ Estado final: bucket versionado, criptografado e com retenção; identidade IAM 
 - Gerar conteúdo de relatório
 - CI/CD — Issue 10
 - ALB — Issue 03 (carry-over condicionado a `elbv2`)
-- Backup de banco — Issue 09
+- Backup de banco — Issue 06
 - Criação de lanes de bugs no tracker
 
 ## Conhecimentos envolvidos

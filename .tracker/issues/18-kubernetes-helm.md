@@ -17,8 +17,8 @@ Estado final: cluster local multi-node, plataforma empacotada como chart com val
 
 ## Dependências
 
-- Requer Issue 07 — o chart empacota a plataforma multi-serviço, não o monolito
-- Requer Issue 06 — as métricas e o comportamento sob carga definem os limiares de probe
+- Requer Issue 08 — o chart empacota a plataforma multi-serviço, não o monolito
+- Requer Issue 07 — as métricas e o comportamento sob carga definem os limiares de probe
 
 ## Escopo
 
@@ -94,7 +94,7 @@ Estado final: cluster local multi-node, plataforma empacotada como chart com val
 ## Limitações / notas
 
 - Requer recursos locais suficientes para cluster multi-node — pré-requisito de hardware
-- Os limiares de probe precisam partir do comportamento observado na Issue 06; probe sem lastro em métrica vira chute e reinicia serviço saudável
+- Os limiares de probe precisam partir do comportamento observado na Issue 07; probe sem lastro em métrica vira chute e reinicia serviço saudável
 - O contrato de saúde é o mesmo do Compose: `/actuator/health` com HTTP 200 e `"status":"UP"` — probes de HTTP devem seguir esse contrato
 - `server.shutdown: graceful` precisa ser preservado: o probe de prestop depende da JVM encerrar sem cortar requisição
 - Esta é a última Issue da sequência — nenhuma outra depende dela

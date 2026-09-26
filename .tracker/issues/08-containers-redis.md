@@ -1,11 +1,11 @@
 ---
-aliases: [issue-07, containers-redis]
+aliases: [issue-08, containers-redis]
 tags: [tracker, issue, todo, study-needed]
 status: todo
 prioridade: media
 ---
 
-# Issue 07 — Composição multi-serviço com Redis Streams e gateway de webhooks
+# Issue 08 — Composição multi-serviço com Redis Streams e gateway de webhooks
 
 ## Contexto
 
@@ -18,7 +18,7 @@ Estado final: Redis na stack como buffer entre produtor e consumidor via Streams
 ## Dependências
 
 - Requer Issue 02 — composição base com API e banco
-- Requer Issue 06 — os painéis de métricas são a base para observar lag de consumer group
+- Requer Issue 07 — os painéis de métricas são a base para observar lag de consumer group
 
 ## Escopo
 
@@ -30,7 +30,7 @@ Estado final: Redis na stack como buffer entre produtor e consumidor via Streams
 ## Fora de escopo
 
 - Publicação da aplicação na internet, TLS e reverse proxy — Issues 04 e 05
-- Segmentação final de redes e limites de recursos — Issue 08
+- Segmentação final de redes e limites de recursos — Issue 09
 - Gates de segurança no CI — Issues 13–16
 - Kubernetes e Cloud — Issues 18 e 12
 
@@ -103,5 +103,5 @@ Estado final: Redis na stack como buffer entre produtor e consumidor via Streams
   - `management.health.redis.enabled` segue o **mesmo** flag: com `REDIS_ENABLED=true` e Redis inalcançável, `/actuator/health` responde **503** e `healthcheck.sh` sai com 1 — qualquer gate baseado em saúde, incluindo o rollback da Issue 17, passa a falhar
   - `publishPaymentProcessed` é chamado síncrono dentro de `@Transactional transfer`; mover para depois do commit ou deixar a exceção propagar acopla a disponibilidade do pagamento ao Redis
   - Os nomes de propriedade são `spring.data.redis.host` e `spring.data.redis.port`
-- Neste ponto a stack está completa o bastante para a Issue 08 segmentar as redes — o Redis precisa entrar na rede interna, nunca numa rede exposta
+- Neste ponto a stack está completa o bastante para a Issue 09 segmentar as redes — o Redis precisa entrar na rede interna, nunca numa rede exposta
 - O perfil de teste mantém `redis.enabled: false`; os testes existentes não podem depender de Redis real

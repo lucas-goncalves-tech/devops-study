@@ -1,12 +1,12 @@
 ---
-aliases: [estudo-06]
+aliases: [estudo-07]
 tags: [estudo]
-issue: 06
+issue: 07
 ---
 
-# Estudos — Issue 06: Observabilidade, Golden Signals e Teste de Carga
+# Estudos — Issue 07: Observabilidade, Golden Signals e Teste de Carga
 
-> Material de apoio da Issue 06. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 07. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Métricas

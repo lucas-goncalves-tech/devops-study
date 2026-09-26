@@ -29,7 +29,7 @@ Estado final: servidor com login exclusivamente por chave SSH, firewall liberand
 ## Fora de escopo
 
 - Reverse proxy, TLS e publicação da API — Issue 05
-- Isolamento de redes do Compose e limites de recursos — Issue 08
+- Isolamento de redes do Compose e limites de recursos — Issue 09
 - Backup e monitoramento — Issues 09 e 06
 - Kubernetes, Cloud e Terraform
 

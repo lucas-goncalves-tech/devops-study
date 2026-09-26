@@ -1,12 +1,12 @@
 ---
-aliases: [estudo-08]
+aliases: [estudo-09]
 tags: [estudo]
-issue: 08
+issue: 09
 ---
 
-# Estudos — Issue 08: Compose Isolado Anti-OOM com DB Blindado
+# Estudos — Issue 09: Compose Isolado Anti-OOM com DB Blindado
 
-> Material de apoio da Issue 08. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 09. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Compose

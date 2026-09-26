@@ -1,12 +1,12 @@
 ---
-aliases: [estudo-09]
+aliases: [estudo-06]
 tags: [estudo]
-issue: 09
+issue: 06
 ---
 
-# Estudos — Issue 09: Backups Off-Site com Retenção e Restore Testado
+# Estudos — Issue 06: Backups Off-Site com Retenção e Restore Testado
 
-> Material de apoio da Issue 09. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 06. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Banco

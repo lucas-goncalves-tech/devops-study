@@ -23,7 +23,7 @@ Estado final: cada merge com gates verdes vira deploy automático na VPS via cha
 - Requer Issue 16 — gates consolidados como pré-requisito
 - Requer Issue 04 — acesso ao servidor somente por chave SSH
 - Requer Issue 05 — o proxy é a porta única de entrada
-- Requer Issue 08 — topologia de rede alvo do deploy
+- Requer Issue 09 — topologia de rede alvo do deploy
 
 ## Escopo
 

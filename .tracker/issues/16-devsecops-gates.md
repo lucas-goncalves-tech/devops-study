@@ -21,7 +21,7 @@ Estado final: os três gates (segredos, SAST, SCA) rodam em toda mudança, falha
 - Requer Issue 14 — gate de SAST
 - Requer Issue 15 — permissões mínimas e pinagem da pipeline que os hospeda
 - Requer Issue 10 — pipeline base e gate de SCA por scan de imagem
-- Requer Issue 07 — a pipeline passa a cobrir múltiplos serviços
+- Requer Issue 08 — a pipeline passa a cobrir múltiplos serviços
 
 ## Escopo
 
@@ -34,7 +34,7 @@ Estado final: os três gates (segredos, SAST, SCA) rodam em toda mudança, falha
 
 - Criação dos gates individuais — Issues 13, 14 e 15
 - Deploy contínuo — Issue 17
-- Monitoramento da aplicação — Issue 06
+- Monitoramento da aplicação — Issue 07
 - Kubernetes e Cloud — Issues 18 e 12
 
 ## Conhecimentos envolvidos
