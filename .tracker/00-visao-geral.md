@@ -11,7 +11,25 @@ tags: [tracker, overview]
 
 - **Jornada:** da JVM no Linux local à plataforma com Docker, VPS, Terraform, CI/CD e observabilidade.
 - **Público:** desenvolvedor em transição para Junior DevOps / Cloud Platform Engineer e backend cloud-native.
-- **Objetivo final:** transformar o backend em plataforma profissional DevSecOps ao longo das 18 Issues.
+- **Objetivo final:** demonstrar a evolução operacional do **mesmo sistema** — o SecurePay — do ambiente local até a plataforma orquestrada, uma capacidade por vez.
+
+## A narrativa
+
+Uma frase só, do começo ao fim:
+
+> Comecei executando a aplicação localmente, depois operei a mesma aplicação em um servidor Linux manualmente, automatizei as partes repetitivas, migrei a arquitetura para serviços de Cloud e finalmente passei a gerenciar essa infraestrutura com IaC e Kubernetes.
+
+Ela se desdobra em cinco transições. Cada transição é uma **necessidade**, não uma tecnologia:
+
+| Transição | A dor que a provoca | Issues |
+|---|---|---|
+| manual → repetitivo | o mesmo comando roda toda vez e alguém esquece de um deles | 04–06 |
+| repetitivo → automatizado | teste quebrado passa revido porque ninguém olhou | 07, 10 |
+| único → multi-serviço | o consumidor cai e o evento some com ele | 08–09 |
+| local → cloud | o estado do Terraform vive no disco de quem aplicou | 11–12 |
+| declarado → orquestrado | um nó morre e ninguém percebe | 13–18 |
+
+Os números são de `01 → 18`, mas a ordem narrativa é esta — nem toda Issue é um marco, e `03` é o caso explícito (ver [Ordem de execução](#ordem-de-execução)).
 
 ## Separação de responsabilidades
 
@@ -51,11 +69,13 @@ LOCAL (01)
   ↓
 CONTAINERS (02)
   ↓
-VPS / LINUX PURO (04–05)
+SERVIDOR (04–05)
   ↓
-MONITORAMENTO E MENSAGERIA (06–07)
+RECUPERAÇÃO (06)
   ↓
-OPERAÇÃO E HARDENING (08–09)
+OBSERVABILIDADE E MENSAGERIA (07–08)
+  ↓
+ISOLAMENTO E LIMITES (09)
   ↓
 AUTOMAÇÃO (10)
   ↓
@@ -66,9 +86,9 @@ CI/CD + DEVSECOPS (13–17)
 KUBERNETES (18)
 ```
 
-- `01, 02, 03` Done; `11` Parked; `04` é a próxima a entrar em execução.
+- `01, 02` Done; `11` Parked; `04` é a próxima a entrar em execução.
 - A numeração é identificador estável. As dependências reais são declaradas em `## Dependências` de cada Issue.
-- `03-terraform-vpc` foi concluída cedo, como laboratório LocalStack sem custo; o restante da IaC e da Cloud aparece depois que a necessidade existe.
+- `03-terraform-vpc` é **laboratório anexado**, não etapa da narrativa: foi concluída antes de existir a dor que Terraform resolve, para não custar dinheiro. **Não a use como marco da evolução.** Ela permanece como pré-requisito de `10`, `11` e `12` apenas porque o gate de IaC valida o HCL que ela criou.
 
 ## Política de status
 
@@ -85,9 +105,10 @@ KUBERNETES (18)
 ## Restrições de escopo
 
 - **FinOps, entrevistas e Ansible estão fora de escopo por decisão.** A estimativa de custo dentro de `12-aws-production` não é um programa de FinOps: é uma trava para impedir cobrança involuntária, pré-requisito de segurança antes de provisionar recurso pago.
+- **Custo zero por regra:** nenhuma Issue exige servidor pago para ser concluída. `04–09` rodam inteiros numa VM local (VirtualBox/UTM/libvirt com Ubuntu ou Debian); `03`, `11` e `12` usam LocalStack ou `terraform plan`. VPS pública só entra como prova final opcional, quando for preciso validar TLS público, DNS e tráfego real de internet.
 - Kubernetes, Cloud e Terraform entram apenas quando existe necessidade concreta que os justifique — nunca porque fazem parte do objetivo final.
 - Nenhuma Issue pode antecipar tecnologia cujo problema ela não resolve.
 
 ---
 
-**Board:** [[BOARD]]
+**Board:** [BOARD](BOARD.md)

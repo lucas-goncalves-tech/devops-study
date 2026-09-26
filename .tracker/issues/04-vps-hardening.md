@@ -85,6 +85,7 @@ Estado final: servidor com login exclusivamente por chave SSH, firewall liberand
 
 ## Limitações / notas
 
-- Requer um servidor VPS com IP público e acesso inicial por provedor — pré-requisito de ambiente, não de código
+- **Não precisa de VPS pública para começar.** Esta Issue roda inteira numa VM local (VirtualBox/UTM/libvirt com Ubuntu ou Debian): SSH por chave, firewall, `fail2ban` e swap não exigem IP público. VPS pública só é necessária para provar acesso externo real — e nesse caso uma VPS temporária resolve.
+- Um servidor real (VPS ou VM) com acesso inicial por provedor é pré-requisito de ambiente, não de código
 - O firewall abre HTTP e HTTPS em antecipação à Issue 05; nesses instantes as portas 80/443 não têm serviço atrás e devem ser reavaliadas ao fechar esta Issue
 - Este contrato de acesso (`só chave SSH`) é pré-requisito do deploy por chave efêmera da Issue 17

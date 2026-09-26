@@ -42,10 +42,10 @@ Issues numbered `01 → 18` in `.tracker/issues/`. Status lives in `.tracker/BOA
 | 03 | Terraform HCL, VPC multi-tier, ALB, LocalStack | Done |
 | 04 | VPS hardening — key-only SSH, minimal firewall, swap | To Do |
 | 05 | Reverse proxy — Caddy, TLS, security headers | To Do |
-| 06 | Prometheus, Grafana dashboards, k6 load testing | To Do |
-| 07 | Multi-service Compose, Redis Streams, webhook gateway | To Do |
-| 08 | Network isolation, DB/Redis lockdown, resource limits | To Do |
-| 09 | Off-site DB backups with retention + tested restore | To Do |
+| 06 | Off-site DB backups with retention + tested restore | To Do |
+| 07 | Prometheus, Grafana dashboards, k6 load testing | To Do |
+| 08 | Multi-service Compose, Redis Streams, webhook gateway | To Do |
+| 09 | Network isolation, DB/Redis lockdown, resource limits | To Do |
 | 10 | GitHub Actions CI, image scanning, IaC gate | To Do |
 | 11 | S3 Reports Infra — bucket, IAM, endpoint | Parked |
 | 12 | AWS production — remote state, minimal compute | To Do |
