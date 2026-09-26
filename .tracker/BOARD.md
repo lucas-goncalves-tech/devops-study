@@ -11,6 +11,34 @@ tags: [tracker, board]
 > `LOCAL → CONTAINERS → VPS/LINUX → OPERAÇÃO → HARDENING/BACKUP/MONITORAMENTO → AUTOMAÇÃO → IaC → CLOUD → CI/CD + DEVSECOPS → KUBERNETES`
 > Material de estudo de cada Issue vive em `estudos/` — fora do escopo da Issue.
 
+## Mapa de estado do app
+
+> O que **existe no app** depois que a Issue está `done`. Leia de cima para baixo: cada linha assume as anteriores.
+
+| # | O app depois dela | Trilha |
+|---|---|---|
+| 01 | Serviço Linux: env vars, healthcheck L4/L7 com código de saída distinto, `SIGTERM` gracioso | Local |
+| 02 | Imagem < 220 MB non-root; API só recebe tráfego com o banco saudável; dados sobrevivem a restart | Local |
+| 03 | Rede multi-tier em HCL idempotente; banco isolado por rota e por SG; bucket privado | Laboratório (LocalStack) |
+| 04 | Servidor só com login por chave, firewall mínimo, ban de brute-force e swap | **VPS** |
+| 05 | Entrada única em 80/443 com TLS automático, headers de segurança e roteamento por domínio | **VPS** |
+| 06 | Prometheus no `/actuator/prometheus`, 4 painéis Grafana, carga k6 com thresholds | Observabilidade |
+| 07 | Redis na stack como buffer via Streams, serviços isolados por perfil, gateway de webhooks | Mensageria |
+| 08 | 3 redes separando fronteira/app/dados; banco e Redis inacessíveis de fora; limites anti-OOM | Operação |
+| 09 | Dump diário criptografado e off-site com retenção; restore testado com tempo medido | Backup |
+| 10 | Pipeline que **impede o merge**: testes, scan de imagem e validação de HCL | CI |
+| 11 | Bucket versionado, IAM least privilege e endpoint privado — sem tocar código Java | Laboratório — **parked** |
+| 12 | Estado remoto com lock, ambientes separados, compute mínimo com custo conhecido | **Cloud real** |
+| 13 | Scanner de segredos no pré-commit e na pipeline; baseline; merge bloqueado | DevSecOps |
+| 14 | SAST obrigatório, bloqueando severidade `ERROR` | DevSecOps |
+| 15 | Jobs com permissão mínima, ações pinadas por SHA, auditoria anti-tag mutável | DevSecOps |
+| 16 | 3 gates consolidados — verde = sem segredo, sem `ERROR`, sem CVE alta/crítica | DevSecOps |
+| 17 | **Produção:** merge com gates → deploy automático na VPS → healthcheck → rollback → auditoria | **Deploy** |
+| 18 | Cluster local multi-node, chart Helm, probes, limits, rollout sem downtime | Kubernetes |
+
+**Fronteiras:** `VPS` = `04–05` (e volta em `17`) · `Cloud real` = `12` só (`03` e `11` são laboratório) ·
+`DevSecOps` = `10 → 13–16` · **produção acende em `17`**, não em `04` (ali só existe um servidor público com deploy manual).
+
 ## Done
 
 - [x] [[01-linux-runtime|01 Linux Runtime]] — runtime Linux, env, healthcheck L4/L7, SIGTERM
