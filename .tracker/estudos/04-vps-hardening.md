@@ -6,7 +6,7 @@ issue: 04
 
 # Estudos — Issue 04: Hardening de VPS para Produção Econômica
 
-> Material de apoio da Issue 04. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 04. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — SSH e firewall

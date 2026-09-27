@@ -6,7 +6,7 @@ issue: 14
 
 # Estudos — Issue 14: SAST com Regras Bloqueantes
 
-> Material de apoio da Issue 14. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 14. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — SAST

@@ -6,7 +6,7 @@ issue: 10
 
 # Estudos — Issue 10: Esteira CI/CD com Testes, Trivy e Gate IaC
 
-> Material de apoio da Issue 10. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 10. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Actions base

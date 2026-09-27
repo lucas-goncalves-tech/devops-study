@@ -6,7 +6,7 @@ issue: 01
 
 # Estudos — Issue 01: Linux Runtime, Env, Healthcheck e Sinais POSIX
 
-> Material de apoio da Issue 01. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 01. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Processos e ambiente

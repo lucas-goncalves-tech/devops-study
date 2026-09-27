@@ -6,7 +6,7 @@ issue: 13
 
 # Estudos — Issue 13: Higiene de Segredos e Anti-Vazamento
 
-> Material de apoio da Issue 13. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 13. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Segredos

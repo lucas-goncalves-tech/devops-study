@@ -6,7 +6,7 @@ issue: 15
 
 # Estudos — Issue 15: Endurecimento da Pipeline (Least-Privilege + SHA Pin)
 
-> Material de apoio da Issue 15. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 15. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Hardening

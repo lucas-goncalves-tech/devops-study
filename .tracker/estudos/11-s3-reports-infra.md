@@ -6,7 +6,7 @@ issue: 11
 
 # Estudos — Issue 11: Infraestrutura S3 para Relatórios Financeiros
 
-> Material de apoio da Issue 11. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 11. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — IAM: identidade, Role vs User, least privilege

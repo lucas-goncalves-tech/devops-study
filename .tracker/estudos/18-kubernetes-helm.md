@@ -6,7 +6,7 @@ issue: 18
 
 # Estudos — Issue 18: Kubernetes Local Multi-Node com Helm Chart
 
-> Material de apoio da Issue 18. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 18. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — K8s base

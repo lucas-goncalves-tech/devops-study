@@ -35,7 +35,7 @@ Os números são de `01 → 18`, mas a ordem narrativa é esta — nem toda Issu
 
 ```text
 ISSUE      → problema, escopo, resultado esperado, validação, evidências
-teach-devops → diagnostica, ensina e verifica o entendimento necessário
+teach-anything → diagnostica, ensina e verifica o entendimento necessário
 repositório → a infraestrutura real construída
 validator  → se a capacidade realmente foi entregue
 ```

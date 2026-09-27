@@ -6,7 +6,7 @@ issue: 07
 
 # Estudos — Issue 07: Observabilidade, Golden Signals e Teste de Carga
 
-> Material de apoio da Issue 07. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 07. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Métricas

@@ -6,7 +6,7 @@ issue: 12
 
 # Estudos — Issue 12: Nuvem Real com Estado Remoto e Lock
 
-> Material de apoio da Issue 12. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 12. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Backend remoto

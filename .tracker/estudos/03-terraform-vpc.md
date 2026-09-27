@@ -6,7 +6,7 @@ issue: 03
 
 # Estudos — Issue 03: Infraestrutura como Código com Terraform, VPC Multi-Tier, Roteamento e ALB
 
-> Material de apoio da Issue 03. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 03. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Terraform base

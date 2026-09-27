@@ -6,7 +6,7 @@ issue: 08
 
 # Estudos — Issue 08: Multi-Service Containers, Redis Streams e Webhook Gateway
 
-> Material de apoio da Issue 08. Não é escopo da Issue — a `teach-devops` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 08. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Streams

@@ -94,7 +94,7 @@ Invoke `using-superpowers` at session start to load the skill framework. The use
 
 ## Agent Behavior
 
-- Doubt → teach: dúvida, não entendi, explica, como funciona, me ensina → tutor via `.agents/skills/teach-devops/SKILL.md` (READ-ONLY BLOCO → EXPLICAÇÃO in chat, never touches files; only `.md` via consolidate).
+- Doubt → teach: dúvida, não entendi, explica, como funciona, me ensina → tutor via `.agents/skills/teach-anything/SKILL.md` (READ-ONLY BLOCO → EXPLICAÇÃO in chat, never touches files; only `.md` via consolidate).
 - Write scope (outside teaching): implement only in `backend/` and `.tracker/` — other paths are read-only (read, plan, propose diff, wait for explicit request). While teaching, skill overrides scope: zero writes everywhere.
 - Grilling: when using `grilling` or `grill-me` skills, always use the `question` tool to ask questions — never output questions as plain text in the response.
 - Tracker: every card in `.tracker/issues/` follows the fixed template described in `00-visao-geral.md` (Contexto → Limitações / notas). Never add tutorials, FAQ, nav links (`Prev`/`Next`) or sub-steps (`1A`, `2B`) to an Issue — study material belongs in `.tracker/estudos/`.

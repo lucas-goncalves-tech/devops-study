@@ -6,7 +6,7 @@ tags: [tracker, board]
 # SecurePay DevOps — Board
 
 > Kanban DevSecOps. Contexto consolidado em [00 Visão Geral](00-visao-geral.md).
-> 1 card por capacidade. **A Issue define o trabalho; a `teach-devops` define o aprendizado.**
+> 1 card por capacidade. **A Issue define o trabalho; a `teach-anything` define o aprendizado.**
 > Cada linha descreve **o que a Issue resolve**, não a tecnologia que ela usa.
 > Ordem de execução: `01 → 18`, seguindo a evolução operacional:
 > `LOCAL → CONTAINERS → SERVIDOR → RECUPERAÇÃO → OBSERVABILIDADE → MENSAGERIA → ISOLAMENTO → AUTOMAÇÃO → IaC/CLOUD → CI/CD + DEVSECOPS → KUBERNETES`

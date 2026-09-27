@@ -1,5 +1,5 @@
 ---
-name: teach-devops-consolidate
+name: teach-anything-consolidate
 description: Use when user finishes learning a topic and wants to consolidate knowledge into a file. Triggers: "consolida", "entendi tudo, salva", "consolida num arquivo", or similar requests to save/consolidate what was taught.
 ---
 
