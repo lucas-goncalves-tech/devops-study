@@ -47,7 +47,7 @@ trilhas** aplicada a um app só — origem da confusão.
 
 | App | Trilha | Justificativa |
 |---|---|---|
-| `ledger-service` (Java/Spring) | **VPS** — linux → hardening → caddy → isolamento → backups → deploy | RAM da JVM não cabe em free tier; Redis de serviço à parte é quase sempre pago |
+| `ledger-service` (Java/Spring) | **VPS** — linux → hardening → caddy → backups → isolamento → deploy | RAM da JVM não cabe em free tier; Redis de serviço à parte é quase sempre pago |
 | `commerce-api` (Node+Postgres) | **AWS local → produção** — linux → docker → terraform/LocalStack → CI → observabilidade → S3/EC2 | leve, cabe em free tier |
 | `webhook-gateway` (Node+Redis) | **DevSecOps completo** — secrets → SAST → **SCA** → hardening → gates → **DAST** (agnóstico de cloud) | trilha é de CI/análise estática + dinâmica, não exige cloud paga; coerente com Redis pago |
 
@@ -113,8 +113,8 @@ Não existe `infra/` na estrutura: infra é do usuário.
 | 02 | Docker Compose multi-stage non-root | reuse `02` |
 | 03 | VPS Hardening (UFW, chave-only, fail2ban, swap) | reuse `04` |
 | 04 | Caddy reverse proxy + TLS | reuse `05` |
-| 05 | Compose production isolation (redes, anti-OOM, DB cego) | reuse `09` |
-| 06 | Backups off-site + restore testado | reuse `06` |
+| 05 | Backups off-site + restore testado | reuse `06` |
+| 06 | Compose production isolation (redes, anti-OOM, DB cego) | reuse `09` |
 | 07 | CI/CD deploy via SSH + rollback | reuse `17` |
 | 08 | **NOVA** — Tráfego sintético & alertas (k6 em cron, alerta real) | nova |
 
