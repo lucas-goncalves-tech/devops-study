@@ -9,13 +9,15 @@ tags: [tracker, overview]
 
 ## As 3 trilhas
 
-O monorepo tem **3 apps, um por trilha**. Cada trilha é **independente** — segue do serviço local até o
-estágio final sem depender de Issue de outro app — e é **completa ponta a ponta**: entrar no app
-`X` é fazer uma jornada inteira, não um pedaço de uma sequência global de 18 números.
+O monorepo tem **3 apps, um por trilha**. Cada trilha é **autônoma e completa ponta a ponta** —
+segue do serviço local até o estágio final sem preencher lacuna de outra sequência — mas não é
+isolada: capacidades compartilhadas (CI, gates, observabilidade) nascem numa trilha e as outras as
+consomem por referência cruzada. Entrar no app `X` é fazer uma jornada inteira, não um pedaço de
+uma sequência global de 18 números.
 
 | App | Trilha | Estágio atual |
 |---|---|---|
-| [`ledger-service`](ledger-service/) | **VPS** — `linux → hardening → caddy → isolamento → backups → deploy` | `01`, `02` `done`; `03` é a próxima a entrar |
+| [`ledger-service`](ledger-service/) | **VPS** — `linux → hardening → caddy → backups → isolamento → deploy` | `01`, `02` `done`; `03` é a próxima a entrar |
 | [`commerce-api`](commerce-api/) | **AWS** — `linux → compose → terraform/LocalStack → CI → observabilidade → S3/EC2` | `01` a entrar; `06` `parked` |
 | [`webhook-gateway`](webhook-gateway/) | **DevSecOps** — `pipeline base → secrets → SAST → SCA → hardening → gates → DAST → mensageria` | `01` a entrar |
 
@@ -72,7 +74,7 @@ Cada Issue é uma mudança concreta no sistema, redigida como RFC de problema co
 ## Restrições de escopo
 
 - **FinOps, entrevistas e Ansible estão fora de escopo por decisão.** As trilhas `interview-prep-finops` e `ansible` do `devops-study` não migraram para este monorepo e continuam lá. A estimativa de custo dentro de `commerce 07` não é um programa de FinOps: é uma trava contra cobrança involuntária, pré-requisito de segurança antes de provisionar recurso pago.
-- **Custo zero por regra:** nenhuma Issue exige servidor pago para ser concluída. As trilhas rodam inteiras em VM local, LocalStack ou `terraform plan`; VPS pública e conta AWS só entram como prova final, quando for preciso validar TLS público, DNS, tráfego real de internet ou deploy em nuvem real.
+- **Custo zero por regra:** nenhuma Issue exige servidor pago para ser concluída. VM local, LocalStack e `terraform plan` cobrem a maior parte das Issues; VPS pública e conta AWS só entram como prova final, quando for preciso validar TLS público, DNS, tráfego real de internet ou deploy em nuvem real — e a trava de custo de recurso pago vive dentro de `commerce 07`.
 - **Kubernetes fora de escopo por decisão.** A Issue 18 (cluster multi-node + chart Helm) foi arquivada em [`archive/18-kubernetes-helm/`](archive/18-kubernetes-helm/issue.md) e registrada como candidata a 4ª trilha futura — não é marco de nenhuma das 3.
 - **A infraestrutura é construção do usuário.** CI, Terraform, Dockerfile, `docker-compose.yaml`, `healthcheck.sh` e código dos apps **nunca** são criados nem alterados pelo agente: o agente escreve Issues, estudos, tracker e docs.
 - Nenhuma Issue pode antecipar tecnologia cujo problema ela não resolve.

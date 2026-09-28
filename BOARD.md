@@ -8,18 +8,18 @@ tags: [tracker, board]
 > Kanban DevSecOps. Contexto consolidado em [00 Visão Geral](00-visao-geral.md).
 > 1 card por capacidade. **A Issue define o trabalho; a `teach-anything` define o aprendizado.**
 > Cada linha descreve **o que a Issue resolve**, não a tecnologia que ela usa.
-> O monorepo tem **3 apps = 3 trilhas**. Cada trilha é independente e completa ponta a ponta.
+> O monorepo tem **3 apps = 3 trilhas**. Cada trilha é uma sequência completa e autônoma para o seu app — capacidades compartilhadas (CI, gates, observabilidade) nascem numa trilha e as outras as consomem por referência cruzada.
 > O checkbox de cada linha espelha o `status:` do frontmatter da Issue.
 > Material de estudo de cada Issue vive em `<app>/estudos/` — fora do escopo da Issue.
 
 ## Produção e staging
 
-- **Produção:** sistema único e de verdade — stack `ledger + postgres + redis + webhook` numa VPS atrás do Caddy com domínio/TLS (trilha VPS, Issues 03→07) e o `commerce` em EC2 (trilha AWS, Issue 07).
+- **Produção:** sistema único e de verdade — stack `ledger + postgres + redis + webhook` numa VPS atrás do Caddy com domínio/TLS (trilha VPS, Issues 03→07; `redis` e `webhook` entram pela `webhook-gateway/10`) e o `commerce` em EC2 (trilha AWS, Issue 07).
 - **Staging:** ambiente separado, público e **deliberadamente falho**, que nunca toca a produção — `ledger 08` (tráfego/alerta), `commerce 08` (falha de observabilidade) e `webhook 11` (insegurança proposital + forense de mensageria).
 
 ## ledger-service · trilha VPS
 
-> Java/Spring: `linux → hardening → caddy → isolamento → backups → deploy`.
+> Java/Spring: `linux → hardening → caddy → backups → isolamento → deploy`.
 > **Estado final da trilha:** serviço endurecido numa VPS real, com entrada TLS única, rede segmentada, backup off-site provado, deploy por pipeline verde com rollback e tráfego sintético com alerta real.
 
 - [x] [01 Linux Runtime](ledger-service/issues/01-linux-runtime.md) — a app vira serviço do sistema: sobe com o boot, responde healthcheck, morre sem cortar requisição
@@ -34,7 +34,7 @@ tags: [tracker, board]
 ## commerce-api · trilha AWS
 
 > Node/Postgres: `linux → compose → terraform/LocalStack → CI → observabilidade → S3/EC2`.
-> **Estado final da trilha:** API leve em computação real na nuvem, com estado Terraform remoto, relatório em bucket privado, pipeline que bloqueia merge e staging falho que prova a observabilidade.
+> **Estado final da trilha:** API leve em computação real na nuvem, com estado Terraform remoto, pipeline que bloqueia merge e staging falho que prova a observabilidade — relatório em bucket privado previsto (Issue 06 `parked`).
 
 - [ ] [01 Linux Runtime](commerce-api/issues/01-linux-runtime.md) — a API sobe como serviço do sistema, com healthcheck e shutdown gracioso
 - [ ] [02 Docker Compose](commerce-api/issues/02-docker-compose.md) — um comando sobe API e banco, imagem non-root e banco sem porta publicada
