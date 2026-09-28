@@ -12,12 +12,9 @@ securepay-devops/
 ├── README.md            # índice público
 ├── BOARD.md             # status e ordem de execução das 3 trilhas
 ├── 00-visao-geral.md    # contexto consolidado, template de Issue, política de status
-├── ledger-service/      # Java 21 / Spring Boot / Postgres  (trilha VPS)
-├── commerce-api/        # Node 22 / Fastify / Postgres      (trilha AWS)
-├── webhook-gateway/     # Node 22 / Redis Streams           (trilha DevSecOps)
 ├── archive/             # Issues arquivadas por decisão
-├── docs/superpowers/    # specs e planos do trabalho
-├── .github/workflows/   # CI (construção do usuário)
+├── docs/                # specs e planos do trabalho
+├── .github/             # CI (construção do usuário)
 ├── healthcheck.sh
 └── .agents/skills/      # Matt Pocock engineering skills
 ```
@@ -59,6 +56,8 @@ Gravável: `ledger-service/`, `commerce-api/`, `webhook-gateway/`, `BOARD.md`,
 Leitura apenas — proponha o diff e aguarde pedido explícito: código dos apps (`<app>/app/`, com
 Dockerfile e compose), IaC/Terraform, `.github/workflows/`, `healthcheck.sh`, `docs/`, `.agents/`.
 Enquanto ensinando, a skill sobrepõe o escopo: zero escrita em qualquer lugar.
+
+Padrão da casa: containers non-root e nenhuma porta de serviço publicada em `0.0.0.0/0` — vale para os 3 apps.
 
 ## Skills e routing
 

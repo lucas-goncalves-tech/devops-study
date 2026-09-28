@@ -13,11 +13,12 @@ reinicia em `01` por app.
 | App | Stack | Trilha | Rodar |
 |---|---|---|---|
 | [`ledger-service/`](ledger-service/) | Java 21 · Spring Boot 3.3 · Postgres | **VPS** — Linux → hardening → Caddy → backups → isolamento → deploy | `cd ledger-service/app && cp .env.example .env && docker compose up --build` |
-| [`commerce-api/`](commerce-api/) | Node 22 · Fastify · Postgres | **AWS** — Linux → compose → Terraform → CI → observabilidade → S3/EC2 | `cd commerce-api/app && npm ci && npm run dev` |
-| [`webhook-gateway/`](webhook-gateway/) | Node 22 · TypeScript · Redis Streams | **DevSecOps** — pipeline → secrets → SAST → SCA → hardening → gates → DAST → mensageria | `cd webhook-gateway/app && npm ci && npm start` |
+| [`commerce-api/`](commerce-api/) | Node 20 · Fastify · Postgres | **AWS** — Linux → compose → Terraform → CI → observabilidade → S3/EC2 | `cd commerce-api/app && npm ci && npm run dev` |
+| [`webhook-gateway/`](webhook-gateway/) | Node 20 · TypeScript · Redis Streams | **DevSecOps** — pipeline → secrets → SAST → SCA → hardening → gates → DAST → mensageria | `cd webhook-gateway/app && npm ci && npm run build && npm start` |
 
-Pré-requisitos: Docker (compose), Java 21 + Maven wrapper, Node 22. Redis para o `webhook-gateway`,
-Postgres para os outros dois. Detalhes de ambiente, rotas e portas no `README.md` de cada app.
+Pré-requisitos: Docker + Compose (`ledger-service`) e Node 20 (`commerce-api`, `webhook-gateway`).
+Redis para o `webhook-gateway`, Postgres para os outros dois. Detalhes de ambiente, rotas e portas
+no `README.md` de cada app.
 
 ## Onde começar
 
