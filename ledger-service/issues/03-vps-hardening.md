@@ -17,7 +17,7 @@ Estado final: servidor com login exclusivamente por chave SSH, firewall liberand
 
 ## Dependências
 
-- Nenhuma dependência de outra Issue — este é o ponto de entrada da trilha de VPS.
+- Nenhuma dependência de outra Issue — primeira Issue da trilha que exige um servidor.
 
 ## Escopo
 

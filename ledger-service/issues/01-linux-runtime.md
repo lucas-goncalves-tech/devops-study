@@ -17,7 +17,7 @@ Estado final: configuração lida do ambiente, healthcheck em duas camadas com c
 
 ## Dependências
 
-- Nenhuma dependência de outra Issue — ponto de entrada da trilha; a Issue 02 (imagem e composição com Postgres) e a Issue 03 (endurecimento do host) consomem a porta, o arquivo de ambiente e o contrato de `SIGTERM` definidos aqui
+- Nenhuma dependência de outra Issue — ponto de entrada da trilha; a Issue 02 (imagem e composição com Postgres) consome a porta, o arquivo de ambiente e o contrato de `SIGTERM` definidos aqui
 
 ## Escopo
 

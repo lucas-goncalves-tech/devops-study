@@ -48,7 +48,7 @@ Estado final: bucket versionado, criptografado e com retenção; identidade IAM 
 - No `ledger-service`, `S3_ENABLED=false` por padrão, então a implementação NoOp da porta de relatórios está ativa
 - O bucket `securepay-financial-reports` existe, mas ninguém tem permissão para usá-lo
 - O emulador não expõe o serviço IAM
-- Não existe nenhum `aws_vpc_endpoint` em código, e a route table privada que o endpoint vai precisar só virá a existir com a Issue 03 — hoje ela está vazia por desenho, não por esquecimento
+- Não existe nenhum `aws_vpc_endpoint` em código, e a route table privada que o endpoint vai precisar só virá a existir com a Issue 03, por desenho e não por esquecimento
 
 ## Resultado esperado
 
