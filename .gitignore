@@ -9,3 +9,5 @@ volume/
 *.tfstate
 *.tfstate.*
 *.tfplan
+# Worktrees locais
+.worktrees/
