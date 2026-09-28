@@ -1,5 +1,5 @@
-# Obsidian local config
-.tracker/.obsidian/
+# Obsidian local config (qualquer vault aberto a partir da raiz do repo)
+.obsidian/
 
 # Environment files
 .env

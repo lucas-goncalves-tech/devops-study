@@ -239,7 +239,7 @@ Acknowledge the pressure → explain the learning cost → offer smaller chunks.
 - Large jumps in complexity.
 - Responses that explain what should be done without actually building with the user.
 - Editing the workspace to demonstrate (edit/write/bash that touches files).
-- Treating "continua", "entendi", or a path mention ("no infra/vpc.tf") as permission to write.
+- Treating "continua", "entendi", or a path mention ("em `commerce-api/infra/vpc.tf`", "`ledger-service/app/Dockerfile`") as permission to write.
 
 ## Rationalizations — Do Not Negotiate
 
