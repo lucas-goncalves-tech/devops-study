@@ -137,20 +137,23 @@ Não existe `infra/` na estrutura: infra é do usuário.
 |---|---|---|
 | 01 | Linux Runtime | clone de `01` |
 | 02 | Docker Compose — **nasce o Dockerfile que falta** + healthcheck | clone de `02` |
-| 03 | Secrets hygiene (gitleaks + baseline) | reuse `13` |
-| 04 | SAST — Semgrep bloqueante | reuse `14` |
-| 05 | **NOVA — SCA:** `npm audit` nas libs + Trivy na imagem Docker | nova |
-| 06 | Pipeline hardening (least-privilege, SHA pin) | reuse `15` |
-| 07 | Gates consolidados — secrets + SAST + **SCA/CVE** | reuse `16` (SCA entra no gate) |
-| 08 | **NOVA — DAST:** OWASP ZAP contra o serviço rodando | nova |
-| 09 | Pipeline agnóstica (roda igual em GitHub/GitLab/VPS) | nova, sintetizada de `10`/`17` |
+| 03 | **NOVA — Pipeline base agnóstica** (testes/build em scripts que rodam em qualquer runner; GitHub/GitLab/VPS) | nova, sintetizada de `10`/`17` |
+| 04 | Secrets hygiene (gitleaks + baseline) | reuse `13` |
+| 05 | SAST — Semgrep bloqueante | reuse `14` |
+| 06 | **NOVA — SCA:** `npm audit` nas libs + Trivy na imagem Docker | nova |
+| 07 | Pipeline hardening (least-privilege, SHA pin) | reuse `15` |
+| 08 | Gates consolidados — secrets + SAST + **SCA/CVE** | reuse `16` (SCA entra no gate) |
+| 09 | **NOVA — DAST:** OWASP ZAP contra o serviço rodando | nova |
 | 10 | Redis Streams em produção (compose + Redis + consumer) | reuse `08` |
-| 11 | **NOVA** — Staging inseguro de propósito (falha que os gates têm que pegar + forense de mensageria; **alvo do DAST da Issue 08**) | nova |
+| 11 | **NOVA** — Staging inseguro de propósito (falha que os gates têm que pegar + forense de mensageria; **alvo do DAST da Issue 09**) | nova |
 
 **Total: 27 Issues (eram 18).** — ledger 8 · commerce 8 · webhook 11
 
 DAST vem depois dos gates estáticos porque exige serviço de pé e um alvo propositalmente falho;
-SCA entra logo após o SAST para o gate consolidado (07) já nascer cobrindo os dois.
+SCA entra logo após o SAST para o gate consolidado (08) já nascer cobrindo os dois.
+A **pipeline base é a Issue 03** (antes das regras de SAST/SCA/hardening): toda gate precisa de
+um pipeline onde se integrar — ordem herdada da trilha original, onde `10-github-actions`
+antecedia as gates `13–16`.
 
 **Sem Issues DevSecOps no ledger/commerce:** o ledger já recebe `Trivy + Gitleaks` dentro da
 Issue 07 (herdada da trilha VPS); SAST/SCA-Maven/DAST do Java ficam para quando você quiser,
@@ -171,7 +174,7 @@ da Issue que servem, **renumerados**; as Issues novas (clonadas ou criadas) ganh
 |---|---|---|---|---|
 | `ledger-service` | 01, 02, 04, 05, 06, 09, 17 | → `01..07` | `08` | 8 |
 | `commerce-api` | 03, 07, 10, 11, 12 | → `03..07` | `01`, `02`, `08` | 8 |
-| `webhook-gateway` | 13, 14, 15, 16, 08 | → `03`, `04`, `06`, `07`, `10` | `01`, `02`, `05`, `08`, `09`, `11` | 11 |
+| `webhook-gateway` | 13, 14, 15, 16, 08 | → `04`, `05`, `07`, `08`, `10` | `01`, `02`, `03`, `06`, `09`, `11` | 11 |
 
 Estudos clonados (`01` Linux, `02` Docker) são **reescritos** para a stack do app alvo
 (Maven vs npm) — cada app é autocontido, sem apontar para pasta de outro app.
