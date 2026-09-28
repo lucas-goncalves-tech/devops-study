@@ -34,10 +34,11 @@ Estado final: os três gates (segredos, SAST, SCA) rodam em toda mudança, falha
 
 ## Fora de escopo
 
-- Criação dos gates individuais — Issues 04, 05 e 07
+- Criação dos gates individuais — Issues 04, 05, 06 e 07
 - Deploy contínuo — [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md)
 - Monitoramento da aplicação — [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md)
-- Kubernetes e Cloud — as Issues que cobriam isso foram arquivadas e estão fora do escopo desta trilha
+- Kubernetes — fora de escopo por decisão (arquivado no repositório)
+- Cloud — [Issue 07 do `commerce-api`](../../commerce-api/issues/07-aws-production.md)
 
 ## Conhecimentos envolvidos
 
@@ -89,7 +90,7 @@ Estado final: os três gates (segredos, SAST, SCA) rodam em toda mudança, falha
 
 ## Limitações / notas
 
-- Os gates individuais vêm prontos das Issues 04, 05 e 07 — esta Issue consolida e sintoniza, não recria
+- Os gates individuais vêm prontos das Issues 04, 05, 06 e 07 — esta Issue consolida e sintoniza, não recria
 - Sintonizar para baixo a severidade bloqueante sem registrá-lo transforma o verde em ilusão: qualquer afrouxamento deve aparecer como decisão registrada
 - Os critérios de "mensagem acionável" e "severidade que alerta" precisam de artefato observável na saída do gate, não de descrição
 - A pipeline cobre os serviços já existentes no momento em que ela é construída; a stack multi-serviço chega na Issue 10, e os gates continuam valendo sem mudança de desenho

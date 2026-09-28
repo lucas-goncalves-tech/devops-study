@@ -13,7 +13,7 @@ prioridade: media
 
 O sistema é um serviço único com chamada síncrona frágil: se o consumidor cai, o produtor perde o evento. O `ledger-service` já publica em `payment-events` via `RedisPaymentEventPublisher`, mas o serviço Redis não existe na stack e o publisher está desativado por padrão. O consumidor já existe: `webhook-gateway/app/src/consumer.ts` lê a Stream `payment-events` com `ioredis`, cria o consumer group `webhook-dispatcher-group` e assina cada payload com HMAC-SHA256 (`src/signer.ts`, com `crypto.timingSafeEqual`). `src/index.ts` lê a configuração do ambiente e trata `SIGTERM`/`SIGINT`, e a suíte de `tests/` (9 testes, `ioredis` mockado) é o que trava esse contrato.
 
-O que **não** existe neste app ainda: HTTP server, `Dockerfile` e `docker-compose.yaml`. O serviço que esta Issue adiciona à stack depende de imagem e healthcheck, que são trabalho das Issues 01 e 02.
+O que **não** existe neste app ainda: HTTP server, `Dockerfile` e `docker-compose.yaml`. O serviço que esta Issue adiciona à stack depende de imagem e healthcheck, que são trabalho da Issue 02.
 
 ## Objetivo
 
@@ -36,7 +36,8 @@ Estado final: Redis na stack como buffer entre produtor e consumidor via Streams
 - Publicação da aplicação na internet, TLS e reverse proxy — [Issue 03](../../ledger-service/issues/03-vps-hardening.md) e [Issue 04](../../ledger-service/issues/04-caddy-reverse-proxy.md) do `ledger-service`
 - Segmentação final de redes e limites de recursos — [Issue 06 do `ledger-service`](../../ledger-service/issues/06-compose-isolation.md)
 - Gates de segurança no CI — Issues 04, 05, 07 e 08
-- Kubernetes e Cloud — as Issues que cobriam isso foram arquivadas e estão fora do escopo desta trilha
+- Kubernetes — fora de escopo por decisão (arquivado no repositório)
+- Cloud — [Issue 07 do `commerce-api`](../../commerce-api/issues/07-aws-production.md)
 
 ## Conhecimentos envolvidos
 

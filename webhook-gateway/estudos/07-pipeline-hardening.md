@@ -30,7 +30,7 @@ issue: 07
 
 ### C — Neste app
 
-- O job deste app roda Node 20 com `actions/setup-node` e cache de npm; `npm ci` e `npm test` são o gate de build
+- O job que a Issue 03 cria roda Node 20 com `actions/setup-node` e cache de npm; `npm ci` e `npm test` são o gate de build
   - https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows
 
 **FIM:** sei dizer o que a pinagem por SHA protege num job Node.

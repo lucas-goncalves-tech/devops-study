@@ -9,7 +9,7 @@ prioridade: alta
 
 ## Contexto
 
-Não existe detecção de segredo versionado: uma chave colada num commit passa despercebida até virar incidente. `.env` já é ignorado, mas não há nada que impeça alguém de commitar uma credencial em outro arquivo — e o `WEBHOOK_SECRET` default está literalmente em `webhook-gateway/app/src/index.ts`. O app também é lido por `dotenv.config()` a partir de `.env`, então o arquivo de exemplo precisa nascer com placeholders, não com valor.
+Não existe detecção de segredo versionado: uma chave colada num commit passa despercebida até virar incidente. `.env` já é ignorado, mas não há nada que impeça alguém de commitar uma credencial em outro arquivo — e o `WEBHOOK_SECRET` default está literalmente em `webhook-gateway/app/src/index.ts`. O app também lê a configuração de `.env` via `dotenv.config()`, então o arquivo de exemplo precisa nascer com placeholders, não com valor.
 
 ## Objetivo
 
@@ -86,6 +86,6 @@ Estado final: scanner de segredos no pré-commit e na pipeline, baseline de acha
 - O `WEBHOOK_SECRET` default em `webhook-gateway/app/src/index.ts` (`default-webhook-secret-key-32chars`) é um literal commitado; tratar como dívida conhecida — substituir por valor de ambiente sem quebrar a suíte, que injeta o segredo pelo construtor de `StreamConsumer`
 - O `JWT_SECRET` default do `ledger-service` (`application.yml`) é a mesma dívida no app Java — o escopo desta Issue é o app Node; o equivalente do ledger é trabalho de lá
 - `.env` é ignorado por `.gitignore`; o `.dockerignore` que o exclui da imagem só existe quando a imagem existir (Issue 02) — nenhum dos dois pode ser removido
-- Não há `.env.example` neste app ainda: ele nasce junto com a imagem (Issue 02). Quando nascer, tem de nascer com placeholders — este é o momento barato de não vazar nada
+- Não há `.env.example` neste app ainda: ele nasce junto com a imagem (Issue 02) — este é o momento barato de não vazar nada
 - O bloqueio de merge depende de proteção de branch configurada na Issue 03; sem ela, o gate roda mas não impede nada
 - Esta Issue cria o gate de segredos que a Issue 08 reaproveita e que a [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md) exige como pré-requisito de deploy
