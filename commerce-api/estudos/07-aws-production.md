@@ -1,12 +1,12 @@
 ---
-aliases: [estudo-12]
+aliases: [estudo-07]
 tags: [estudo]
-issue: 12
+issue: 07
 ---
 
-# Estudos — Issue 12: Nuvem Real com Estado Remoto e Lock
+# Estudos — Issue 07: Nuvem Real com Estado Remoto e Lock
 
-> Material de apoio da Issue 12. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 07. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Backend remoto

@@ -1,7 +1,7 @@
 ---
 aliases: [issue-03, terraform-vpc]
-tags: [tracker, issue, done, study-needed]
-status: done
+tags: [tracker, issue, todo, study-needed]
+status: todo
 prioridade: alta
 ---
 
@@ -40,12 +40,7 @@ Estado final: rede, roteamento, segurança de grupo e storage declarados em HCL 
 
 ## Estado atual
 
-| Arquivo | Conteúdo atual | Observação |
-|---|---|---|
-| `infra/provider.tf` | Provider AWS + LocalStack, endpoints `s3`/`ec2` | Endpoint `elbv2` comentado |
-| `infra/vpc.tf` | VPC, três subnets, IGW e route tables | ALB comentado; IGW e route tables já implementados |
-| `infra/security.tf` | SG da API e SG do banco | SG do ALB comentado; API exposta temporariamente para o laboratório |
-| `infra/s3.tf` | Bucket e quatro bloqueios de acesso público | Adequado ao escopo desta Issue |
+Estado inicial vazio: `commerce-api/infra/` não existe. Não há nenhum arquivo Terraform neste app — a rede, o bucket e o ALB precisam ser declarados do zero.
 
 ## Resultado esperado
 
@@ -62,33 +57,42 @@ subnet banco   → sem rota internet direta
 
 ## Requisitos
 
-- [x] Declarar provider `hashicorp/aws` `~> 5.0`, endpoints `ec2` e `s3` em `http://localhost:4566`, região `sa-east-1`, credenciais mock com `skip_credentials_validation` e `skip_requesting_account_id`
-- [x] Subir emulador local com a lista de serviços do `infra/platform/compose-localstack.yaml` e endpoint respondendo
-- [x] Criar VPC `10.0.0.0/16`
-- [x] Criar subnet pública `10.0.1.0/24` (load balancers), privada `10.0.2.0/24` (API) e isolada `10.0.3.0/24` (destinada ao banco)
-- [x] Declarar `aws_internet_gateway` associado à VPC
-- [x] Criar route table pública com rota padrão `0.0.0.0/0` para o Internet Gateway e associar a subnet pública
-- [x] Criar route table privada para a subnet da API, sem rota padrão direta para o Internet Gateway
-- [x] Criar ou reutilizar route table sem rota internet para a subnet do banco
-- [x] Associar explicitamente cada subnet à sua route table e garantir que a subnet do banco não tenha rota direta para a internet
-- [x] Criar SG da API e SG do banco
-- [x] Criar entrada `5432` no SG do banco exclusivamente a partir do SG da API, nunca `0.0.0.0/0`
-- [x] Criar bucket `securepay-financial-reports` com os 4 bloqueios (`block_public_acls`, `block_public_policy`, `ignore_public_acls`, `restrict_public_buckets`)
+Arquivos que esta Issue espera encontrar em `commerce-api/infra/` ao final — nenhum deles existe hoje:
+
+| Arquivo | Conteúdo esperado | Observação |
+|---|---|---|
+| `commerce-api/infra/provider.tf` | Provider AWS + LocalStack, endpoints `s3`/`ec2` | Endpoint `elbv2` comentado |
+| `commerce-api/infra/vpc.tf` | VPC, três subnets, IGW e route tables | ALB comentado; IGW e route tables implementados |
+| `commerce-api/infra/security.tf` | SG da API e SG do banco | SG do ALB comentado; API exposta temporariamente para o laboratório |
+| `commerce-api/infra/s3.tf` | Bucket e quatro bloqueios de acesso público | Atende ao escopo desta Issue |
+
+- [ ] Declarar provider `hashicorp/aws` `~> 5.0`, endpoints `ec2` e `s3` em `http://localhost:4566`, região `sa-east-1`, credenciais mock com `skip_credentials_validation` e `skip_requesting_account_id`
+- [ ] Subir emulador local com a lista de serviços do `commerce-api/infra/platform/compose-localstack.yaml` e endpoint respondendo
+- [ ] Criar VPC `10.0.0.0/16`
+- [ ] Criar subnet pública `10.0.1.0/24` (load balancers), privada `10.0.2.0/24` (API) e isolada `10.0.3.0/24` (destinada ao banco)
+- [ ] Declarar `aws_internet_gateway` associado à VPC
+- [ ] Criar route table pública com rota padrão `0.0.0.0/0` para o Internet Gateway e associar a subnet pública
+- [ ] Criar route table privada para a subnet da API, sem rota padrão direta para o Internet Gateway
+- [ ] Criar ou reutilizar route table sem rota internet para a subnet do banco
+- [ ] Associar explicitamente cada subnet à sua route table e garantir que a subnet do banco não tenha rota direta para a internet
+- [ ] Criar SG da API e SG do banco
+- [ ] Criar entrada `5432` no SG do banco exclusivamente a partir do SG da API, nunca `0.0.0.0/0`
+- [ ] Criar bucket `securepay-financial-reports` com os 4 bloqueios (`block_public_acls`, `block_public_policy`, `ignore_public_acls`, `restrict_public_buckets`)
 - [ ] Quando o ALB estiver ativo, restringir a entrada da API na porta `8080` exclusivamente pelo SG do ALB
-- [x] Executar `init` → `validate` → `apply -auto-approve` → `plan -detailed-exitcode` com exit 0
-- [x] Declarar ALB na subnet pública, target group para a API na porta `8080`, listener na porta `80` e health check em `/actuator/health`, mantendo-os comentados enquanto o emulador não suportar o serviço
+- [ ] Executar `init` → `validate` → `apply -auto-approve` → `plan -detailed-exitcode` com exit 0
+- [ ] Declarar ALB na subnet pública, target group para a API na porta `8080`, listener na porta `80` e health check em `/actuator/health`, mantendo-os comentados enquanto o emulador não suportar o serviço
 - [ ] Reativar os recursos em um ambiente com suporte a `elbv2` e validar DNS, listener e health check
 
 ## Critérios de aceitação
 
 **Laboratório**
 
-- [x] `terraform plan -detailed-exitcode` retorna exit 0
-- [x] Nenhuma regra de segurança expõe `5432` em `0.0.0.0/0`
-- [x] Bucket privado com os 4 bloqueios; VPC e subnets com os CIDRs exatos
-- [x] Subnet pública associada a route table com rota para o Internet Gateway
-- [x] Subnets da API e do banco sem rota internet direta
-- [x] ALB implementado no código e desativado/documentado no laboratório
+- [ ] `terraform plan -detailed-exitcode` retorna exit 0
+- [ ] Nenhuma regra de segurança expõe `5432` em `0.0.0.0/0`
+- [ ] Bucket privado com os 4 bloqueios; VPC e subnets com os CIDRs exatos
+- [ ] Subnet pública associada a route table com rota para o Internet Gateway
+- [ ] Subnets da API e do banco sem rota internet direta
+- [ ] ALB implementado no código e desativado/documentado no laboratório
 
 **Arquitetura final (pendente de ambiente com `elbv2`)**
 
@@ -113,8 +117,9 @@ subnet banco   → sem rota internet direta
 
 ## Limitações / notas
 
+- **Recomeço do zero:** a infraestrutura anterior foi apagada (histórico no git); esta Issue começa do zero em `commerce-api/infra/`
 - **Lab ≠ real:** sucesso de `init`, `validate`, `plan` e `apply` prova que o emulador aceitou os recursos; **não prova** que a semântica de rede, roteamento e segurança da AWS real foi reproduzida
-- `infra/platform/compose-localstack.yaml` declara `SERVICES=s3,ec2,elbv2` e exige `LOCALSTACK_AUTH_TOKEN` — qualquer automação que suba o emulador precisa respeitar essa configuração
+- `commerce-api/infra/platform/compose-localstack.yaml` declara `SERVICES=s3,ec2,elbv2` e exige `LOCALSTACK_AUTH_TOKEN` — qualquer automação que suba o emulador precisa respeitar essa configuração
 - O LocalStack pode não validar toda a semântica de rota; as rotas são declaradas para o desenho ser fiel à arquitetura pretendida
-- **Carry-over condicionado a ambiente com `elbv2`:** reativar `aws_alb`, `aws_alb_target_group` e `aws_alb_listener`; restringir a entrada da API ao SG do ALB (hoje a regra temporária `0.0.0.0/0` em `80`/`443` permanece documentada como lab-only). Nenhum item bloqueia a Issue 11
+- **Carry-over condicionado a ambiente com `elbv2`:** reativar `aws_alb`, `aws_alb_target_group` e `aws_alb_listener`; restringir a entrada da API ao SG do ALB (hoje a regra temporária `0.0.0.0/0` em `80`/`443` permanece documentada como lab-only). Nenhum item bloqueia a Issue 06
 - Enquanto o ALB está desativado, a entrada temporária da API é de laboratório e não deve ser confundida com o desenho final de produção

@@ -1,11 +1,11 @@
 ---
-aliases: [issue-10, github-actions]
+aliases: [issue-04, github-actions]
 tags: [tracker, issue, todo, study-needed]
 status: todo
 prioridade: alta
 ---
 
-# Issue 10 — Pipeline de CI com testes, scan de imagem e gate de IaC
+# Issue 04 — Pipeline de CI com testes, scan de imagem e gate de IaC
 
 ## Contexto
 
@@ -17,7 +17,7 @@ Estado final: a cada push e pull request, a pipeline executa a suíte de testes,
 
 ## Dependências
 
-- Requer Issue 03 — o gate de IaC valida o HCL declarado em `infra/`
+- Requer Issue 03 — o gate de IaC valida o HCL declarado em `commerce-api/infra/`
 - Requer Issue 02 — o scan de imagem precisa do `Dockerfile` e do contexto de build
 
 ## Escopo
@@ -32,10 +32,10 @@ Estado final: a cada push e pull request, a pipeline executa a suíte de testes,
 
 - GitOps (ArgoCD/Flux), deploy ECS Fargate, Ansible
 - Foco exclusivo: workflow YAML, build e testes Maven, build Docker, scan de imagem bloqueante, `fmt` e `validate`
-- Deploy contínuo — Issue 17
-- Gates de segredos, SAST e SCA — Issues 13, 14 e 15
-- **FinOps de staging (auto-stop de ambiente)** — fora de escopo por decisão registrada em `00-visao-geral.md`; além disso não existe ambiente de staging para desligar antes da Issue 12
-- Foco exclusivo do gate de IaC: consistência entre `infra/provider.tf` e o serviço que o emulador realmente inicializa
+- Deploy contínuo — [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md)
+- Gates de segredos, SAST e SCA — [Issue 04](../../webhook-gateway/issues/04-secrets-hygiene.md), [Issue 05](../../webhook-gateway/issues/05-sast-semgrep.md) e [Issue 06](../../webhook-gateway/issues/06-sca-dependencias-imagem.md) do `webhook-gateway`
+- **FinOps de staging (auto-stop de ambiente)** — fora de escopo por decisão registrada em `00-visao-geral.md`; além disso não existe ambiente de staging para desligar antes da Issue 07
+- Foco exclusivo do gate de IaC: consistência entre `commerce-api/infra/provider.tf` e o serviço que o emulador realmente inicializa
 
 ## Conhecimentos envolvidos
 
@@ -65,7 +65,7 @@ Estado final: a cada push e pull request, a pipeline executa a suíte de testes,
 - [ ] Job de backend: Java 21 com `cache: maven` e execução de `./mvnw verify`
 - [ ] Job de segurança de imagem: build e scan bloqueante para `HIGH` e `CRITICAL`
 - [ ] Job de gate de IaC: `fmt -check` → `init` → `validate` → `plan`
-- [ ] Fazer o job de IaC subir o emulador com a configuração real de `infra/platform/compose-localstack.yaml`
+- [ ] Fazer o job de IaC subir o emulador com a configuração real de `commerce-api/infra/platform/compose-localstack.yaml`
 - [ ] Exigir YAML íntegro e pipeline verde como pré-requisito de merge
 - [ ] Manter `./mvnw test` como verificação local equivalente ao job de backend
 
@@ -93,11 +93,11 @@ Estado final: a cada push e pull request, a pipeline executa a suíte de testes,
 
 ## Limitações / notas
 
-- **Achado — divergência entre a especificação do gate e a configuração real do emulador.** Antes desta Issue, o gate de IaC foi especificado como `localstack/localstack:4.4.0` com `SERVICES=s3,ec2` e sem token. O arquivo real `infra/platform/compose-localstack.yaml` hoje declara:
+- **Achado — divergência entre a especificação do gate e a configuração real do emulador.** Antes desta Issue, o gate de IaC foi especificado como `localstack/localstack:4.4.0` com `SERVICES=s3,ec2` e sem token. O arquivo real `commerce-api/infra/platform/compose-localstack.yaml` hoje declara:
   - `image: localstack/localstack` — sem pin de versão
   - `LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN:?}` — obrigatório; sem a variável o Compose aborta a inicialização
   - `SERVICES=s3,ec2,elbv2`
-  - `infra/provider.tf` declara endpoints apenas para `s3` e `ec2` (`elbv2` comentado)
+  - `commerce-api/infra/provider.tf` declara endpoints apenas para `s3` e `ec2` (`elbv2` comentado)
 
   O job de IaC precisa partir da configuração real: ou reutiliza o próprio arquivo de Compose (com `LOCALSTACK_AUTH_TOKEN` fornecido como secret), ou define seu próprio serviço com os serviços que `provider.tf` declara. Especificar `SERVICES=s3,ec2` num job isolado não reproduz o ambiente do repositório.
 - **Contrato de portas:** `8080` é a única porta publicada pelo Compose do backend. A suíte de testes usa perfil próprio com porta efêmera e H2, então não colide com o serviço rodando localmente

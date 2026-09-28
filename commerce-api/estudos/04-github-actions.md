@@ -1,12 +1,12 @@
 ---
-aliases: [estudo-10]
+aliases: [estudo-04]
 tags: [estudo]
-issue: 10
+issue: 04
 ---
 
-# Estudos — Issue 10: Esteira CI/CD com Testes, Trivy e Gate IaC
+# Estudos — Issue 04: Esteira CI/CD com Testes, Trivy e Gate IaC
 
-> Material de apoio da Issue 10. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 04. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Actions base

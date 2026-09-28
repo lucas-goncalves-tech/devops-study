@@ -1,11 +1,11 @@
 ---
-aliases: [issue-11, s3-reports-infra]
+aliases: [issue-06, s3-reports-infra]
 tags: [tracker, issue, parked, study-needed]
 status: parked
 prioridade: alta
 ---
 
-# Issue 11 — Storage S3 para relatórios com IAM least privilege e endpoint privado
+# Issue 06 — Storage S3 para relatórios com IAM least privilege e endpoint privado
 
 ## Contexto
 
@@ -31,9 +31,9 @@ Estado final: bucket versionado, criptografado e com retenção; identidade IAM 
 
 - Modificar `ReportRepository`, `S3ReportRepository`, `S3Config` ou qualquer código Java
 - Gerar conteúdo de relatório
-- CI/CD — Issue 10
+- CI/CD — Issue 04
 - ALB — Issue 03 (carry-over condicionado a `elbv2`)
-- Backup de banco — Issue 06
+- Backup de banco — [Issue 05 do `ledger-service`](../../ledger-service/issues/05-db-backups-s3.md)
 - Criação de lanes de bugs no tracker
 
 ## Conhecimentos envolvidos
@@ -59,8 +59,8 @@ Estado final: bucket versionado, criptografado e com retenção; identidade IAM 
 
 ## Requisitos
 
-- [ ] Em `infra/provider.tf`, adicionar `iam = "http://localhost:4566"` ao bloco `endpoints { }`
-- [ ] Em `infra/platform/compose-localstack.yaml`, adicionar `iam` à variável `SERVICES` e `ENFORCE_IAM=1` ao bloco `environment`
+- [ ] Em `commerce-api/infra/provider.tf`, adicionar `iam = "http://localhost:4566"` ao bloco `endpoints { }`
+- [ ] Em `commerce-api/infra/platform/compose-localstack.yaml`, adicionar `iam` à variável `SERVICES` e `ENFORCE_IAM=1` ao bloco `environment`
 - [ ] Reiniciar o emulador — `SERVICES` só é lido na inicialização
 - [ ] Conferir que `endpoints { }` do Terraform lista exatamente os serviços que `SERVICES=` inicializou
 - [ ] Declarar IAM **Role** (não User) com `assume_role_policy` para o principal que roda o app,
@@ -72,7 +72,7 @@ Estado final: bucket versionado, criptografado e com retenção; identidade IAM 
 - [ ] Exportar as access keys desse User e fazer `put-object` no bucket alvo (esperado: sucesso)
 - [ ] Repetir o `put` contra um bucket que não é o alvo (esperado: `AccessDenied`)
 - [ ] Repetir com `get-object` no bucket alvo (esperado: sucesso)
-- [ ] Reusar o bucket `securepay-financial-reports` já declarado em `infra/s3.tf`
+- [ ] Reusar o bucket `securepay-financial-reports` já declarado em `commerce-api/infra/s3.tf`
 - [ ] Declarar `aws_s3_bucket_versioning` como recurso próprio do provider `aws` v5
 - [ ] Declarar `aws_s3_bucket_server_side_encryption_configuration` com `sse_algorithm = "AES256"`
 - [ ] Declarar `aws_s3_bucket_lifecycle_rule` expirando versões antigas
@@ -108,7 +108,7 @@ Estado final: bucket versionado, criptografado e com retenção; identidade IAM 
 
 ## Limitações / notas
 
-- **Status: parked.** A Issue 04 do tracker antigo foi revertida (`infra/provider.tf`, `infra/platform/compose-localstack.yaml` e este card voltaram ao estado inicial) e o trabalho foi adiado para depois da trilha de VPS, backup e CI. Nenhuma outra Issue depende dela — `S3_ENABLED` continua `false` e o `NoOpReportRepository` responde
+- **Status: parked.** O trabalho de provisionar a identidade IAM foi revertido (`commerce-api/infra/provider.tf`, `commerce-api/infra/platform/compose-localstack.yaml` e este card voltaram ao estado inicial) e a entrega foi adiada para depois das trilhas de VPS, backup e CI. Nenhuma outra Issue depende dela — `S3_ENABLED` continua `false` e o `NoOpReportRepository` responde
 - **Lab ≠ real:** no LocalStack o app fala com `localhost:4566` na máquina host. As subnets são objetos declarados sem núcleo de rede real e **não há como observar tráfego**. A prova do endpoint é `plan` limpo com o recurso aceito pelo emulador — declarado ≠ funcionando
 - **`ENFORCE_IAM` é feature Pro e está desabilitada por padrão.** Sem ela, nenhuma API do emulador nega nada. Se a prova de negação não produzir `AccessDenied`, o cenário correto é rebaixar essa parte para "declarar e inspecionar a política" e marcar a prova de negação como **bloqueada por ambiente**, não como falha
 - **S3 com versionamento sem expiração faz o bucket crescer para sempre:** `deleteObject` vira *delete marker* e o objeto anterior continua faturando — por isso a regra de ciclo de vida é obrigatória

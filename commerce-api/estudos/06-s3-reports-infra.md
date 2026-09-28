@@ -1,12 +1,12 @@
 ---
-aliases: [estudo-11]
+aliases: [estudo-06]
 tags: [estudo]
-issue: 11
+issue: 06
 ---
 
-# Estudos — Issue 11: Infraestrutura S3 para Relatórios Financeiros
+# Estudos — Issue 06: Infraestrutura S3 para Relatórios Financeiros
 
-> Material de apoio da Issue 11. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 06. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — IAM: identidade, Role vs User, least privilege

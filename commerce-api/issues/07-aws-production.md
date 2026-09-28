@@ -1,11 +1,11 @@
 ---
-aliases: [issue-12, aws-production]
+aliases: [issue-07, aws-production]
 tags: [tracker, issue, todo, study-needed]
 status: todo
 prioridade: media
 ---
 
-# Issue 12 — Estado Terraform remoto com lock e computação em nuvem real
+# Issue 07 — Estado Terraform remoto com lock e computação em nuvem real
 
 ## Contexto
 
@@ -17,7 +17,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 
 ## Dependências
 
-- Requer Issue 03 — é o estado local de `infra/terraform.tfstate` que precisa ser migrado
+- Requer Issue 03 — é o estado local de `commerce-api/infra/terraform.tfstate` que precisa ser migrado
 
 ## Escopo
 
@@ -28,9 +28,9 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 
 ## Fora de escopo
 
-- Kubernetes e orquestração — Issue 18
-- Pipeline de CI/CD — Issues 10 e 17
-- Backups e monitoramento — Issues 09 e 06
+- Kubernetes e orquestração — fora de escopo por decisão; a Issue correspondente está arquivada em `archive/18-kubernetes-helm/`
+- Pipeline de CI/CD — Issue 04 e [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md)
+- Backups e monitoramento — [Issue 05 do `ledger-service`](../../ledger-service/issues/05-db-backups-s3.md) e Issue 05
 - Serviços gerenciados além da computação mínima
 
 ## Conhecimentos envolvidos
