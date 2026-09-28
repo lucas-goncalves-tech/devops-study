@@ -1,111 +1,82 @@
-# SecurePay DevOps
+# SecurePay — monorepo DevOps
 
-AI-assisted payment API (ledger-service) built with Spring Boot 21, deployed through a progressive DevOps pipeline. The agent's role is to assist with infrastructure, CI/CD, observability, and operational tasks — not to modify business logic unless explicitly asked.
+3 apps, 3 trilhas DevSecOps. Cada app = uma sequência **completa e autônoma** do serviço local até
+produção. O papel do agente é tracker (Issues, estudos), board e docs — **a infraestrutura é
+construção do usuário**.
 
-## Filetree
+## Layout
 
 ```
 securepay-devops/
-├── AGENTS.md
+├── AGENTS.md            # este arquivo — routing
+├── README.md            # índice público
+├── BOARD.md             # status e ordem de execução das 3 trilhas
+├── 00-visao-geral.md    # contexto consolidado, template de Issue, política de status
+├── ledger-service/      # Java 21 / Spring Boot / Postgres  (trilha VPS)
+├── commerce-api/        # Node 22 / Fastify / Postgres      (trilha AWS)
+├── webhook-gateway/     # Node 22 / Redis Streams           (trilha DevSecOps)
+├── archive/             # Issues arquivadas por decisão
+├── docs/superpowers/    # specs e planos do trabalho
+├── .github/workflows/   # CI (construção do usuário)
 ├── healthcheck.sh
-├── backend/                    # Spring Boot payment API
-│   ├── Dockerfile
-│   ├── docker-compose.yaml
-│   ├── pom.xml
-│   └── src/
-│       └── main/java/com/securepay/ledger/
-│           ├── domain/         # Entities + repositories (JPA)
-│           ├── event/          # PaymentEventPublisher (Redis/NoOp)
-│           ├── report/         # ReportRepository (S3/NoOp) — infra-agnostic
-│           ├── payment/        # PaymentService, WalletService
-│           ├── security/       # JWT auth, SecurityConfig
-│           └── infrastructure/ # GlobalExceptionHandler, OpenApiConfig
-├── infra/                      # Terraform IaC
-│   ├── provider.tf             # AWS provider + LocalStack endpoints
-│   └── vpc.tf                  # VPC multi-tier + subnets
-├── .tracker/                   # Obsidian-compatible issue tracker
-│   ├── BOARD.md                # status e ordem de execução (01 → 18)
-│   ├── 00-visao-geral.md       # contexto consolidado, template, política de status
-│   ├── issues/                 # 01–18 — uma Issue por capacidade (template fixo)
-│   └── estudos/                # material de estudo por Issue — fora do escopo das Issues
-└── .agents/skills/             # Matt Pocock engineering skills
+└── .agents/skills/      # Matt Pocock engineering skills
 ```
 
-## DevOps Pipeline
+Antes de mexer num app, abra o `AGENTS.md` dele (`ledger-service/AGENTS.md`): é onde vive a
+arquitetura, as variáveis de ambiente e o contrato de infra que este arquivo não repete. O
+`README.md` do app diz como rodar; `issues/` e `estudos/` são o trabalho.
 
-Issues numbered `01 → 18` in `.tracker/issues/`. Status lives in `.tracker/BOARD.md`.
+## Apps, trilhas e estágio
 
-| # | Focus | Status |
-|---|-------|--------|
-| 01 | Linux runtime, env vars, healthcheck, POSIX signals | Done |
-| 02 | Multi-stage Dockerfile, Docker Compose, non-root user | Done |
-| 03 | Terraform HCL, VPC multi-tier, ALB, LocalStack | Done |
-| 04 | VPS hardening — key-only SSH, minimal firewall, swap | To Do |
-| 05 | Reverse proxy — Caddy, TLS, security headers | To Do |
-| 06 | Off-site DB backups with retention + tested restore | To Do |
-| 07 | Prometheus, Grafana dashboards, k6 load testing | To Do |
-| 08 | Multi-service Compose, Redis Streams, webhook gateway | To Do |
-| 09 | Network isolation, DB/Redis lockdown, resource limits | To Do |
-| 10 | GitHub Actions CI, image scanning, IaC gate | To Do |
-| 11 | S3 Reports Infra — bucket, IAM, endpoint | Parked |
-| 12 | AWS production — remote state, minimal compute | To Do |
-| 13 | Secrets hygiene — blocking secret scan | To Do |
-| 14 | SAST Semgrep — blocking static analysis | To Do |
-| 15 | Pipeline hardening — least-privilege, SHA pin | To Do |
-| 16 | Consolidated DevSecOps gates, per-gate timing | To Do |
-| 17 | CI/CD to VPS — gated deploy, rollback, audit trail | To Do |
-| 18 | Kubernetes multi-node, Helm chart, probes, limits | To Do |
+| App | Trilha (ordem da sequência) | Estágio |
+|---|---|---|
+| `ledger-service` · 8 Issues | VPS — `linux → hardening → caddy → backups → isolamento → deploy` | `01`,`02` `done`; `03` a entrar |
+| `commerce-api` · 8 Issues | AWS — `linux → compose → terraform → CI → observabilidade → S3/EC2` | `01` a entrar; `06` `parked` |
+| `webhook-gateway` · 11 Issues | DevSecOps — `pipeline → secrets → SAST → SCA → hardening → gates → DAST → mensageria` | `01` a entrar |
 
-## Backend Architecture
+**Status e ordem de execução → `BOARD.md`:** consulte quando precisar saber o que está feito e o que
+entra em seguida. **Metodologia, pilares e política de status → `00-visao-geral.md`:** consulte antes
+de escrever ou fechar qualquer Issue. A numeração reinicia em `01` por app: `ledger 05` e
+`commerce 05` são Issues diferentes.
 
-### Infrastructure Ports (Interfaces)
+## Tracker
 
-The app uses ports to remain infrastructure-agnostic. Each port has a NoOp (default) and a real implementation activated via `@ConditionalOnProperty`.
+- Issue = uma capacidade, escrita como RFC (problema → escopo → critérios observáveis → validação →
+  evidências). Template fixo e política de status: `00-visao-geral.md`.
+- Uma Issue não é aula. Material de estudo vive em `<app>/estudos/`, fora da Issue.
+- Sem tutorial, FAQ, navegação (`Prev`/`Next`) nem sub-etapas (`1A`, `2B`) dentro da Issue.
+- Fechar uma Issue exige a saída real do comando de validação colada em `Evidências` e o
+  `status:` do frontmatter atualizado junto com o checkbox do board. Limitação de ambiente
+  registrada em `Limitações / notas` não vale como evidência.
+- Custo zero por regra: nenhuma Issue exige recurso pago para ser concluída. Infra local, LocalStack
+  e `terraform plan` cobrem quase tudo; VPS pública e conta AWS só como prova final.
 
-| Port | Interface | NoOp | Real | Activated by |
-|------|-----------|------|------|--------------|
-| Events | `PaymentEventPublisher` | `NoOpPaymentEventPublisher` | `RedisPaymentEventPublisher` | `REDIS_ENABLED=true` |
-| Reports | `ReportRepository` | `NoOpReportRepository` | `S3ReportRepository` | `S3_ENABLED=true` |
+## Escopo de escrita
 
-### Environment Variables (Infrastructure Contract)
+Gravável: `ledger-service/`, `commerce-api/`, `webhook-gateway/`, `BOARD.md`,
+`00-visao-geral.md`, `README.md`, `AGENTS.md`, `archive/`.
 
-When infra is ready, the app expects:
+Leitura apenas — proponha o diff e aguarde pedido explícito: código dos apps (`<app>/app/`, com
+Dockerfile e compose), IaC/Terraform, `.github/workflows/`, `healthcheck.sh`, `docs/`, `.agents/`.
+Enquanto ensinando, a skill sobrepõe o escopo: zero escrita em qualquer lugar.
 
-| Variable | Default | Used by |
-|----------|---------|---------|
-| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://localhost:5432/securepay_db` | PostgreSQL |
-| `SPRING_DATA_REDIS_HOST` | `localhost` | Redis |
-| `REDIS_ENABLED` | `false` | Event publisher |
-| `S3_ENABLED` | `false` | Report repository |
-| `S3_BUCKET_NAME` | `securepay-financial-reports` | S3 reports |
-| `AWS_REGION` | `sa-east-1` | S3 region |
-| `S3_ENDPOINT_URL` | (empty) | LocalStack only |
-| `JWT_SECRET` | (built-in) | JWT signing |
+## Skills e routing
 
-### Infra → App Wiring
+1. **Startup:** invoque `using-superpowers` antes da primeira resposta. Terminado quando o
+   framework de skills está carregado.
+2. **Roteador:** o usuário digita `/ask-matt` quando precisa saber qual skill usar. O agente não
+   invoca.
+3. **Dúvida pontual** ("dúvida", "explica", "como funciona", "não entendi") → `teach-anything`
+   automaticamente: resposta `EXPLICAÇÃO` no chat, read-only, nenhum arquivo tocado (exceto
+   `.md` via `consolidate`).
+4. **Curso longo:** o usuário digita `/teach` — nunca o agente (a skill é `disable-model-invocation`).
+   Modo curso grava só em `.learning/<missão>/`.
+5. **Grilling:** com `grilling`/`grill-me`/`grill-with-docs`, pergunte sempre pela tool
+   `question` — nunca em texto plano na resposta.
 
-When infra is created, set these to activate real implementations:
-- **Redis**: `REDIS_ENABLED=true`, `SPRING_DATA_REDIS_HOST=<redis-host>`
-- **S3**: `S3_ENABLED=true`, `S3_BUCKET_NAME=<bucket>`, `AWS_REGION=<region>`, `S3_ENDPOINT_URL=<endpoint>` (LocalStack only)
+## Trilha ≠ tecnologia
 
-## Startup
-
-Invoke `using-superpowers` at session start to load the skill framework. The user triggers `/ask-matt` when they need a skill router.
-
-## Agent Behavior
-
-- Doubt → teach-anything: dúvida, não entendi, explica, como funciona, me ensina → tutor via `.agents/skills/teach-anything/SKILL.md` (READ-ONLY BLOCO → EXPLICAÇÃO in chat, never touches files; only `.md` via consolidate).
-- Write scope (outside teaching): implement only in `backend/` and `.tracker/` — other paths are read-only (read, plan, propose diff, wait for explicit request). While teaching, skill overrides scope: zero writes everywhere.
-  - Exception (course mode): the user-triggered `teach` skill (`.agents/skills/teach/`) may write only under `.learning/` — one workspace per mission (ex.: `.learning/07-observability/`).
-- Routing: dúvida pontual → `teach-anything` (auto, read-only, chat); curso longo → usuário digita `/teach` (nunca o agente — a skill tem `disable-model-invocation`).
-- Grilling: when using `grilling` or `grill-me` skills, always use the `question` tool to ask questions — never output questions as plain text in the response.
-- Tracker: every card in `.tracker/issues/` follows the fixed template described in `00-visao-geral.md` (Contexto → Limitações / notas). Never add tutorials, FAQ, nav links (`Prev`/`Next`) or sub-steps (`1A`, `2B`) to an Issue — study material belongs in `.tracker/estudos/`.
-
-## Conventions
-
-- All infra targets LocalStack (`localhost:4566`) in `sa-east-1` — no real AWS costs
-- Backend: Java 21, Maven, Spring Boot with Actuator endpoints
-- Healthcheck: L4 port check + L7 `/actuator/health` (status UP)
-- Security: non-root containers, no ports exposed to 0.0.0.0/0, JWT auth
-- Infra isolation: backend uses interfaces (`ReportRepository`, `PaymentEventPublisher`) — never depends directly on S3, Redis, or other infra
-- Infra activation: `@ConditionalOnProperty` switches NoOp ↔ real implementation
+Cada linha do board descreve **o que a Issue resolve**, não a ferramenta que ela usa. Linux, Docker,
+CI/CD e observabilidade se repetem em cada app porque cada trilha precisa atravessá-los por conta
+própria; quando uma trilha já resolveu, as outras referenciam em vez de repetir. Nenhuma Issue
+antecipa tecnologia cujo problema ela não resolve.
