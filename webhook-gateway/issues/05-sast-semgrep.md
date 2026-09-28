@@ -1,15 +1,15 @@
 ---
-aliases: [issue-14, sast-semgrep]
+aliases: [issue-05, sast-semgrep]
 tags: [tracker, issue, todo, study-needed]
 status: todo
 prioridade: alta
 ---
 
-# Issue 14 — Análise estática com gate bloqueante para severidade ERROR
+# Issue 05 — Análise estática com gate bloqueante para severidade ERROR
 
 ## Contexto
 
-Padrão inseguro no código Java só é pego em revisão humana — ou nunca. Injeção, hardcode de credencial e uso inseguro de criptografia passam até alguém atento olhar, e a revisão não escala.
+Padrão inseguro no código TypeScript/Node só é pego em revisão humana — ou nunca. Injeção, hardcode de credencial e uso inseguro de criptografia passam até alguém atento olhar, e a revisão não escala. O `webhook-gateway/app/` é pequeno (4 arquivos em `src/`), mas o que ele faz — assinar payload e falar com Redis — é exatamente o tipo de código onde um deslize vira leitura não autorizada de evento.
 
 ## Objetivo
 
@@ -17,19 +17,19 @@ Estado final: scanner SAST rodando como gate obrigatório na pipeline, bloqueand
 
 ## Dependências
 
-- Requer Issue 10 — o gate precisa de uma pipeline onde se integrar
+- Requer Issue 03 — o gate precisa de uma pipeline onde se integrar
 
 ## Escopo
 
-- Scanner SAST com regras focadas em Java
+- Scanner SAST com regras focadas em JavaScript/TypeScript (família `p/javascript`)
 - Modo bloqueante restrito a severidade `ERROR`
 - Integração como gate obrigatório de pull request
 - Zeramento das violações existentes
 
 ## Fora de escopo
 
-- SCA (dependências e CVEs) — Issue 15
-- Detecção de segredos — Issue 13
+- SCA (dependências e CVEs) — Issue 06
+- Detecção de segredos — Issue 04
 - Correção de arquitetura do código além das violações apontadas
 - Kubernetes, Cloud e Terraform
 
@@ -38,6 +38,7 @@ Estado final: scanner SAST rodando como gate obrigatório na pipeline, bloqueand
 - Análise estática e shift-left
 - Diferença entre SAST, SCA e scan de segredos
 - Regras, severidades e exceções de scanner
+- Escolha da família de regras por linguagem (`p/javascript` para Node/TS)
 
 ## Estado atual
 
@@ -53,7 +54,7 @@ Estado final: scanner SAST rodando como gate obrigatório na pipeline, bloqueand
 
 ## Requisitos
 
-- [ ] Adotar scanner SAST com regras focadas em Java
+- [ ] Adotar scanner SAST com regras focadas em JavaScript/TypeScript (`p/javascript`)
 - [ ] Ativar modo bloqueante apenas para severidade `ERROR`
 - [ ] Integrar à pipeline como gate obrigatório
 - [ ] Zerar violações `ERROR` ou registrar cada uma como exceção justificada
@@ -82,5 +83,6 @@ Estado final: scanner SAST rodando como gate obrigatório na pipeline, bloqueand
 ## Limitações / notas
 
 - Começar bloqueando só `ERROR` é deliberado: um gate barulhento vira ruído e é desativado
-- Dívida de código detectada aqui pode exigir alteração em classes de domínio — se o escopo da Issue não cobrir, registrar como dívida em vez de afrouxar o gate
-- Esta Issue cria o gate de SAST que a Issue 16 reaproveita e que a Issue 17 exige como pré-requisito de deploy
+- Dívida de código detectada aqui pode exigir alteração em `webhook-gateway/app/src/` — se o escopo da Issue não cobrir, registrar como dívida em vez de afrouxar o gate
+- A família de regras é a do app de destino: `p/javascript` aqui. O `ledger-service` é Java e precisaria de `p/java` — um gate por app, não um gate único para o monorepo
+- Esta Issue cria o gate de SAST que a Issue 08 reaproveita e que a [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md) exige como pré-requisito de deploy

@@ -1,15 +1,15 @@
 ---
-aliases: [issue-13, secrets-hygiene]
+aliases: [issue-04, secrets-hygiene]
 tags: [tracker, issue, todo, study-needed]
 status: todo
 prioridade: alta
 ---
 
-# Issue 13 — Higiene de segredos com detecção bloqueante no fluxo de merge
+# Issue 04 — Higiene de segredos com detecção bloqueante no fluxo de merge
 
 ## Contexto
 
-Não existe detecção de segredo versionado: uma chave colada num commit passa despercebida até virar incidente. `.env` já é ignorado, mas não há nada que impeça alguém de commitar uma credencial em outro arquivo — e o `JWT_SECRET` default está literalmente no repositório.
+Não existe detecção de segredo versionado: uma chave colada num commit passa despercebida até virar incidente. `.env` já é ignorado, mas não há nada que impeça alguém de commitar uma credencial em outro arquivo — e o `WEBHOOK_SECRET` default está literalmente em `webhook-gateway/app/src/index.ts`. O app também é lido por `dotenv.config()` a partir de `.env`, então o arquivo de exemplo precisa nascer com placeholders, não com valor.
 
 ## Objetivo
 
@@ -17,7 +17,7 @@ Estado final: scanner de segredos no pré-commit e na pipeline, baseline de acha
 
 ## Dependências
 
-- Requer Issue 10 — o bloqueio de merge exige uma pipeline que rode em pull request
+- Requer Issue 03 — o bloqueio de merge exige uma pipeline que rode em pull request
 
 ## Escopo
 
@@ -28,8 +28,8 @@ Estado final: scanner de segredos no pré-commit e na pipeline, baseline de acha
 
 ## Fora de escopo
 
-- SAST e SCA — Issues 14 e 15
-- Endurecimento de permissões e pinagem de ações — Issue 15
+- SAST e SCA — Issues 05 e 06
+- Endurecimento de permissões e pinagem de ações — Issue 07
 - Rotação de credenciais já vazadas — operação, não esta Issue
 - Kubernetes, Cloud e Terraform
 
@@ -83,7 +83,9 @@ Estado final: scanner de segredos no pré-commit e na pipeline, baseline de acha
 
 ## Limitações / notas
 
-- O `JWT_SECRET` default em `application.yml` é um literal commitado; tratar como dívida conhecida — substituir por valor de ambiente sem quebrar os testes, que usam perfil próprio
-- `.env` é ignorado por `.gitignore` e excluído da imagem por `.dockerignore` — nenhum dos dois pode ser removido
-- O bloqueio de merge depende de proteção de branch configurada na Issue 10; sem ela, o gate roda mas não impede nada
-- Esta Issue cria o gate de segredos que a Issue 16 reaproveita e que a Issue 17 exige como pré-requisito de deploy
+- O `WEBHOOK_SECRET` default em `webhook-gateway/app/src/index.ts` (`default-webhook-secret-key-32chars`) é um literal commitado; tratar como dívida conhecida — substituir por valor de ambiente sem quebrar a suíte, que injeta o segredo pelo construtor de `StreamConsumer`
+- O `JWT_SECRET` default do `ledger-service` (`application.yml`) é a mesma dívida no app Java — o escopo desta Issue é o app Node; o equivalente do ledger é trabalho de lá
+- `.env` é ignorado por `.gitignore`; o `.dockerignore` que o exclui da imagem só existe quando a imagem existir (Issue 02) — nenhum dos dois pode ser removido
+- Não há `.env.example` neste app ainda: ele nasce junto com a imagem (Issue 02). Quando nascer, tem de nascer com placeholders — este é o momento barato de não vazar nada
+- O bloqueio de merge depende de proteção de branch configurada na Issue 03; sem ela, o gate roda mas não impede nada
+- Esta Issue cria o gate de segredos que a Issue 08 reaproveita e que a [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md) exige como pré-requisito de deploy

@@ -1,12 +1,12 @@
 ---
-aliases: [estudo-15]
+aliases: [estudo-07]
 tags: [estudo]
-issue: 15
+issue: 07
 ---
 
-# Estudos — Issue 15: Endurecimento da Pipeline (Least-Privilege + SHA Pin)
+# Estudos — Issue 07: Endurecimento da Pipeline (Least-Privilege + SHA Pin)
 
-> Material de apoio da Issue 15. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 07. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Hardening
@@ -25,4 +25,13 @@ issue: 15
   - https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-third-party-actions
 
 **FIM:** sei explicar o ataque que cada medida previne.
+
+---
+
+### C — Neste app
+
+- O job deste app roda Node 20 com `actions/setup-node` e cache de npm; `npm ci` e `npm test` são o gate de build
+  - https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows
+
+**FIM:** sei dizer o que a pinagem por SHA protege num job Node.
 

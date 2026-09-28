@@ -1,15 +1,17 @@
 ---
-aliases: [issue-16, devsecops-gates]
+aliases: [issue-08, devsecops-gates]
 tags: [tracker, issue, todo, study-needed]
 status: todo
 prioridade: alta
 ---
 
-# Issue 16 — Gates de segredos, SAST e SCA consolidados como barreira da pipeline multi-serviço
+# Issue 08 — Gates de segredos, SAST e SCA consolidados como barreira única da pipeline
 
 ## Contexto
 
-Os gates de conteúdo existem isolados na pipeline de serviço único. Com múltiplos serviços na composição, a superfície cresce e um único pipeline não pode deixar de verificar nenhuma dimensão — cada um precisa falhar de forma isolada e acionável.
+Os gates de conteúdo (segredos, SAST, SCA) nascem isolados, cada um com seu próprio arquivo e sua própria severidade. Consolidá-los numa barreira única evita a dúvida de "qual foi o problema?" no merge: cada gate precisa falhar de forma isolada, com mensagem acionável, e o verde da pipeline precisa significar as três coisas ao mesmo tempo.
+
+O app auditado aqui é o `webhook-gateway` (Node 20 + TypeScript, `ioredis`): o SAST roda com a família de regras `p/javascript` (Issue 05) e o SCA sobre `package-lock.json` mais a imagem (Issue 06).
 
 ## Objetivo
 
@@ -17,11 +19,11 @@ Estado final: os três gates (segredos, SAST, SCA) rodam em toda mudança, falha
 
 ## Dependências
 
-- Requer Issue 13 — gate de segredos
-- Requer Issue 14 — gate de SAST
-- Requer Issue 15 — permissões mínimas e pinagem da pipeline que os hospeda
-- Requer Issue 10 — pipeline base e gate de SCA por scan de imagem
-- Requer Issue 08 — a pipeline passa a cobrir múltiplos serviços
+- Requer Issue 04 — gate de segredos
+- Requer Issue 05 — gate de SAST
+- Requer Issue 07 — permissões mínimas e pinagem da pipeline que os hospeda
+- Requer Issue 03 — pipeline base
+- Requer Issue 06 — gate de SCA por scan de imagem
 
 ## Escopo
 
@@ -32,10 +34,10 @@ Estado final: os três gates (segredos, SAST, SCA) rodam em toda mudança, falha
 
 ## Fora de escopo
 
-- Criação dos gates individuais — Issues 13, 14 e 15
-- Deploy contínuo — Issue 17
-- Monitoramento da aplicação — Issue 07
-- Kubernetes e Cloud — Issues 18 e 12
+- Criação dos gates individuais — Issues 04, 05 e 07
+- Deploy contínuo — [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md)
+- Monitoramento da aplicação — [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md)
+- Kubernetes e Cloud — as Issues que cobriam isso foram arquivadas e estão fora do escopo desta trilha
 
 ## Conhecimentos envolvidos
 
@@ -46,8 +48,8 @@ Estado final: os três gates (segredos, SAST, SCA) rodam em toda mudança, falha
 
 ## Estado atual
 
-- A pipeline testa, mas não protege de forma consolidada
-- Gates existem em módulos separados, sem visão única de verde
+- `.github/workflows/CI.yml` tem um job `build` sem `steps` — não há gate de conteúdo rodando
+- Os gates de segredos, SAST e SCA ainda não existem; cada um vem da sua Issue (04, 05, 06) e esta Issue os consolida depois
 - Ninguém sabe quanto tempo cada gate adiciona
 
 ## Resultado esperado
@@ -87,7 +89,8 @@ Estado final: os três gates (segredos, SAST, SCA) rodam em toda mudança, falha
 
 ## Limitações / notas
 
-- Os gates individuais vêm prontos das Issues 13, 14 e 15 — esta Issue consolida e sintoniza, não recria
+- Os gates individuais vêm prontos das Issues 04, 05 e 07 — esta Issue consolida e sintoniza, não recria
 - Sintonizar para baixo a severidade bloqueante sem registrá-lo transforma o verde em ilusão: qualquer afrouxamento deve aparecer como decisão registrada
 - Os critérios de "mensagem acionável" e "severidade que alerta" precisam de artefato observável na saída do gate, não de descrição
-- Esta Issue é pré-requisito da Issue 17, que exige os gates como barreira antes do deploy
+- A pipeline cobre os serviços já existentes no momento em que ela é construída; a stack multi-serviço chega na Issue 10, e os gates continuam valendo sem mudança de desenho
+- Esta Issue é pré-requisito da [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md), que exige os gates como barreira antes do deploy — gate verde aqui é o que autoriza aquele deploy, mas o job é deste app
