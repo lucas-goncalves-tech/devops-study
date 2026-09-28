@@ -49,7 +49,7 @@ trilhas** aplicada a um app só — origem da confusão.
 |---|---|---|
 | `ledger-service` (Java/Spring) | **VPS** — linux → hardening → caddy → isolamento → backups → deploy | RAM da JVM não cabe em free tier; Redis de serviço à parte é quase sempre pago |
 | `commerce-api` (Node+Postgres) | **AWS local → produção** — linux → docker → terraform/LocalStack → CI → observabilidade → S3/EC2 | leve, cabe em free tier |
-| `webhook-gateway` (Node+Redis) | **DevSecOps** — secrets → SAST → hardening → gates (agnóstico de cloud) | trilha é de CI/análise estática, não exige cloud pada; coerente com Redis pago |
+| `webhook-gateway` (Node+Redis) | **DevSecOps completo** — secrets → SAST → **SCA** → hardening → gates → **DAST** (agnóstico de cloud) | trilha é de CI/análise estática + dinâmica, não exige cloud paga; coerente com Redis pago |
 
 O que é comum a todas (Linux, Docker, CI/CD) **se repete em cada app** — cada trilha vai do zero
 ao fim, mantendo o escopo final dela.
@@ -82,8 +82,8 @@ securepay-devops/
 └── webhook-gateway/        # trilha DevSecOps
     ├── AGENTS.md · README.md
     ├── app/                # importado de devops-study/app/webhook-gateway
-    ├── issues/             # 01..09
-    └── estudos/            # 01..09
+    ├── issues/             # 01..11
+    └── estudos/            # 01..11
 ```
 
 Não existe `infra/` na estrutura: infra é do usuário.
@@ -131,21 +131,26 @@ Não existe `infra/` na estrutura: infra é do usuário.
 | 07 | AWS real: state remoto com lock, EC2, custo conhecido | reuse `12` |
 | 08 | **NOVA** — Staging falho de observabilidade (falhas injetadas, detectar/diagnosticar/consertar) | nova |
 
-### `webhook-gateway` — trilha DevSecOps (9)
+### `webhook-gateway` — trilha DevSecOps (11)
 
 | # | Issue | Origem |
 |---|---|---|
 | 01 | Linux Runtime | clone de `01` |
 | 02 | Docker Compose — **nasce o Dockerfile que falta** + healthcheck | clone de `02` |
 | 03 | Secrets hygiene (gitleaks + baseline) | reuse `13` |
-| 04 | SAST Semgrep bloqueante | reuse `14` |
-| 05 | Pipeline hardening (least-privilege, SHA pin) | reuse `15` |
-| 06 | Gates consolidados (secrets + SAST + CVE) | reuse `16` |
-| 07 | Pipeline agnóstica (roda igual em GitHub/GitLab/VPS) | nova, sintetizada de `10`/`17` |
-| 08 | Redis Streams em produção (compose + Redis + consumer) | reuse `08` |
-| 09 | **NOVA** — Staging inseguro de propósito (falha que os gates têm que pegar + forense de mensageria) | nova |
+| 04 | SAST — Semgrep bloqueante | reuse `14` |
+| 05 | **NOVA — SCA:** `npm audit` nas libs + Trivy na imagem Docker | nova |
+| 06 | Pipeline hardening (least-privilege, SHA pin) | reuse `15` |
+| 07 | Gates consolidados — secrets + SAST + **SCA/CVE** | reuse `16` (SCA entra no gate) |
+| 08 | **NOVA — DAST:** OWASP ZAP contra o serviço rodando | nova |
+| 09 | Pipeline agnóstica (roda igual em GitHub/GitLab/VPS) | nova, sintetizada de `10`/`17` |
+| 10 | Redis Streams em produção (compose + Redis + consumer) | reuse `08` |
+| 11 | **NOVA** — Staging inseguro de propósito (falha que os gates têm que pegar + forense de mensageria; **alvo do DAST da Issue 08**) | nova |
 
-**Total: 25 Issues (eram 18).**
+**Total: 27 Issues (eram 18).** — ledger 8 · commerce 8 · webhook 11
+
+DAST vem depois dos gates estáticos porque exige serviço de pé e um alvo propositalmente falho;
+SCA entra logo após o SAST para o gate consolidado (07) já nascer cobrindo os dois.
 
 ### Fora de escopo (registrado no `00-visao-geral.md`)
 
@@ -161,7 +166,7 @@ da Issue que servem, **renumerados**; as Issues novas (clonadas ou criadas) ganh
 |---|---|---|---|---|
 | `ledger-service` | 01, 02, 04, 05, 06, 09, 17 | → `01..07` | `08` | 8 |
 | `commerce-api` | 03, 07, 10, 11, 12 | → `03..07` | `01`, `02`, `08` | 8 |
-| `webhook-gateway` | 13, 14, 15, 16, 08 | → `03..06` e `08` | `01`, `02`, `07`, `09` | 9 |
+| `webhook-gateway` | 13, 14, 15, 16, 08 | → `03`, `04`, `06`, `07`, `10` | `01`, `02`, `05`, `08`, `09`, `11` | 11 |
 
 Estudos clonados (`01` Linux, `02` Docker) são **reescritos** para a stack do app alvo
 (Maven vs npm) — cada app é autocontido, sem apontar para pasta de outro app.
@@ -192,10 +197,10 @@ skill `.agents/skills/teach-anything/SKILL.md` (menções a `backend/`/`infra/`)
 ## Produção + staging
 
 - **Produção = sistema único:** VPS com `ledger + postgres + redis + webhook` num compose só,
-  atrás do Caddy com domínio/TLS (Issues 03→07 do ledger); `webhook` entra na stack pela Issue 08;
+  atrás do Caddy com domínio/TLS (Issues 03→07 do ledger); `webhook` entra na stack pela Issue 10;
   `commerce` vai para EC2 pela Issue 07.
 - **Staging falho = ambiente separado, nunca a produção** (repo público): as Issues novas
-  `ledger 08` (tráfego/alerta), `commerce 08` (falha de observabilidade), `webhook 09`
+  `ledger 08` (tráfego/alerta), `commerce 08` (falha de observabilidade), `webhook 11`
   (insegurança proposital + forense de mensageria).
 - O staging, o k6 e as injeções de falha são **infra/código do usuário**; o agente escreve
   só o texto da Issue e do estudo.
