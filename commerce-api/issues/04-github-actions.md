@@ -9,7 +9,7 @@ prioridade: alta
 
 ## Contexto
 
-O workflow `.github/workflows/CI.yml` existe mas o job `build` não tem nenhum `steps` — não executa nada. Hoje o gate real é `./mvnw test` rodando localmente: teste quebrado, CVE em imagem ou Terraform inválido passam batido até alguém lembrar de olhar.
+O workflow `.github/workflows/CI.yml` deste repo compartilhado existe mas o job `build` não tem nenhum `steps` — não executa nada. Hoje o gate real da `commerce-api` é `npm test` rodando localmente: teste quebrado, CVE em imagem ou Terraform inválido passam batido até alguém lembrar de olhar. Os arquivos de CI são construção do usuário: esta Issue descreve o que o workflow precisa conter, não o escreve.
 
 ## Objetivo
 
@@ -18,12 +18,12 @@ Estado final: a cada push e pull request, a pipeline executa a suíte de testes,
 ## Dependências
 
 - Requer Issue 03 — o gate de IaC valida o HCL declarado em `commerce-api/infra/`
-- Requer Issue 02 — o scan de imagem precisa do `Dockerfile` e do contexto de build
+- Requer Issue 02 — o scan de imagem precisa do `commerce-api/app/Dockerfile` e do contexto de build (`commerce-api/app/`, com `package-lock.json`)
 
 ## Escopo
 
 - Substituir o workflow existente por um pipeline com passos reais
-- Job de backend: Java 21, cache do Maven e execução da suíte de testes
+- Job da `commerce-api`: Node 20, cache do npm e execução da suíte de testes
 - Job de segurança de imagem com scan bloqueante
 - Gate de IaC com `fmt`, `validate` e `plan`
 - Proteção de merge: pipeline verde é pré-requisito
@@ -31,16 +31,16 @@ Estado final: a cada push e pull request, a pipeline executa a suíte de testes,
 ## Fora de escopo
 
 - GitOps (ArgoCD/Flux), deploy ECS Fargate, Ansible
-- Foco exclusivo: workflow YAML, build e testes Maven, build Docker, scan de imagem bloqueante, `fmt` e `validate`
+- Foco exclusivo: workflow YAML, `npm ci` e `npm test`, build Docker, scan de imagem bloqueante, `fmt` e `validate`
 - Deploy contínuo — [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md)
-- Gates de segredos, SAST e SCA — [Issue 04](../../webhook-gateway/issues/04-secrets-hygiene.md), [Issue 05](../../webhook-gateway/issues/05-sast-semgrep.md) e [Issue 06](../../webhook-gateway/issues/06-sca-dependencias-imagem.md) do `webhook-gateway`
+- Gates de segredos, SAST, SCA e hardening do pipeline — [Issue 04](../../webhook-gateway/issues/04-secrets-hygiene.md), [Issue 05](../../webhook-gateway/issues/05-sast-semgrep.md), [Issue 06](../../webhook-gateway/issues/06-sca-dependencias-imagem.md) e [Issue 07](../../webhook-gateway/issues/07-pipeline-hardening.md) do `webhook-gateway`
 - **FinOps de staging (auto-stop de ambiente)** — fora de escopo por decisão registrada em `00-visao-geral.md`; além disso não existe ambiente de staging para desligar antes da Issue 07
 - Foco exclusivo do gate de IaC: consistência entre `commerce-api/infra/provider.tf` e o serviço que o emulador realmente inicializa
 
 ## Conhecimentos envolvidos
 
 - Workflows, triggers e filtros de caminho
-- Build Maven com cache em CI
+- Build Node com cache em CI (`actions/setup-node` com `cache: npm` e `npm ci`)
 - Scan de vulnerabilidade de imagem em pipeline
 - `fmt`, `validate` e `plan` do Terraform no CI
 - Proteção de branch e pré-requisitos de merge
@@ -61,13 +61,13 @@ Estado final: a cada push e pull request, a pipeline executa a suíte de testes,
 ## Requisitos
 
 - [ ] Substituir `.github/workflows/CI.yml` por um workflow com `push` e `pull_request` em `main`/`master`
-- [ ] Separar backend e IaC por filtro de caminho alterado
-- [ ] Job de backend: Java 21 com `cache: maven` e execução de `./mvnw verify`
+- [ ] Separar app e IaC por filtro de caminho alterado
+- [ ] Job da `commerce-api`: Node 20 com `cache: npm` e execução de `npm ci && npm test && npm run lint`
 - [ ] Job de segurança de imagem: build e scan bloqueante para `HIGH` e `CRITICAL`
 - [ ] Job de gate de IaC: `fmt -check` → `init` → `validate` → `plan`
 - [ ] Fazer o job de IaC subir o emulador com a configuração real de `commerce-api/infra/platform/compose-localstack.yaml`
 - [ ] Exigir YAML íntegro e pipeline verde como pré-requisito de merge
-- [ ] Manter `./mvnw test` como verificação local equivalente ao job de backend
+- [ ] Manter `npm test` e `npm run lint` como verificação local equivalente ao job da `commerce-api`
 
 ## Critérios de aceitação
 
@@ -79,7 +79,7 @@ Estado final: a cada push e pull request, a pipeline executa a suíte de testes,
 
 ## Validação
 
-- Introduzir deliberadamente um teste quebrado e confirmar o falha no job de backend; reverter em seguida
+- Introduzir deliberadamente um teste quebrado em `commerce-api/app/tests/` e confirmar a falha no job da API; reverter em seguida
 - **Build to break:** forçar um erro de sintaxe no HCL e confirmar falha no gate; reverter
 - Conferir a saída do job de IaC mostrando `fmt`, `validate` e `plan` executando
 - Abrir pull request limpo e confirmar pipeline verde
@@ -100,6 +100,6 @@ Estado final: a cada push e pull request, a pipeline executa a suíte de testes,
   - `commerce-api/infra/provider.tf` declara endpoints apenas para `s3` e `ec2` (`elbv2` comentado)
 
   O job de IaC precisa partir da configuração real: ou reutiliza o próprio arquivo de Compose (com `LOCALSTACK_AUTH_TOKEN` fornecido como secret), ou define seu próprio serviço com os serviços que `provider.tf` declara. Especificar `SERVICES=s3,ec2` num job isolado não reproduz o ambiente do repositório.
-- **Contrato de portas:** `8080` é a única porta publicada pelo Compose do backend. A suíte de testes usa perfil próprio com porta efêmera e H2, então não colide com o serviço rodando localmente
-- O job de testes precisa de Docker disponível no runner — a suíte inclui um teste de contêiner baseado em Testcontainers
+- **Contrato de portas:** a `commerce-api` escuta em `PORT=3000` (host `0.0.0.0`) e o `Dockerfile` expõe `3000` com `HEALTHCHECK` em `/health`. Não existe `docker-compose.yaml` neste app — a Issue 02 orquestra API + Postgres; até lá o job de testes não depende de serviço no ar
+- A suíte `npm test` (vitest) usa `app.inject()` e mocka o serviço, então não abre porta nem precisa de Docker no runner — apenas o job de segurança de imagem precisa de daemon Docker para o build
 - Não assumir que a pipeline anterior captura regressões: o workflow atual não executa nada

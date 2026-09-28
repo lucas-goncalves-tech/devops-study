@@ -9,11 +9,11 @@ prioridade: alta
 
 ## Contexto
 
-O `S3ReportRepository` existe no código mas está desativado por padrão (`S3_ENABLED=false`), então o `NoOpReportRepository` responde. Sem identidade IAM, sem contrato de variáveis e sem proteções no bucket, relatório financeiro não tem onde ser gravado com segurança.
+O bucket de relatórios financeiros já tem dono do lado do código: a porta `ReportRepository` e suas implementações (`S3ReportRepository` / `NoOpReportRepository`, controladas por `S3_ENABLED`) vivem no `ledger-service/app/`, e estão desativadas por padrão (`S3_ENABLED=false`). Falta o lado de infraestrutura desta trilha: sem identidade IAM, sem contrato de variáveis publicado e sem proteções no bucket, relatório financeiro não tem onde ser gravado com segurança.
 
 ## Objetivo
 
-Estado final: bucket versionado, criptografado e com retenção; identidade IAM com política restrita ao bucket; endpoint de rede privada para o S3; e o contrato das quatro variáveis de ambiente publicado — tudo sem alterar código Java.
+Estado final: bucket versionado, criptografado e com retenção; identidade IAM com política restrita ao bucket; endpoint de rede privada para o S3; e o contrato das quatro variáveis de ambiente publicado — tudo por IaC, sem tocar em código de aplicação.
 
 ## Dependências
 
@@ -29,7 +29,7 @@ Estado final: bucket versionado, criptografado e com retenção; identidade IAM 
 
 ## Fora de escopo
 
-- Modificar `ReportRepository`, `S3ReportRepository`, `S3Config` ou qualquer código Java
+- Modificar a porta `ReportRepository` e suas implementações (`S3ReportRepository`, `NoOpReportRepository`, configuração S3) — esse código é do `ledger-service/app/`, não desta app
 - Gerar conteúdo de relatório
 - CI/CD — Issue 04
 - ALB — Issue 03 (carry-over condicionado a `elbv2`)
@@ -45,7 +45,7 @@ Estado final: bucket versionado, criptografado e com retenção; identidade IAM 
 
 ## Estado atual
 
-- `S3_ENABLED=false` por padrão, então `NoOpReportRepository` está ativo
+- No `ledger-service`, `S3_ENABLED=false` por padrão, então a implementação NoOp da porta de relatórios está ativa
 - O bucket `securepay-financial-reports` existe, mas ninguém tem permissão para usá-lo
 - O emulador não expõe o serviço IAM
 - Não existe nenhum `aws_vpc_endpoint` no código; a route table privada está vazia de propósito desde a Issue 03
@@ -54,7 +54,7 @@ Estado final: bucket versionado, criptografado e com retenção; identidade IAM 
 
 - `Put` e `Get` funcionam apenas no bucket alvo; fora dele a operação é negada
 - Bucket versionado, criptografado e com expiração de versões antigas
-- App configurável 100% pelas quatro variáveis de ambiente, sem hardcode
+- O app consumidor (`ledger-service`) configurável 100% pelas quatro variáveis de ambiente, sem hardcode
 - `aws_vpc_endpoint` declarado e associado à route table privada
 
 ## Requisitos
@@ -76,7 +76,7 @@ Estado final: bucket versionado, criptografado e com retenção; identidade IAM 
 - [ ] Declarar `aws_s3_bucket_versioning` como recurso próprio do provider `aws` v5
 - [ ] Declarar `aws_s3_bucket_server_side_encryption_configuration` com `sse_algorithm = "AES256"`
 - [ ] Declarar `aws_s3_bucket_lifecycle_rule` expirando versões antigas
-- [ ] Publicar o contrato das quatro variáveis que o app lê: `S3_ENABLED`, `S3_BUCKET_NAME`, `AWS_REGION`, `S3_ENDPOINT_URL`
+- [ ] Publicar o contrato das quatro variáveis que o app consumidor lê: `S3_ENABLED`, `S3_BUCKET_NAME`, `AWS_REGION`, `S3_ENDPOINT_URL` (o contrato do `ledger-service`, que é quem implementa a porta de relatórios)
 - [ ] Declarar `aws_vpc_endpoint` com `vpc_endpoint_type = "Gateway"` e o `service_name` do S3 da região
 - [ ] Associar o endpoint à route table privada da subnet da API
 - [ ] Criar security group permitindo tráfego S3 vindo da subnet privada onde roda o app
@@ -87,7 +87,7 @@ Estado final: bucket versionado, criptografado e com retenção; identidade IAM 
 - [ ] `Put` e `Get` funcionam no bucket alvo e `Put` fora dele retorna `AccessDenied` — com a ressalva do `ENFORCE_IAM` registrada se a negação não ocorrer
 - [ ] `get-bucket-acl` e `get-bucket-public-access-block` confirmam zero acesso público
 - [ ] `get-bucket-versioning` e `get-bucket-encryption` confirmam versionamento e AES256
-- [ ] As **4** variáveis de ambiente estão documentadas e o app sobe sem nenhuma delas hardcoded
+- [ ] As **4** variáveis de ambiente estão documentadas e o app consumidor sobe sem nenhuma delas hardcoded
 - [ ] `aws_vpc_endpoint` declarado **e associado** à route table privada
 
 ## Validação
@@ -108,10 +108,10 @@ Estado final: bucket versionado, criptografado e com retenção; identidade IAM 
 
 ## Limitações / notas
 
-- **Status: parked.** O trabalho de provisionar a identidade IAM foi revertido (`commerce-api/infra/provider.tf`, `commerce-api/infra/platform/compose-localstack.yaml` e este card voltaram ao estado inicial) e a entrega foi adiada para depois das trilhas de VPS, backup e CI. Nenhuma outra Issue depende dela — `S3_ENABLED` continua `false` e o `NoOpReportRepository` responde
+- **Status: parked.** O trabalho de provisionar a identidade IAM foi revertido (`commerce-api/infra/provider.tf`, `commerce-api/infra/platform/compose-localstack.yaml` e este card voltaram ao estado inicial) e a entrega foi adiada para depois das trilhas de VPS, backup e CI. Nenhuma outra Issue depende dela — `S3_ENABLED` continua `false` e a implementação NoOp da porta de relatórios responde
 - **Lab ≠ real:** no LocalStack o app fala com `localhost:4566` na máquina host. As subnets são objetos declarados sem núcleo de rede real e **não há como observar tráfego**. A prova do endpoint é `plan` limpo com o recurso aceito pelo emulador — declarado ≠ funcionando
 - **`ENFORCE_IAM` é feature Pro e está desabilitada por padrão.** Sem ela, nenhuma API do emulador nega nada. Se a prova de negação não produzir `AccessDenied`, o cenário correto é rebaixar essa parte para "declarar e inspecionar a política" e marcar a prova de negação como **bloqueada por ambiente**, não como falha
 - **S3 com versionamento sem expiração faz o bucket crescer para sempre:** `deleteObject` vira *delete marker* e o objeto anterior continua faturando — por isso a regra de ciclo de vida é obrigatória
 - **`delete-object` fora do alvo não prova nada:** o LocalStack tem `s3:DeleteObject` sem cobertura de negação testada, então esse resultado não serve de evidência — quem rodar deve registrá-lo como inspeção, nunca como prova de least privilege
-- **Variáveis que o app não lê:** `AWS_ACCESS_KEY_ID` e `AWS_SECRET_ACCESS_KEY` não são lidas em lugar nenhum do backend. `S3Config` injeta credenciais fixas quando há endpoint. Servem para a prova manual, não para o app
-- **Dívida conhecida:** `S3ReportRepository.save()` monta a chave em `tipo + "/" + id` enquanto `findById()` lê apenas `id` — um `save` seguido de `findById` não encontra o objeto. Corrigir quando uma Issue de código Java for liberada. Não bloqueia nenhuma etapa: tudo é validado por `awslocal`
+- **Variáveis que o app não lê:** `AWS_ACCESS_KEY_ID` e `AWS_SECRET_ACCESS_KEY` não são lidas em lugar nenhum do `ledger-service`. A configuração S3 dele injeta credenciais fixas quando há endpoint. Servem para a prova manual, não para o app
+- **Dívida conhecida (código do `ledger-service`, não desta trilha):** a implementação S3 da porta de relatórios monta a chave em `tipo + "/" + id` enquanto a leitura usa apenas `id` — um `save` seguido de leitura pelo id não encontra o objeto. Corrigir quando uma Issue de código for liberada lá. Não bloqueia nenhuma etapa: tudo é validado por `awslocal`

@@ -11,9 +11,9 @@ issue: 05
 
 ### A — Métricas
 
-- Actuator + Micrometer
-  - https://docs.spring.io/spring-boot/reference/actuator/metrics.html
-  - https://micrometer.io/docs
+- `prom-client` e `/metrics` em Fastify
+  - https://github.com/siimon/prom-client
+  - https://fastify.dev/docs/latest/Reference/Server/
 - Scraping Prometheus
   - https://prometheus.io/docs/prometheus/latest/configuration/configuration/
 
@@ -28,8 +28,9 @@ issue: 05
   - https://prometheus.io/docs/prometheus/latest/querying/basics/
 - k6 e thresholds
   - https://grafana.com/docs/k6/
-- HikariCP
-  - https://github.com/brettwooldridge/HikariCP
+- Pool de conexões do driver `postgres` (postgres.js) e suas métricas
+  - https://github.com/porsager/postgres
+  - https://github.com/siimon/prom-client
 
 **FIM:** sei apontar gargalo (GC, threads, contenção, pool) no gráfico.
 

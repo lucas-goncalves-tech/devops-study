@@ -13,7 +13,7 @@ A API sobe e responde, mas ninguém enxerga latência, uso de pool nem falha sob
 
 ## Objetivo
 
-Estado final: Prometheus coletando do `/actuator/prometheus`, Grafana com quatro painéis de sinais dourados, e um teste de carga com thresholds que provam ausência de starvation do banco.
+Estado final: Prometheus coletando de `/metrics` (exposta pelo app com `prom-client`), Grafana com quatro painéis de sinais dourados, e um teste de carga com thresholds que provam ausência de starvation do banco.
 
 ## Dependências
 
@@ -21,27 +21,27 @@ Estado final: Prometheus coletando do `/actuator/prometheus`, Grafana com quatro
 
 ## Escopo
 
-- Orquestração de coletor (`9090`) e dashboard (`3000`) na mesma rede da API
-- Scraping de `/actuator/prometheus` com job dedicado
-- Quatro painéis: RPS por status, p95/p99 do endpoint de transferência, HikariCP e heap JVM
+- Orquestração de coletor (`9090`) e dashboard na mesma rede da API
+- Scraping de `/metrics` com job dedicado
+- Quatro painéis: RPS por status, p95/p99 do endpoint de checkout, pool de conexões do Postgres e memória do processo
 - Carga k6 com thresholds de falha e latência
 
 ## Fora de escopo
 
 - Jaeger com OpenTelemetry Collector, Chaos Engineering complexo, clusters ELK
-- Foco exclusivo: scraping `/actuator/prometheus`, `prometheus.yml`, Grafana (RPS, p95/p99, HikariCP) e carga sem starvation
+- Foco exclusivo: rota `/metrics`, `prometheus.yml`, Grafana (RPS, p95/p99, pool do Postgres) e carga sem starvation
 
 ## Conhecimentos envolvidos
 
-- Actuator e Micrometer
+- `prom-client` e a exposição de `/metrics` em uma instância Fastify
 - Scraping e configuração do Prometheus
 - Grafana e PromQL
 - k6 e thresholds
-- Pool de conexões HikariCP
+- Pool de conexões do driver `postgres` (postgres.js) e leitura das métricas de pool
 
 ## Estado atual
 
-- App no escuro, sem métricas expostas
+- App no escuro, sem métricas expostas: a única rota de introspecção hoje é `/health`
 - Dados podem existir, mas ninguém vê gargalo
 - Dashboard sem prova de resiliência sob carga
 
@@ -54,14 +54,14 @@ Estado final: Prometheus coletando do `/actuator/prometheus`, Grafana com quatro
 
 ## Requisitos
 
-- [ ] Orquestrar coletor em `9090` e dashboard em `3000` na mesma rede da API
-- [ ] Expor `/actuator/prometheus` e criar job `ledger-service` com scraping de `5s`
-- [ ] Painel de RPS por status (`http_server_requests_seconds_count`)
-- [ ] Painel de p95/p99 de `/api/v1/payments/transfer`
-- [ ] Painel de HikariCP (`hikaricp_connections_active`, `_idle`, `_pending`)
-- [ ] Painel de heap JVM (`jvm_memory_used_bytes{area="heap"}`)
-- [ ] Carga k6 de 50–100 VUs contra `/api/v1/payments/transfer` com `X-Idempotency-Key`
-- [ ] Validar `http_req_failed < 0.01` e `http_req_duration` p95 abaixo de 500ms, observando `connection-timeout: 20s`
+- [ ] Orquestrar coletor em `9090` e dashboard na mesma rede da API, sem colisão de host: a API ocupa `PORT=3000`, então o dashboard precisa de porta própria ou ficar só na rede interna do Compose
+- [ ] Registrar o client `prom-client` na instância Fastify, expor `/metrics` (registro padrão + contadores HTTP e do pool) e criar job `commerce-api` com scraping de `5s`
+- [ ] Painel de RPS por status (métricas de requisição do app, por código de resposta)
+- [ ] Painel de p95/p99 de `/api/v1/orders/checkout`
+- [ ] Painel do pool do Postgres (conexões ativas, ociosas e pendentes de espera), expondo o limite real de `max: 10` do `src/db/connection.ts`
+- [ ] Painel de memória do processo (`process_resident_memory_bytes` e `process_heap_bytes` do `prom-client`)
+- [ ] Carga k6 de 50–100 VUs autenticados (token obtido em `/api/v1/auth/login`) contra `/api/v1/orders/checkout`, com `idempotencyKey` no corpo
+- [ ] Validar `http_req_failed < 0.01` e `http_req_duration` p95 abaixo de 500ms, observando `connect_timeout: 10s` e `idle_timeout: 20s` do client `postgres`
 
 ## Critérios de aceitação
 
@@ -72,10 +72,10 @@ Estado final: Prometheus coletando do `/actuator/prometheus`, Grafana com quatro
 
 ## Validação
 
-- Requisição ao `/actuator/prometheus` confirmando as métricas esperadas
+- Requisição a `/metrics` confirmando as métricas esperadas
 - Dashboard do coletor mostrando as séries com valor
 - Execução do script de carga com os thresholds dentro do esperado
-- Inspecionar o painel de HikariCP durante a carga confirmando que `pending` não cresce sem limite
+- Inspecionar o painel do pool durante a carga confirmando que a fila de pendentes não cresce sem limite
 
 ## Evidências
 
@@ -86,7 +86,8 @@ Estado final: Prometheus coletando do `/actuator/prometheus`, Grafana com quatro
 
 ## Limitações / notas
 
-- **Invariante:** `management.endpoints.web.exposure.include` precisa continuar contendo `prometheus` e `health`; `/actuator/**` precisa continuar `permitAll` — senão o scraping e o healthcheck param de funcionar
-- `show-details: always` e `probes.enabled: true` precisam permanecer ligados: `healthcheck.sh` faz grep literal em `"status":"UP"`
+- **Invariante:** `/metrics` precisa continuar registrada sem `preHandler` de autenticação e o mesmo vale para `/health` — se qualquer uma das duas cair atrás do JWT, o scraping e o `HEALTHCHECK` do `Dockerfile` param de funcionar
+- `/health` precisa continuar respondendo `200` com `"status":"UP"` quando o banco está de pé e `503`/`"DEGRADED"` quando não — o `HEALTHCHECK` do `Dockerfile` (linha de comando `wget --spider http://127.0.0.1:3000/health`) só falha por código de saída
+- **Contrato equivalente na stack Java:** o `healthcheck.sh` da raiz do repo (L4 + L7 em `/actuator/health`, porta `8080`) pertence ao `ledger-service` e ao Compose dele — a adaptação para esta app é o `HEALTHCHECK` do `Dockerfile` descrito acima, não o script
 - Os containers de coletor e dashboard entram na stack do Compose e passam a fazer parte da topologia de rede — por isso esta Issue vem antes de qualquer segmentação de rede da stack (ver [Issue 06 do `ledger-service`](../../ledger-service/issues/06-compose-isolation.md)), que precisa cobrir todos eles
-- O teste de carga depende de Docker disponível para os testes de contêiner do projeto
+- O teste de carga precisa de Docker para subir a stack da Issue 02 (API + Postgres); a suíte `npm test` usa `app.inject()` e mocka o serviço, então não é ela que produz prova de carga

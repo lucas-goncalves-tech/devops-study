@@ -15,6 +15,10 @@ A infraestrutura existe só como estado manual: não é reproduzível, não é v
 
 Estado final: rede, roteamento, segurança de grupo e storage declarados em HCL idempotente contra um emulador local, com o banco isolado por rota e por security group, e um bucket privado. O que é validado no laboratório fica separado do que só existe em AWS real.
 
+## Dependências
+
+- Nenhuma dependência de outra Issue — ponto de entrada da trilha de cloud; a Issue 04 (pipeline) e a Issue 06 (bucket com IAM) consomem o que é declarado aqui
+
 ## Escopo
 
 - Provider `hashicorp/aws` com endpoints locais e credenciais mock
@@ -78,9 +82,9 @@ Arquivos que esta Issue espera encontrar em `commerce-api/infra/` ao final — n
 - [ ] Criar SG da API e SG do banco
 - [ ] Criar entrada `5432` no SG do banco exclusivamente a partir do SG da API, nunca `0.0.0.0/0`
 - [ ] Criar bucket `securepay-financial-reports` com os 4 bloqueios (`block_public_acls`, `block_public_policy`, `ignore_public_acls`, `restrict_public_buckets`)
-- [ ] Quando o ALB estiver ativo, restringir a entrada da API na porta `8080` exclusivamente pelo SG do ALB
+- [ ] Quando o ALB estiver ativo, restringir a entrada da API na porta `3000` (`PORT` da `commerce-api`) exclusivamente pelo SG do ALB
 - [ ] Executar `init` → `validate` → `apply -auto-approve` → `plan -detailed-exitcode` com exit 0
-- [ ] Declarar ALB na subnet pública, target group para a API na porta `8080`, listener na porta `80` e health check em `/actuator/health`, mantendo-os comentados enquanto o emulador não suportar o serviço
+- [ ] Declarar ALB na subnet pública, target group para a API na porta `3000`, listener na porta `80` e health check em `/health` (rota real da `commerce-api`, que já responde `200` com `"status":"UP"` e `503` com `"DEGRADED"`), mantendo-os comentados enquanto o emulador não suportar o serviço
 - [ ] Reativar os recursos em um ambiente com suporte a `elbv2` e validar DNS, listener e health check
 
 ## Critérios de aceitação
@@ -96,7 +100,7 @@ Arquivos que esta Issue espera encontrar em `commerce-api/infra/` ao final — n
 
 **Arquitetura final (pendente de ambiente com `elbv2`)**
 
-- [ ] SG da API aceita `8080` somente do SG do ALB
+- [ ] SG da API aceita `3000` somente do SG do ALB
 - [ ] ALB acessível via DNS público
 - [ ] Health check do Target Group em `target healthy`
 

@@ -19,11 +19,11 @@ issue: 04
 
 ---
 
-### B — Java e Trivy
+### B — Node e Trivy
 
-- Build Maven com cache
-  - https://github.com/actions/setup-java
-  - https://maven.apache.org/surefire/maven-surefire-plugin/
+- Build Node com cache
+  - https://github.com/actions/setup-node
+  - https://vitest.dev/guide/
 - Scan bloqueante
   - https://aquasecurity.github.io/trivy/
   - https://github.com/aquasecurity/trivy-action
