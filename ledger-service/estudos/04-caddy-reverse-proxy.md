@@ -1,12 +1,12 @@
 ---
-aliases: [estudo-05]
+aliases: [estudo-04]
 tags: [estudo]
-issue: 05
+issue: 04
 ---
 
-# Estudos — Issue 05: Gateway L7 com TLS Automático e Headers
+# Estudos — Issue 04: Gateway L7 com TLS Automático e Headers
 
-> Material de apoio da Issue 05. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 04. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Proxy e TLS

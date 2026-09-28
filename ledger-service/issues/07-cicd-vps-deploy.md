@@ -1,11 +1,11 @@
 ---
-aliases: [issue-17, cicd-vps-deploy]
+aliases: [issue-07, cicd-vps-deploy]
 tags: [tracker, issue, todo, study-needed]
 status: todo
 prioridade: alta
 ---
 
-# Issue 17 — Deploy contínuo auditável na VPS só com pipeline verde
+# Issue 07 — Deploy contínuo auditável na VPS só com pipeline verde
 
 ## Contexto
 
@@ -17,13 +17,13 @@ Estado final: cada merge com gates verdes vira deploy automático na VPS via cha
 
 ## Dependências
 
-- Requer Issue 10 — pipeline e proteção de branch
-- Requer Issue 13 — gate de segredos
-- Requer Issue 14 — gate de SAST
-- Requer Issue 16 — gates consolidados como pré-requisito
-- Requer Issue 04 — acesso ao servidor somente por chave SSH
-- Requer Issue 05 — o proxy é a porta única de entrada
-- Requer Issue 09 — topologia de rede alvo do deploy
+- Requer [Issue 04 do `commerce-api`](../../commerce-api/issues/04-github-actions.md) — pipeline e proteção de branch
+- Requer [Issue 04 do `webhook-gateway`](../../webhook-gateway/issues/04-secrets-hygiene.md) — gate de segredos
+- Requer [Issue 05 do `webhook-gateway`](../../webhook-gateway/issues/05-sast-semgrep.md) — gate de SAST
+- Requer [Issue 08 do `webhook-gateway`](../../webhook-gateway/issues/08-devsecops-gates.md) — gates consolidados como pré-requisito
+- Requer Issue 03 — acesso ao servidor somente por chave SSH
+- Requer Issue 04 — o proxy é a porta única de entrada
+- Requer Issue 06 — topologia de rede alvo do deploy
 
 ## Escopo
 
@@ -35,9 +35,9 @@ Estado final: cada merge com gates verdes vira deploy automático na VPS via cha
 
 ## Fora de escopo
 
-- Criação dos gates — Issues 13, 14, 15 e 16
-- Provisionamento de servidor e firewall — Issues 04 e 08
-- Kubernetes e orquestração — Issue 18
+- Criação dos gates — [Issue 04](../../webhook-gateway/issues/04-secrets-hygiene.md), [Issue 05](../../webhook-gateway/issues/05-sast-semgrep.md), [Issue 07](../../webhook-gateway/issues/07-pipeline-hardening.md) e [Issue 08](../../webhook-gateway/issues/08-devsecops-gates.md) do `webhook-gateway`
+- Provisionamento de servidor e firewall — Issue 03; a stack com Redis e webhook chega na [Issue 10 do `webhook-gateway`](../../webhook-gateway/issues/10-containers-redis.md)
+- Kubernetes e orquestração — fora do escopo desta trilha
 - Rollout blue-green com duas versões simultâneas — esta Issue entrega deploy com rollback, não dual-run
 
 ## Conhecimentos envolvidos
@@ -96,6 +96,6 @@ Estado final: cada merge com gates verdes vira deploy automático na VPS via cha
 ## Limitações / notas
 
 - **Invariante de saúde:** o rollback usa `healthcheck.sh`, que depende de `curl` em `/actuator/health` retornando HTTP 200 e do literal `"status":"UP"`. Se qualquer Issue ligar `REDIS_ENABLED=true` sem Redis alcançável, `/actuator/health` responde 503 e o rollback entra em loop — manter o healthcheck do Redis acoplado a `service_healthy`
-- **Invariante de porta:** se a Issue 05 tornou `8080` interna, o healthcheck precisa apontar para o upstream correto; `PORT`, o `EXPOSE` do `Dockerfile` e `server.port` devem continuar coerentes entre si
-- A chave efêmera depende do acesso por chave estabelecido na Issue 04
+- **Invariante de porta:** se a Issue 04 tornou `8080` interna, o healthcheck precisa apontar para o upstream correto; `PORT`, o `EXPOSE` do `Dockerfile` e `server.port` devem continuar coerentes entre si
+- A chave efêmera depende do acesso por chave estabelecido na Issue 03
 - `/actuator/**` precisa continuar `permitAll` — senão o healthcheck e o scraping falham por autenticação

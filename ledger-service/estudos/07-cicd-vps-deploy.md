@@ -1,12 +1,12 @@
 ---
-aliases: [estudo-17]
+aliases: [estudo-07]
 tags: [estudo]
-issue: 17
+issue: 07
 ---
 
-# Estudos — Issue 17: CI/CD com Gates e Deploy Contínuo via SSH
+# Estudos — Issue 07: CI/CD com Gates e Deploy Contínuo via SSH
 
-> Material de apoio da Issue 17. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 07. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — Deploy seguro

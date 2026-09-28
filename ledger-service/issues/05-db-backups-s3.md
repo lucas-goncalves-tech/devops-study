@@ -1,11 +1,11 @@
 ---
-aliases: [issue-06, db-backups-s3]
+aliases: [issue-05, db-backups-s3]
 tags: [tracker, issue, todo, study-needed]
 status: todo
 prioridade: alta
 ---
 
-# Issue 06 — Backup off-site com retenção e restore provado
+# Issue 05 — Backup off-site com retenção e restore provado
 
 ## Contexto
 
@@ -28,10 +28,10 @@ Estado final: dump diário comprimido, criptografado e enviado para storage fora
 
 ## Fora de escopo
 
-- Provisionamento da infraestrutura de nuvem e do Terraform — Issues 11 e 12
-- Bucket e IAM da Issue 11 — são para relatórios financeiros, com outro ciclo de retenção e outra política de custo
-- Monitoramento e alertas — Issue 07
-- Kubernetes — Issue 18
+- Provisionamento da infraestrutura de nuvem e do Terraform — [Issue 07 do `commerce-api`](../../commerce-api/issues/07-aws-production.md)
+- Bucket e IAM da [Issue 06 do `commerce-api`](../../commerce-api/issues/06-s3-reports-infra.md) — são para relatórios financeiros, com outro ciclo de retenção e outra política de custo
+- Monitoramento e alertas — [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md)
+- Kubernetes — fora do escopo desta trilha
 
 ## Conhecimentos envolvidos
 
@@ -84,7 +84,7 @@ Estado final: dump diário comprimido, criptografado e enviado para storage fora
 ## Limitações / notas
 
 - O destino é "storage off-site" — qualquer S3-compatible (LocalStack, AWS, Backblaze, Wasabi, R2) ou repositório remoto satisfaz. Provisionar o destino é parte desta Issue
-- O bucket da Issue 11 não pode ser reusado: a política de IAM é escopada para `s3:PutObject`/`GetObject`/`DeleteObject` em `securepay-financial-reports` e o ciclo de vida expira versões antigas de relatório — misturar os dois workloads corrompe o controle de custo que a Issue 11 existe para estabelecer
+- O bucket da [Issue 06 do `commerce-api`](../../commerce-api/issues/06-s3-reports-infra.md) não pode ser reusado: a política de IAM é escopada para `s3:PutObject`/`GetObject`/`DeleteObject` em `securepay-financial-reports` e o ciclo de vida expira versões antigas de relatório — misturar os dois workloads corrompe o controle de custo que aquela Issue existe para estabelecer
 - Backup em disco local **na mesma VPS** não satisfaz "off-site": não cobre perda total do servidor
 - RPO e RTO são definição de negócio, não de ferramenta — precisam ser fixados antes de configurar a retenção
 - O banco alvo é o serviço `database` do Compose, acessível apenas da rede isolada

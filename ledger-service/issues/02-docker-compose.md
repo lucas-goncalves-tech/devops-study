@@ -82,7 +82,7 @@ Estado final: imagem multi-stage abaixo de 220 MB executando como usuário sem p
 
 ## Limitações / notas
 
-- `backend/docker-compose.yaml` publica apenas a porta da API (`${PORT:-8080}:${PORT:-8080}`) e **não** publica a porta do banco — manter assim
+- `ledger-service/app/docker-compose.yaml` publica apenas a porta da API (`${PORT:-8080}:${PORT:-8080}`) e **não** publica a porta do banco — manter assim
 - O serviço do banco não pode ganhar entrada `ports:` em nenhuma Issue futura
-- `backend/.env` é obrigatório para o Compose (`env_file`) e nunca deve ser commitado nem embutido na imagem
+- `ledger-service/app/.env` é obrigatório para o Compose (`env_file`) e nunca deve ser commitado nem embutido na imagem
 - O serviço se chama `database` — o nome é nome DNS dentro da rede do Compose

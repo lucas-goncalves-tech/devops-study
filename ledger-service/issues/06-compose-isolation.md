@@ -1,11 +1,11 @@
 ---
-aliases: [issue-09, compose-isolation]
+aliases: [issue-06, compose-isolation]
 tags: [tracker, issue, todo, study-needed]
 status: todo
 prioridade: alta
 ---
 
-# Issue 09 — Compose em redes segmentadas com banco inacessível e limites anti-OOM
+# Issue 06 — Compose em redes segmentadas com banco inacessível e limites anti-OOM
 
 ## Contexto
 
@@ -17,8 +17,7 @@ Estado final: três redes separando fronteira, aplicação e dados; banco e Redi
 
 ## Dependências
 
-- Requer Issue 05 — a rede pública existe por causa do proxy, que é o único alcançável de fora
-- Requer Issue 08 — Redis já está na stack e precisa entrar na rede isolada
+- Requer Issue 04 — a rede pública existe por causa do proxy, que é o único alcançável de fora
 - Requer Issue 02 — composição base e healthcheck do banco
 
 ## Escopo
@@ -30,10 +29,10 @@ Estado final: três redes separando fronteira, aplicação e dados; banco e Redi
 
 ## Fora de escopo
 
-- Alteração do proxy ou do TLS — Issue 05
-- Backup do banco — Issue 06
-- Monitoramento — Issue 07
-- Kubernetes e Cloud — Issues 18 e 12
+- Alteração do proxy ou do TLS — Issue 04
+- Backup do banco — Issue 05
+- Monitoramento — [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md)
+- Kubernetes e Cloud — [Issue 07 do `commerce-api`](../../commerce-api/issues/07-aws-production.md)
 
 ## Conhecimentos envolvidos
 
@@ -97,6 +96,7 @@ Estado final: três redes separando fronteira, aplicação e dados; banco e Redi
   - `securepay_api` e `database` precisam dividir ao menos uma rede; `spring.jpa.hibernate.ddl-auto` é `update`, então um banco inacessível vira **falha de boot**, não degradação
   - `depends_on` com `condition: service_healthy` deve sobreviver à separação — sem isso a API sobe "no ar mas quebrada"
   - Banco não pode ganhar entrada `ports:` em nenhuma hipótese
-  - `backend/.env` continua obrigatório (`env_file`)
+  - `ledger-service/app/.env` continua obrigatório (`env_file`)
 - Esta Issue é a **última palavra sobre topologia de rede**: tudo que entra na stack antes dela (coletor, dashboard, Redis) já está coberto pelas três redes. Serviços adicionados depois precisam ser declarados nas redes corretas explicitamente
+- O Redis ainda não está na stack: quando o Redis entrar (Issue 10 do `webhook-gateway`), ele deve cair na rede interna
 - O Redis não pode ser publicado em `0.0.0.0` — acesso externo à Stream é exposição de evento de pagamento

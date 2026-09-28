@@ -1,11 +1,11 @@
 ---
-aliases: [issue-04, vps-hardening]
+aliases: [issue-03, vps-hardening]
 tags: [tracker, issue, todo, study-needed]
 status: todo
 prioridade: alta
 ---
 
-# Issue 04 — VPS endurecida com acesso só por chave, firewall mínimo e ban de brute-force
+# Issue 03 — VPS endurecida com acesso só por chave, firewall mínimo e ban de brute-force
 
 ## Contexto
 
@@ -28,9 +28,9 @@ Estado final: servidor com login exclusivamente por chave SSH, firewall liberand
 
 ## Fora de escopo
 
-- Reverse proxy, TLS e publicação da API — Issue 05
-- Isolamento de redes do Compose e limites de recursos — Issue 09
-- Backup e monitoramento — Issues 09 e 06
+- Reverse proxy, TLS e publicação da API — Issue 04
+- Isolamento de redes do Compose e limites de recursos — Issue 06
+- Backup e monitoramento — Issues 06 e 05
 - Kubernetes, Cloud e Terraform
 
 ## Conhecimentos envolvidos
@@ -87,5 +87,5 @@ Estado final: servidor com login exclusivamente por chave SSH, firewall liberand
 
 - **Não precisa de VPS pública para começar.** Esta Issue roda inteira numa VM local (VirtualBox/UTM/libvirt com Ubuntu ou Debian): SSH por chave, firewall, `fail2ban` e swap não exigem IP público. VPS pública só é necessária para provar acesso externo real — e nesse caso uma VPS temporária resolve.
 - Um servidor real (VPS ou VM) com acesso inicial por provedor é pré-requisito de ambiente, não de código
-- O firewall abre HTTP e HTTPS em antecipação à Issue 05; nesses instantes as portas 80/443 não têm serviço atrás e devem ser reavaliadas ao fechar esta Issue
-- Este contrato de acesso (`só chave SSH`) é pré-requisito do deploy por chave efêmera da Issue 17
+- O firewall abre HTTP e HTTPS em antecipação à Issue 04; nesses instantes as portas 80/443 não têm serviço atrás e devem ser reavaliadas ao fechar esta Issue
+- Este contrato de acesso (`só chave SSH`) é pré-requisito do deploy por chave efêmera da Issue 07

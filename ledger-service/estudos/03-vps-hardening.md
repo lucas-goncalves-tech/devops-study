@@ -1,12 +1,12 @@
 ---
-aliases: [estudo-04]
+aliases: [estudo-03]
 tags: [estudo]
-issue: 04
+issue: 03
 ---
 
-# Estudos — Issue 04: Hardening de VPS para Produção Econômica
+# Estudos — Issue 03: Hardening de VPS para Produção Econômica
 
-> Material de apoio da Issue 04. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
+> Material de apoio da Issue 03. Não é escopo da Issue — a `teach-anything` lê este arquivo para montar a sessão de ensino antes da implementação.
 
 
 ### A — SSH e firewall

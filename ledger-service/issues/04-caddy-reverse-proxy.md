@@ -1,11 +1,11 @@
 ---
-aliases: [issue-05, caddy-reverse-proxy]
+aliases: [issue-04, caddy-reverse-proxy]
 tags: [tracker, issue, todo, study-needed]
 status: todo
 prioridade: alta
 ---
 
-# Issue 05 — Entrada única via reverse proxy com TLS automático e headers de segurança
+# Issue 04 — Entrada única via reverse proxy com TLS automático e headers de segurança
 
 ## Contexto
 
@@ -17,7 +17,7 @@ Estado final: o tráfego externo entra por um único reverse proxy na porta 80/4
 
 ## Dependências
 
-- Requer Issue 04 — o firewall precisa liberar 80/443 e o acesso ao servidor é só por chave
+- Requer Issue 03 — o firewall precisa liberar 80/443 e o acesso ao servidor é só por chave
 
 ## Escopo
 
@@ -28,9 +28,9 @@ Estado final: o tráfego externo entra por um único reverse proxy na porta 80/4
 
 ## Fora de escopo
 
-- Isolamento de redes do Compose e limites de recursos — Issue 09
-- Alteração do compose do backend — a API continua em `backend/docker-compose.yaml`
-- Backup e monitoramento — Issues 09 e 06
+- Isolamento de redes do Compose e limites de recursos — Issue 06
+- Alteração do compose do backend — a API continua em `ledger-service/app/docker-compose.yaml`
+- Backup e monitoramento — Issues 06 e 05
 - Kubernetes, Cloud e Terraform
 
 ## Conhecimentos envolvidos
