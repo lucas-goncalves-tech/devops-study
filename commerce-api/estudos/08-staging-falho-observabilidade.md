@@ -15,8 +15,8 @@ issue: 08
   - https://12factor.net/disposability
 - Ambientes de pré-produção
   - https://sre.google/sre-book/monitoring-distributed-systems/
-- Ambientes rotulados e Stackdriver/Cloud Monitoring
-  - https://cloud.google.com/monitoring
+- Ambientes rotulados e monitoramento na nuvem (CloudWatch)
+  - https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html
 
 **FIM:** sei dizer o que separa staging de produção (URL, credencial, dados, nome).
 
@@ -28,8 +28,8 @@ issue: 08
   - https://principlesofchaos.org/
 - Toxiproxy
   - https://github.com/Shopify/toxiproxy
-- Injeção de latência e falha de rede
-  - https://www.envoyproxy.io/docs/envoy/latest/
+- Injeção de latência e falha de rede (toxics do Toxiproxy)
+  - https://github.com/Shopify/toxiproxy#toxics
 - Liveness, readiness e start probes
   - https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/
 
@@ -60,7 +60,6 @@ issue: 08
 - Postmortem e timeline de incidente
   - https://sre.google/sre-book/postmortem-culture/
 - Debug e diagnóstico de performance Node
-  - https://nodejs.org/en/learn/getting-started/debugging
   - https://nodejs.org/en/learn/getting-started/debugging
 - Teste de regressão que prova a correção
   - https://martinfowler.com/articles/microservices.html

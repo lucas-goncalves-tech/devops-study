@@ -39,6 +39,8 @@ Estado final: os três gates (segredos, SAST, SCA) rodam em toda mudança, falha
 - Monitoramento da aplicação — [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md)
 - Kubernetes — fora de escopo por decisão (arquivado no repositório)
 - Cloud — [Issue 07 do `commerce-api`](../../commerce-api/issues/07-aws-production.md)
+- DAST — [Issue 09](09-dast-zap.md)
+- Staging inseguro de propósito — [Issue 11](11-staging-inseguro.md)
 
 ## Conhecimentos envolvidos
 

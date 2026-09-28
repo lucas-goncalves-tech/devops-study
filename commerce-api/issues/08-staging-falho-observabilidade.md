@@ -9,7 +9,7 @@ prioridade: alta
 
 ## Contexto
 
-O ambiente real sobe na nuvem e nada foi feito para quebrar de propósito. Painel bonito sobre sistema que nunca falhou não é prova de observabilidade: é prova de que a observabilidade nunca teve o que mostrar. Enquanto as falhas forem hipotéticas, a resposta a elas é chute — e o chute em incidente custa mais caro do que a falha. A Issue 05 entrega `/metrics` com `prom-client` e os quatro painéis, e a Issue 07 põe o serviço em computação real; falta o ambiente errado, separado do certo, onde a falha é provocada, vista no painel, diagnosticada por escrito e consertada com prova de antes e depois.
+O ambiente real vai subir na nuvem e nada foi feito para quebrar de propósito. Painel bonito sobre sistema que nunca falhou não é prova de observabilidade: é prova de que a observabilidade nunca teve o que mostrar. Enquanto as falhas forem hipotéticas, a resposta a elas é chute — e o chute em incidente custa mais caro do que a falha. A Issue 05 entrega `/metrics` com `prom-client` e os quatro painéis, e a Issue 07 põe o serviço em computação real; falta o ambiente errado, separado do certo, onde a falha é provocada, vista no painel, diagnosticada por escrito e consertada com prova de antes e depois.
 
 ## Objetivo
 
@@ -17,7 +17,7 @@ Estado final: um ambiente de staging claramente separado da produção, três fa
 
 ## Dependências
 
-- Requer Issue 05 — a detecção de cada falha depende dos quatro painéis e das métricas de pool e memória que esta Issue entrega
+- Requer Issue 05 — a detecção de cada falha depende dos quatro painéis e das métricas de pool e memória que a Issue 05 entrega
 - Requer Issue 07 — é a computação real que define o que é "produção" e, portanto, o que precisa ficar separado
 - Requer Issue 02 — a stack (API + Postgres) que recebe a injeção é a orquestrada aqui
 
