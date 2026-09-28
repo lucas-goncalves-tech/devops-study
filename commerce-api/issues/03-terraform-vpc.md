@@ -61,17 +61,24 @@ subnet banco   → sem rota internet direta
 
 ## Requisitos
 
-Arquivos que esta Issue espera encontrar em `commerce-api/infra/` ao final — nenhum deles existe hoje:
+Arquivos que esta Issue cria em `commerce-api/infra/` — nenhum deles existe hoje. A tabela é o
+**contrato de saída**: cada arquivo e cada observação abaixo é um requisito que a Issue precisa
+satisfazer quando criar o arquivo, não um inventário do que já está lá.
 
-| Arquivo | Conteúdo esperado | Observação |
+| Arquivo | Conteúdo esperado | Observação (o arquivo criado deverá…) |
 |---|---|---|
-| `commerce-api/infra/provider.tf` | Provider AWS + LocalStack, endpoints `s3`/`ec2` | Endpoint `elbv2` comentado |
-| `commerce-api/infra/vpc.tf` | VPC, três subnets, IGW e route tables | ALB comentado; IGW e route tables implementados |
-| `commerce-api/infra/security.tf` | SG da API e SG do banco | SG do ALB comentado; API exposta temporariamente para o laboratório |
+| `commerce-api/infra/platform/compose-localstack.yaml` | Emulador local com `SERVICES=s3,ec2,elbv2` e `LOCALSTACK_AUTH_TOKEN` obrigatório | Sem a variável de token o Compose aborta: o job de IaC da Issue 04 precisa fornecê-la |
+| `commerce-api/infra/provider.tf` | Provider AWS + LocalStack, endpoints `s3`/`ec2` | Manter `elbv2` comentado até o emulador suportar o serviço |
+| `commerce-api/infra/vpc.tf` | VPC, três subnets, IGW e route tables | IGW e route tables implementados; ALB comentado até o carry-over |
+| `commerce-api/infra/security.tf` | SG da API e SG do banco | SG do ALB comentado; entrada da API temporária e de laboratório até o ALB existir |
 | `commerce-api/infra/s3.tf` | Bucket e quatro bloqueios de acesso público | Atende ao escopo desta Issue |
 
+A infraestrutura que existia antes desta Issue foi apagada junto com a migração (histórico no git).
+A forma dela serviu de referência para o desenho acima, mas **nada dela é reaproveitado como está**:
+se um arquivo recriado divergir do que esta tabela exige, vale a tabela.
+
 - [ ] Declarar provider `hashicorp/aws` `~> 5.0`, endpoints `ec2` e `s3` em `http://localhost:4566`, região `sa-east-1`, credenciais mock com `skip_credentials_validation` e `skip_requesting_account_id`
-- [ ] Subir emulador local com a lista de serviços do `commerce-api/infra/platform/compose-localstack.yaml` e endpoint respondendo
+- [ ] Subir emulador local com o `commerce-api/infra/platform/compose-localstack.yaml` que esta Issue cria, expondo a lista de serviços que ele declara, e confirmar o endpoint respondendo
 - [ ] Criar VPC `10.0.0.0/16`
 - [ ] Criar subnet pública `10.0.1.0/24` (load balancers), privada `10.0.2.0/24` (API) e isolada `10.0.3.0/24` (destinada ao banco)
 - [ ] Declarar `aws_internet_gateway` associado à VPC
@@ -123,7 +130,7 @@ Arquivos que esta Issue espera encontrar em `commerce-api/infra/` ao final — n
 
 - **Recomeço do zero:** a infraestrutura anterior foi apagada (histórico no git); esta Issue começa do zero em `commerce-api/infra/`
 - **Lab ≠ real:** sucesso de `init`, `validate`, `plan` e `apply` prova que o emulador aceitou os recursos; **não prova** que a semântica de rede, roteamento e segurança da AWS real foi reproduzida
-- `commerce-api/infra/platform/compose-localstack.yaml` declara `SERVICES=s3,ec2,elbv2` e exige `LOCALSTACK_AUTH_TOKEN` — qualquer automação que suba o emulador precisa respeitar essa configuração
+- O `commerce-api/infra/platform/compose-localstack.yaml` criado por esta Issue deverá declarar `SERVICES=s3,ec2,elbv2` e exigir `LOCALSTACK_AUTH_TOKEN` — qualquer automação que suba o emulador (inclusive o job de IaC da Issue 04) precisa respeitar essa configuração
 - O LocalStack pode não validar toda a semântica de rota; as rotas são declaradas para o desenho ser fiel à arquitetura pretendida
-- **Carry-over condicionado a ambiente com `elbv2`:** reativar `aws_alb`, `aws_alb_target_group` e `aws_alb_listener`; restringir a entrada da API ao SG do ALB (hoje a regra temporária `0.0.0.0/0` em `80`/`443` permanece documentada como lab-only). Nenhum item bloqueia a Issue 06
+- **Carry-over condicionado a ambiente com `elbv2`:** reativar `aws_alb`, `aws_alb_target_group` e `aws_alb_listener`; restringir a entrada da API ao SG do ALB. Enquanto o ALB não existe no laboratório, a entrada da API é temporária e **deve** ficar declarada como lab-only — a porta do serviço é a `3000` (`PORT` da `commerce-api`), nunca `80`/`443`, e nenhuma delas pode ficar aberta em `0.0.0.0/0` como estado final. Nenhum item bloqueia a Issue 06
 - Enquanto o ALB está desativado, a entrada temporária da API é de laboratório e não deve ser confundida com o desenho final de produção

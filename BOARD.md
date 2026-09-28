@@ -29,7 +29,9 @@ tags: [tracker, board]
 - [ ] [05 DB Backups](ledger-service/issues/05-db-backups-s3.md) — dado sobrevive se o servidor sumir: dump diário fora do servidor, restore provado
 - [ ] [06 Compose Isolation](ledger-service/issues/06-compose-isolation.md) — serviço vizinho não alcança o banco nem o Redis; nada estoura a memória
 - [ ] [07 CI/CD VPS Deploy](ledger-service/issues/07-cicd-vps-deploy.md) — merge vira produção sozinho, e volta sozinho se doer
-- [ ] [08 Tráfego sintético e alertas](ledger-service/issues/08-trafego-sintetico-alertas.md) — sei que está lento ou quebrado antes do usuário perceber
+- [ ] [08 Tráfego sintético e alertas](ledger-service/issues/08-trafego-sintetico-alertas.md) — tráfego agendado de ponta a ponta, medido e comparado ao baseline, com alerta real disparando
+
+> **Dependências cross-app:** `07` e `08` dependem de Issues de outras trilhas — `07` requer `commerce 04` e `webhook 04`/`05`/`08`; `08` requer a coleta e os painéis de `commerce 05`.
 
 ## commerce-api · trilha AWS
 
@@ -40,7 +42,7 @@ tags: [tracker, board]
 - [ ] [02 Docker Compose](commerce-api/issues/02-docker-compose.md) — um comando sobe API e banco, imagem non-root e banco sem porta publicada
 - [ ] [03 Terraform VPC](commerce-api/issues/03-terraform-vpc.md) — rede que se recria do zero, com o banco inacessível de fora
 - [ ] [04 GitHub Actions](commerce-api/issues/04-github-actions.md) — teste quebrado, imagem com CVE ou Terraform inválido não passam revidos
-- [ ] [05 Observability](commerce-api/issues/05-observability.md) — sei que está lento ou quebrado antes do usuário perceber
+- [ ] [05 Observabilidade](commerce-api/issues/05-observability.md) — golden signals coletados, dashboards por cima e SLO medido por carga com k6
 - [ ] [07 AWS Production](commerce-api/issues/07-aws-production.md) — ninguém aplica por cima de ninguém; sei o custo antes de subir
 - [ ] [08 Staging falho de observabilidade](commerce-api/issues/08-staging-falho-observabilidade.md) — a falha injetada aparece no painel, é diagnosticada por escrito e consertada com prova de antes e depois
 
@@ -65,6 +67,8 @@ tags: [tracker, board]
 - [ ] [09 DAST OWASP ZAP](webhook-gateway/issues/09-dast-zap.md) — o serviço rodando é examinado, e o achado é corrigido ou justificado por escrito
 - [ ] [10 Containers e Redis](webhook-gateway/issues/10-containers-redis.md) — evento não se perde quando o consumidor cai
 - [ ] [11 Staging inseguro](webhook-gateway/issues/11-staging-inseguro.md) — gates verdes que nunca enfrentaram um ambiente inteiro montado errado
+
+> **Dependências cross-app:** `10` depende da composição base já concluída em `ledger 02` e da coleta e dos painéis de `commerce 05`.
 
 ## Fora de escopo
 

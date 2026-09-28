@@ -15,6 +15,10 @@ O backend Spring Boot precisa rodar num host Linux sem contêineres. Hoje não e
 
 Estado final: configuração lida do ambiente, healthcheck em duas camadas com código de saída distinto para saudável/falho, e desligamento gracioso sob `SIGTERM`.
 
+## Dependências
+
+- Nenhuma dependência de outra Issue — ponto de entrada da trilha; a Issue 02 (imagem e composição com Postgres) e a Issue 03 (endurecimento do host) consomem a porta, o arquivo de ambiente e o contrato de `SIGTERM` definidos aqui
+
 ## Escopo
 
 - Configuração de URL do banco, usuário, senha, porta e segredo JWT via variáveis de ambiente

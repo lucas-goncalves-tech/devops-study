@@ -48,7 +48,7 @@ Estado final: bucket versionado, criptografado e com retenção; identidade IAM 
 - No `ledger-service`, `S3_ENABLED=false` por padrão, então a implementação NoOp da porta de relatórios está ativa
 - O bucket `securepay-financial-reports` existe, mas ninguém tem permissão para usá-lo
 - O emulador não expõe o serviço IAM
-- Não existe nenhum `aws_vpc_endpoint` no código; a route table privada está vazia de propósito desde a Issue 03
+- Não existe nenhum `aws_vpc_endpoint` em código, e a route table privada que o endpoint vai precisar só virá a existir com a Issue 03 — hoje ela está vazia por desenho, não por esquecimento
 
 ## Resultado esperado
 
@@ -108,7 +108,7 @@ Estado final: bucket versionado, criptografado e com retenção; identidade IAM 
 
 ## Limitações / notas
 
-- **Status: parked.** O trabalho de provisionar a identidade IAM foi revertido (`commerce-api/infra/provider.tf`, `commerce-api/infra/platform/compose-localstack.yaml` e este card voltaram ao estado inicial) e a entrega foi adiada para depois das trilhas de VPS, backup e CI. Nenhuma outra Issue depende dela — `S3_ENABLED` continua `false` e a implementação NoOp da porta de relatórios responde
+- **Status: parked.** O trabalho de provisionar a identidade IAM foi desfeito e depois apagado junto com a infraestrutura inteira (`commerce-api/infra/provider.tf` e `commerce-api/infra/platform/compose-localstack.yaml` não existem mais; histórico no git) — este card voltou ao estado inicial e a entrega foi adiada para depois das trilhas de VPS, backup e CI. Nenhuma outra Issue depende dela — `S3_ENABLED` continua `false` e a implementação NoOp da porta de relatórios responde
 - **Lab ≠ real:** no LocalStack o app fala com `localhost:4566` na máquina host. As subnets são objetos declarados sem núcleo de rede real e **não há como observar tráfego**. A prova do endpoint é `plan` limpo com o recurso aceito pelo emulador — declarado ≠ funcionando
 - **`ENFORCE_IAM` é feature Pro e está desabilitada por padrão.** Sem ela, nenhuma API do emulador nega nada. Se a prova de negação não produzir `AccessDenied`, o cenário correto é rebaixar essa parte para "declarar e inspecionar a política" e marcar a prova de negação como **bloqueada por ambiente**, não como falha
 - **S3 com versionamento sem expiração faz o bucket crescer para sempre:** `deleteObject` vira *delete marker* e o objeto anterior continua faturando — por isso a regra de ciclo de vida é obrigatória

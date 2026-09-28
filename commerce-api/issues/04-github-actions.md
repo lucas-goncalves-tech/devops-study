@@ -65,7 +65,7 @@ Estado final: a cada push e pull request, a pipeline executa a suíte de testes,
 - [ ] Job da `commerce-api`: Node 20 com `cache: npm` e execução de `npm ci && npm test && npm run lint`
 - [ ] Job de segurança de imagem: build e scan bloqueante para `HIGH` e `CRITICAL`
 - [ ] Job de gate de IaC: `fmt -check` → `init` → `validate` → `plan`
-- [ ] Fazer o job de IaC subir o emulador com a configuração real de `commerce-api/infra/platform/compose-localstack.yaml`
+- [ ] Fazer o job de IaC subir o emulador com o `commerce-api/infra/platform/compose-localstack.yaml` criado pela Issue 03, fornecendo o `LOCALSTACK_AUTH_TOKEN` que esse arquivo exige
 - [ ] Exigir YAML íntegro e pipeline verde como pré-requisito de merge
 - [ ] Manter `npm test` e `npm run lint` como verificação local equivalente ao job da `commerce-api`
 
@@ -74,7 +74,7 @@ Estado final: a cada push e pull request, a pipeline executa a suíte de testes,
 - [ ] Um commit com teste quebrado derruba a pipeline e o merge é bloqueado
 - [ ] Um `HIGH` ou `CRITICAL` detectado no scan da imagem derruba a pipeline
 - [ ] `terraform fmt -check` ou `terraform validate` com erro derruba a pipeline
-- [ ] O job de IaC sobe o emulador sem erro de inicialização de variável de ambiente
+- [ ] O job de IaC sobe o emulador a partir do `commerce-api/infra/platform/compose-localstack.yaml` da Issue 03 e conclui `validate` sem abortar por variável de ambiente ausente — sem token fornecido, o Compose não sobe e o gate reprova
 - [ ] Pull request limpo passa em todos os jobs
 
 ## Validação
@@ -93,13 +93,20 @@ Estado final: a cada push e pull request, a pipeline executa a suíte de testes,
 
 ## Limitações / notas
 
-- **Achado — divergência entre a especificação do gate e a configuração real do emulador.** Antes desta Issue, o gate de IaC foi especificado como `localstack/localstack:4.4.0` com `SERVICES=s3,ec2` e sem token. O arquivo real `commerce-api/infra/platform/compose-localstack.yaml` hoje declara:
+- **Achado — divergência entre a especificação do gate e a configuração do emulador.** A primeira especificação do gate de IaC foi escrita contra uma configuração que não sobreviveu à migração: `localstack/localstack:4.4.0` com `SERVICES=s3,ec2` e sem token. O `commerce-api/infra/platform/compose-localstack.yaml` que existia declarava (arquivo apagado — histórico no git):
   - `image: localstack/localstack` — sem pin de versão
-  - `LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN:?}` — obrigatório; sem a variável o Compose aborta a inicialização
+  - `LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN:?}` — obrigatório; sem a variável o Compose abortava a inicialização
   - `SERVICES=s3,ec2,elbv2`
-  - `commerce-api/infra/provider.tf` declara endpoints apenas para `s3` e `ec2` (`elbv2` comentado)
+  - e o `commerce-api/infra/provider.tf` da mesma altura declarava endpoints apenas para `s3` e `ec2`, com `elbv2` comentado
 
-  O job de IaC precisa partir da configuração real: ou reutiliza o próprio arquivo de Compose (com `LOCALSTACK_AUTH_TOKEN` fornecido como secret), ou define seu próprio serviço com os serviços que `provider.tf` declara. Especificar `SERVICES=s3,ec2` num job isolado não reproduz o ambiente do repositório.
+  **O ponto pedagógico continua valendo e é o que esta Issue precisa impedir:** o gate não pode
+  silenciar o emulador com uma configuração própria que não bate com a do repositório. Como
+  `commerce-api/infra/` foi apagado, quem implementa esta Issue precisa entregar **os dois lados de
+  uma vez** — o `compose-localstack.yaml` e o `provider.tf` que a Issue 03 cria, com os endpoints do
+  provider correspondendo exatamente aos serviços que o Compose inicializa. Reutilizar o arquivo do
+  repositório (com o `LOCALSTACK_AUTH_TOKEN` fornecido como secret do CI) é preferível a definir um
+  serviço paralelo; declarar `SERVICES=s3,ec2` num job isolado recria a divergência em vez de
+  eliminá-la.
 - **Contrato de portas:** a `commerce-api` escuta em `PORT=3000` (host `0.0.0.0`) e o `Dockerfile` expõe `3000` com `HEALTHCHECK` em `/health`. Não existe `docker-compose.yaml` neste app — a Issue 02 orquestra API + Postgres; até lá o job de testes não depende de serviço no ar
 - A suíte `npm test` (vitest) usa `app.inject()` e mocka o serviço, então não abre porta nem precisa de Docker no runner — apenas o job de segurança de imagem precisa de daemon Docker para o build
 - Não assumir que a pipeline anterior captura regressões: o workflow atual não executa nada

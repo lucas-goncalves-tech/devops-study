@@ -15,6 +15,10 @@ O build atual inclui ferramentas de compilação, roda como root e não garante 
 
 Estado final: imagem multi-stage abaixo de 220 MB executando como usuário sem privilégios, e um Compose onde a API só recebe tráfego depois que o banco está saudável, com dados que sobrevivem a restart.
 
+## Dependências
+
+- Requer Issue 01 — o contrato de porta (`PORT=8080`), o arquivo de ambiente e o fechamento sob `SIGTERM` vêm de lá; o healthcheck do Compose herda o contrato L4/L7 que aquela Issue provou
+
 ## Escopo
 
 - Build multi-stage separando compilação (JDK 21) de runtime (JRE Alpine)

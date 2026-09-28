@@ -68,7 +68,7 @@ Estado final: um ambiente de staging separado da produção, com fraquezas propo
 ## Requisitos
 
 - [ ] Provisionar staging com URL, porta, credencial de banco/Redis, volume e namespace próprios, sem recurso compartilhado com a produção
-- [ ] Injetar e documentar credencial fraca (segredo JWT curto ou senha trivial no `.env` do staging)
+- [ ] Injetar e documentar credencial fraca (segredo `WEBHOOK_SECRET` curto ou senha trivial no `.env` do staging)
 - [ ] Injetar e documentar porta exposta do serviço de staging em endereço público, com a exposição visível por varredura externa
 - [ ] Injetar e documentar segredo real em artefato de build versionado (por exemplo string de conexão com segredo dentro de um arquivo que a imagem consome)
 - [ ] Injetar e documentar padrão inseguro no código do staging detectável por SAST (por exemplo comparação de HMAC que deixa de ser em tempo constante)

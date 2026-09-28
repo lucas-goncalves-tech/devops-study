@@ -30,7 +30,8 @@ Estado final: o tráfego externo entra por um único reverse proxy na porta 80/4
 
 - Isolamento de redes do Compose e limites de recursos — Issue 06
 - Alteração do compose do backend — a API continua em `ledger-service/app/docker-compose.yaml`
-- Backup e monitoramento — Issues 06 e 05
+- Backup do banco — Issue 05
+- Monitoramento e alertas — [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md)
 - Kubernetes, Cloud e Terraform
 
 ## Conhecimentos envolvidos

@@ -90,7 +90,7 @@ procure estes arquivos antes dela:
 
 ## Rollout dos gates para os outros apps
 
-Os gates DevSecOps nascem aqui (Issues 04 a 09) e sãoagnósticos de app. Portá-los para
+Os gates DevSecOps nascem aqui (Issues 04 a 09) e são agnósticos de app. Portá-los para
 [`ledger-service`](../ledger-service/AGENTS.md) ou [`commerce-api`](../commerce-api/AGENTS.md) é
 **adaptar configuração, não reaprender a ferramenta** — o que muda está nesta tabela:
 
