@@ -29,9 +29,9 @@ Estado final: o consumidor gerenciado por uma unidade de serviço que sobe sozin
 ## Fora de escopo
 
 - Docker, Docker Compose, Terraform, Kubernetes, CI/CD
-- Foco exclusivo: processos Linux, permissões de arquivo, variáveis de ambiente, verificação de processo e healthcheck em bash
+- Foco exclusivo: processos Linux, permissões de arquivo, variáveis de ambiente, verificação de processo e script de verificação em bash
 - Servidor HTTP, rota `/health` e `HEALTHCHECK` de imagem — Issue 02
-- Liveness e readiness em HTTP, métricas de lag e entrega de webhook — Issue 10
+- Liveness e readiness em HTTP — Issue 02; métricas de lag e entrega de webhook — Issue 10
 
 ## Conhecimentos envolvidos
 

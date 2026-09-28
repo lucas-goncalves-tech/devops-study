@@ -24,7 +24,7 @@ Estado final: imagem multi-stage enxuta executando como usuário sem privilégio
 - Criar a rota `/health` no `src/`, expondo o estado do consumidor e da conexão com o Redis
 - Criar `Dockerfile` multi-stage com usuário sem privilégios e `HEALTHCHECK`
 - Criar `docker-compose.yaml` com o serviço do consumidor e o serviço Redis em rede interna
-- Criar `.env.example` com placeholders de `REDIS_URL`, `STREAM_KEY`, `GROUP_NAME`, `CONSUMER_NAME` e `WEBHOOK_SECRET`
+- Criar `.env.example` com placeholders de `REDIS_URL`, `STREAM_KEY`, `GROUP_NAME`, `CONSUMER_NAME`, `WEBHOOK_SECRET` e `PORT` (default `8081`, porta da rota de saúde)
 - Dependência condicional: o consumidor sobe depois que o Redis está saudável
 
 ## Fora de escopo
@@ -58,22 +58,22 @@ Estado final: imagem multi-stage enxuta executando como usuário sem privilégio
 - `/health` respondendo HTTP 200 quando o consumidor está ativo e conectado ao Redis
 - `HEALTHCHECK` da imagem consultando `/health` e falhando quando o consumidor para de consumir
 - Compose com Redis em rede interna, sem porta `6379` publicada no host
-- `.env.example` documentando as cinco variáveis com placeholders, sem segredo real
+- `.env.example` documentando as seis variáveis com placeholders, sem segredo real
 
 ## Requisitos
 
 - [ ] Criar `webhook-gateway/app/Dockerfile` multi-stage: estágio de build com `npm ci` e `npm run build`, estágio de runtime com `node:20-alpine`, `npm ci --omit=dev` e cópia apenas de `dist/` e dos módulos de produção
 - [ ] Rodar o contêiner com usuário sem privilégios via `USER node`, nunca root
-- [ ] Declarar `EXPOSE` da porta da rota de saúde e `HEALTHCHECK` no `Dockerfile` consultando `/health`
+- [ ] Declarar `EXPOSE` da porta `PORT` (default `8081`) da rota de saúde e `HEALTHCHECK` no `Dockerfile` consultando `/health`
 - [ ] Criar `.dockerignore` excluindo `node_modules`, `dist`, `.git` e `.env` do contexto de build
 - [ ] Criar a rota `/health` no `src/`, com resposta que distingue consumidor ativo de conexão com o Redis perdida
-- [ ] Registrar a rota de saúde na mesma instância que executa o `StreamConsumer`, sem introduzir um servidor HTTP com ciclo de vida próprio
+- [ ] Registrar a rota de saúde no mesmo processo que executa o `StreamConsumer`, de modo que o servidor HTTP de saúde suba e desça junto com o consumidor, sem processo separado nem segundo ciclo de vida
 - [ ] Criar `webhook-gateway/app/docker-compose.yaml` com o serviço do consumidor construído a partir do `Dockerfile` e o serviço `redis:7-alpine`
 - [ ] Não publicar a porta `6379` do Redis no host; o consumidor fala com ele pelo nome do serviço na rede do Compose
 - [ ] Dar healthcheck ao Redis via `redis-cli ping` e ligar o consumidor a ele por `depends_on` com `condition: service_healthy`
 - [ ] Usar `env_file` no serviço do consumidor, com `REDIS_URL` apontando para o nome do serviço Redis
-- [ ] Criar `webhook-gateway/app/.env.example` com `REDIS_URL`, `STREAM_KEY`, `GROUP_NAME`, `CONSUMER_NAME` e `WEBHOOK_SECRET` em placeholder
-- [ ] Publicar no host apenas a porta da rota de saúde, se e somente se a validação exigir consultá-la de fora
+- [ ] Criar `webhook-gateway/app/.env.example` com `REDIS_URL`, `STREAM_KEY`, `GROUP_NAME`, `CONSUMER_NAME`, `WEBHOOK_SECRET` e `PORT` (default `8081`) em placeholder
+- [ ] Publicar no host apenas a porta `PORT` (default `8081`) da rota de saúde, se e somente se a validação exigir consultá-la de fora
 - [ ] Confirmar que `SIGTERM` no contêiner fecha o `quit()` do `ioredis` e encerra com código de saída 0
 - [ ] Manter a suíte `npm test` (9 testes) verde — a rota de saúde não pode regreder o contrato de Stream, group e assinatura
 
@@ -105,7 +105,7 @@ Estado final: imagem multi-stage enxuta executando como usuário sem privilégio
 - Resposta da rota de saúde nos dois cenários (saudável e falho)
 - Saída da tentativa de conexão na porta `6379` a partir do host (recusada)
 - Log de desligamento gracioso no `SIGTERM` do contêiner
-- Conteúdo de `.env.example` com os cinco campos em placeholder
+- Conteúdo de `.env.example` com os seis campos em placeholder
 - Saída do `npm test` com os 9 testes verdes
 
 ## Limitações / notas
@@ -117,5 +117,5 @@ Estado final: imagem multi-stage enxuta executando como usuário sem privilégio
 - O serviço do Redis não pode ganhar entrada `ports:` em nenhuma Issue futura — acesso externo à Stream de eventos é exposição de dado de pedido
 - Esta Issue não segmenta redes: consumidor e Redis sobem na rede padrão do Compose. A rede isolada é [Issue 06 do `ledger-service`](../../ledger-service/issues/06-compose-isolation.md), e é lá que este serviço deve cair
 - O consumidor cria o group com `MKSTREAM` e tolera `BUSYGROUP` (`src/consumer.ts`): manter isso é o que faz o contêiner subir em restart
-- Publicar a porta da rota de saúde no host é opcional e só serve para validação externa; em produção ela não precisa ser alcançável de fora
+- Publicar a porta `PORT` (default `8081`) da rota de saúde no host é opcional e só serve para validação externa; em produção ela não precisa ser alcançável de fora
 - Esta Issue não entrega webhook: validação, idempotência, retry e lag são [Issue 10](10-containers-redis.md)
