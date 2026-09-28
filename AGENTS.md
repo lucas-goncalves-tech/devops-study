@@ -12,6 +12,7 @@ securepay-devops/
 ├── README.md            # índice público
 ├── BOARD.md             # status e ordem de execução das 3 trilhas
 ├── 00-visao-geral.md    # contexto consolidado, template de Issue, política de status
+├── ledger-service/  commerce-api/  webhook-gateway/   # os 3 apps — trilhas em `BOARD.md`
 ├── archive/             # Issues arquivadas por decisão
 ├── docs/                # specs e planos do trabalho
 ├── .github/             # CI (construção do usuário)

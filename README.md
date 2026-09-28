@@ -12,7 +12,7 @@ reinicia em `01` por app.
 
 | App | Stack | Trilha | Rodar |
 |---|---|---|---|
-| [`ledger-service/`](ledger-service/) | Java 21 · Spring Boot 3.3 · Postgres | **VPS** — Linux → hardening → Caddy → backups → isolamento → deploy | `cd ledger-service/app && cp .env.example .env && docker compose up --build` |
+| [`ledger-service/`](ledger-service/) | Java 21 · Spring Boot 3.3 · Postgres | **VPS** — Linux → hardening → Caddy → backups → isolamento → deploy | `cd ledger-service/app && cp .env.example .env && sed -i 's#^SPRING_DATASOURCE_URL=.*#SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/securepay_db#' .env && docker compose up --build` |
 | [`commerce-api/`](commerce-api/) | Node 20 · Fastify · Postgres | **AWS** — Linux → compose → Terraform → CI → observabilidade → S3/EC2 | `cd commerce-api/app && npm ci && npm run dev` |
 | [`webhook-gateway/`](webhook-gateway/) | Node 20 · TypeScript · Redis Streams | **DevSecOps** — pipeline → secrets → SAST → SCA → hardening → gates → DAST → mensageria | `cd webhook-gateway/app && npm ci && npm run build && npm start` |
 
