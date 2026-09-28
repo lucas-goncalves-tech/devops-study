@@ -152,6 +152,11 @@ Não existe `infra/` na estrutura: infra é do usuário.
 DAST vem depois dos gates estáticos porque exige serviço de pé e um alvo propositalmente falho;
 SCA entra logo após o SAST para o gate consolidado (07) já nascer cobrindo os dois.
 
+**Sem Issues DevSecOps no ledger/commerce:** o ledger já recebe `Trivy + Gitleaks` dentro da
+Issue 07 (herdada da trilha VPS); SAST/SCA-Maven/DAST do Java ficam para quando você quiser,
+com o checklist de rollout que vive no `AGENTS.md` do webhook. Nenhuma Issue nova é criada para
+isso.
+
 ### Fora de escopo (registrado no `00-visao-geral.md`)
 
 - `18` Kubernetes/Helm → `archive/` (issue + estudo), candidato a 4ª trilha
@@ -187,7 +192,12 @@ Estudos clonados (`01` Linux, `02` Docker) são **reescritos** para a stack do a
 
 **`AGENTS.md` por app (só domínio):** tabela de Issues da trilha, stack e comandos, env vars,
 healthcheck, gaps conhecidos, `infra` local se houver. Ex.: `webhook-gateway/AGENTS.md` já nasce
-documentando que não tem Dockerfile/healthcheck até fechar a Issue 02.
+documentando que não tem Dockerfile/healthcheck até fechar a Issue 02, e recebe uma **nota de
+domínio** (não uma Issue) com o checklist de rollout dos gates para os outros apps:
+`gitleaks` é agnóstico (só muda baseline), Semgrep `p/javascript` → `p/java`,
+`npm audit` → OWASP Dependency-Check Maven, Trivy idêntico (troca a imagem),
+ZAP vira scan autenticado (JWT) — assim aplicar DevSecOps no ledger depois é adaptar config,
+não reaprender.
 
 **`README.md` por app:** público e curto — o que é, como rodar, links para `issues/` e `estudos/`.
 
