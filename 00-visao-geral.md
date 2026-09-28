@@ -3,33 +3,29 @@ aliases: [visao-geral, overview, pilares]
 tags: [tracker, overview]
 ---
 
-# Visão Geral — Jornada do Local à Nuvem
+# Visão Geral — 3 apps, 3 trilhas
 
-> Fonte consolidada de contexto. Define metodologia, pilares, ordem de execução e política de status.
+> Fonte consolidada de contexto. Define metodologia, pilares, as trilhas e política de status.
 
-## Jornada e público
+## As 3 trilhas
+
+O monorepo tem **3 apps, um por trilha**. Cada trilha é **independente** — segue do serviço local até o
+estágio final sem depender de Issue de outro app — e é **completa ponta a ponta**: entrar no app
+`X` é fazer uma jornada inteira, não um pedaço de uma sequência global de 18 números.
+
+| App | Trilha | Estágio atual |
+|---|---|---|
+| [`ledger-service`](ledger-service/) | **VPS** — `linux → hardening → caddy → isolamento → backups → deploy` | `01`, `02` `done`; `03` é a próxima a entrar |
+| [`commerce-api`](commerce-api/) | **AWS** — `linux → compose → terraform/LocalStack → CI → observabilidade → S3/EC2` | `01` a entrar; `06` `parked` |
+| [`webhook-gateway`](webhook-gateway/) | **DevSecOps** — `pipeline base → secrets → SAST → SCA → hardening → gates → DAST → mensageria` | `01` a entrar |
+
+Os números reiniciam em `01` em cada app: `ledger 05` e `commerce 05` são Issues diferentes, de
+apps diferentes. A numeração é identificador estável **dentro do app**, e as dependências reais
+estão declaradas em `## Dependências` de cada Issue.
 
 - **Jornada:** da JVM no Linux local à plataforma com Docker, VPS, Terraform, CI/CD e observabilidade.
 - **Público:** desenvolvedor em transição para Junior DevOps / Cloud Platform Engineer e backend cloud-native.
-- **Objetivo final:** demonstrar a evolução operacional do **mesmo sistema** — o SecurePay — do ambiente local até a plataforma orquestrada, uma capacidade por vez.
-
-## A narrativa
-
-Uma frase só, do começo ao fim:
-
-> Comecei executando a aplicação localmente, depois operei a mesma aplicação em um servidor Linux manualmente, automatizei as partes repetitivas, migrei a arquitetura para serviços de Cloud e finalmente passei a gerenciar essa infraestrutura com IaC e Kubernetes.
-
-Ela se desdobra em cinco transições. Cada transição é uma **necessidade**, não uma tecnologia:
-
-| Transição | A dor que a provoca | Issues |
-|---|---|---|
-| manual → repetitivo | o mesmo comando roda toda vez e alguém esquece de um deles | 04–06 |
-| repetitivo → automatizado | teste quebrado passa revido porque ninguém olhou | 07, 10 |
-| único → multi-serviço | o consumidor cai e o evento some com ele | 08–09 |
-| local → cloud | o estado do Terraform vive no disco de quem aplicou | 11–12 |
-| declarado → orquestrado | um nó morre e ninguém percebe | 13–18 |
-
-Os números são de `01 → 18`, mas a ordem narrativa é esta — nem toda Issue é um marco, e `03` é o caso explícito (ver [Ordem de execução](#ordem-de-execução)).
+- **Objetivo final:** demonstrar a evolução operacional de **sistemas reais** até a plataforma orquestrada, uma capacidade por app.
 
 ## Separação de responsabilidades
 
@@ -40,7 +36,7 @@ repositório → a infraestrutura real construída
 validator  → se a capacidade realmente foi entregue
 ```
 
-- A Issue **não** é aula, apostila, tutorial nem roadmap de estudos. Todo material de estudo fica em `estudos/`, fora do escopo das Issues.
+- A Issue **não** é aula, apostila, tutorial nem roadmap de estudos. Todo material de estudo fica em `<app>/estudos/`, fora do escopo das Issues.
 - Toda Issue segue o template: `Contexto`, `Objetivo`, `Dependências`, `Escopo`, `Fora de escopo`, `Conhecimentos envolvidos`, `Estado atual`, `Resultado esperado`, `Requisitos`, `Critérios de aceitação`, `Validação`, `Evidências`, `Limitações / notas`.
 - Critérios de aceitação são observáveis e verificáveis por um terceiro, sem depender da opinião do autor.
 
@@ -60,36 +56,6 @@ Cada Issue é uma mudança concreta no sistema, redigida como RFC de problema co
 2. **Negócio e confiabilidade preventiva:** prevenção acima de reação — shift-left, healthcheck real, tolerância a falhas.
 3. **Automação intencional e KISS:** IaC declarativo idempotente e pipelines versionadas em vez de scripts ad-hoc; simplicidade, sem overengineering.
 
-## Ordem de execução
-
-A ordem `01 → 18` segue a evolução da infraestrutura do sistema, não uma sequência de aulas:
-
-```text
-LOCAL (01)
-  ↓
-CONTAINERS (02)
-  ↓
-SERVIDOR (04–05)
-  ↓
-RECUPERAÇÃO (06)
-  ↓
-OBSERVABILIDADE E MENSAGERIA (07–08)
-  ↓
-ISOLAMENTO E LIMITES (09)
-  ↓
-AUTOMAÇÃO (10)
-  ↓
-IaC E CLOUD (11–12)
-  ↓
-CI/CD + DEVSECOPS (13–17)
-  ↓
-KUBERNETES (18)
-```
-
-- `01, 02` Done; `11` Parked; `04` é a próxima a entrar em execução.
-- A numeração é identificador estável. As dependências reais são declaradas em `## Dependências` de cada Issue.
-- `03-terraform-vpc` é **laboratório anexado**, não etapa da narrativa: foi concluída antes de existir a dor que Terraform resolve, para não custar dinheiro. **Não a use como marco da evolução.** Ela permanece como pré-requisito de `10`, `11` e `12` apenas porque o gate de IaC valida o HCL que ela criou.
-
 ## Política de status
 
 | Status | Significado |
@@ -101,13 +67,21 @@ KUBERNETES (18)
 
 - Nenhuma Issue pode entrar em `done` sem que a `Validação` tenha sido executada e as `Evidências` registradas.
 - Limitação de ambiente registrada em `Limitações / notas` nunca conta como evidência de validação.
+- O checkbox do [Board](BOARD.md) espelha o `status:` do frontmatter da Issue.
 
 ## Restrições de escopo
 
-- **FinOps, entrevistas e Ansible estão fora de escopo por decisão.** A estimativa de custo dentro de `12-aws-production` não é um programa de FinOps: é uma trava para impedir cobrança involuntária, pré-requisito de segurança antes de provisionar recurso pago.
-- **Custo zero por regra:** nenhuma Issue exige servidor pago para ser concluída. `04–09` rodam inteiros numa VM local (VirtualBox/UTM/libvirt com Ubuntu ou Debian); `03`, `11` e `12` usam LocalStack ou `terraform plan`. VPS pública só entra como prova final opcional, quando for preciso validar TLS público, DNS e tráfego real de internet.
-- Kubernetes, Cloud e Terraform entram apenas quando existe necessidade concreta que os justifique — nunca porque fazem parte do objetivo final.
+- **FinOps, entrevistas e Ansible estão fora de escopo por decisão.** As trilhas `interview-prep-finops` e `ansible` do `devops-study` não migraram para este monorepo e continuam lá. A estimativa de custo dentro de `commerce 07` não é um programa de FinOps: é uma trava contra cobrança involuntária, pré-requisito de segurança antes de provisionar recurso pago.
+- **Custo zero por regra:** nenhuma Issue exige servidor pago para ser concluída. As trilhas rodam inteiras em VM local, LocalStack ou `terraform plan`; VPS pública e conta AWS só entram como prova final, quando for preciso validar TLS público, DNS, tráfego real de internet ou deploy em nuvem real.
+- **Kubernetes fora de escopo por decisão.** A Issue 18 (cluster multi-node + chart Helm) foi arquivada em [`archive/18-kubernetes-helm/`](archive/18-kubernetes-helm/issue.md) e registrada como candidata a 4ª trilha futura — não é marco de nenhuma das 3.
+- **A infraestrutura é construção do usuário.** CI, Terraform, Dockerfile, `docker-compose.yaml`, `healthcheck.sh` e código dos apps **nunca** são criados nem alterados pelo agente: o agente escreve Issues, estudos, tracker e docs.
 - Nenhuma Issue pode antecipar tecnologia cujo problema ela não resolve.
+
+## Fora de escopo
+
+- [`archive/18-kubernetes-helm/`](archive/18-kubernetes-helm/issue.md) — a Issue 18 e seu estudo, arquivados: Kubernetes não entra neste momento.
+- `interview-prep-finops` e `ansible` — trilhas do `devops-study` fora das 3 escolhidas.
+- Incorporar os apps num único serviço: cada app é um sistema, com sua trilha.
 
 ---
 

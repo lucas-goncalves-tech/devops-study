@@ -8,93 +8,65 @@ tags: [tracker, board]
 > Kanban DevSecOps. Contexto consolidado em [00 Visão Geral](00-visao-geral.md).
 > 1 card por capacidade. **A Issue define o trabalho; a `teach-anything` define o aprendizado.**
 > Cada linha descreve **o que a Issue resolve**, não a tecnologia que ela usa.
-> Ordem de execução: `01 → 18`, seguindo a evolução operacional:
-> `LOCAL → CONTAINERS → SERVIDOR → RECUPERAÇÃO → OBSERVABILIDADE → MENSAGERIA → ISOLAMENTO → AUTOMAÇÃO → IaC/CLOUD → CI/CD + DEVSECOPS → KUBERNETES`
-> Material de estudo de cada Issue vive em `estudos/` — fora do escopo da Issue.
+> O monorepo tem **3 apps = 3 trilhas**. Cada trilha é independente e completa ponta a ponta.
+> O checkbox de cada linha espelha o `status:` do frontmatter da Issue.
+> Material de estudo de cada Issue vive em `<app>/estudos/` — fora do escopo da Issue.
 
-## Mapa de estado do app
+## Produção e staging
 
-> O que **existe no app** depois que a Issue está `done`. Leia de cima para baixo: cada linha assume as anteriores.
+- **Produção:** sistema único e de verdade — stack `ledger + postgres + redis + webhook` numa VPS atrás do Caddy com domínio/TLS (trilha VPS, Issues 03→07) e o `commerce` em EC2 (trilha AWS, Issue 07).
+- **Staging:** ambiente separado, público e **deliberadamente falho**, que nunca toca a produção — `ledger 08` (tráfego/alerta), `commerce 08` (falha de observabilidade) e `webhook 11` (insegurança proposital + forense de mensageria).
 
-| # | O app depois dela | Etapa |
-|---|---|---|
-| 01 | Serviço Linux: env vars, healthcheck L4/L7 com código de saída distinto, `SIGTERM` gracioso | Local |
-| 02 | Imagem < 220 MB non-root; API só recebe tráfego com o banco saudável; dados sobrevivem a restart | Local |
-| 03 | Rede multi-tier em HCL idempotente; banco isolado por rota e por SG; bucket privado | *Laboratório* |
-| 04 | Servidor só com login por chave, firewall mínimo, ban de brute-force e swap | **Servidor** |
-| 05 | Entrada única em 80/443 com TLS automático, headers de segurança e roteamento por domínio | **Servidor** |
-| 06 | Dump diário criptografado e off-site com retenção; restore testado com tempo medido | Recuperação |
-| 07 | Prometheus no `/actuator/prometheus`, 4 painéis Grafana, carga k6 com thresholds | Observabilidade |
-| 08 | Redis na stack como buffer via Streams, serviços isolados por perfil, gateway de webhooks | Mensageria |
-| 09 | 3 redes separando fronteira/app/dados; banco e Redis inacessíveis de fora; limites anti-OOM | Isolamento |
-| 10 | Pipeline que **impede o merge**: testes, scan de imagem e validação de HCL | Automação |
-| 11 | Bucket versionado, IAM least privilege e endpoint privado — sem tocar código Java | *Laboratório — parked* |
-| 12 | Estado remoto com lock, ambientes separados, compute mínimo com custo conhecido | **Cloud real** |
-| 13 | Scanner de segredos no pré-commit e na pipeline; baseline; merge bloqueado | DevSecOps |
-| 14 | SAST obrigatório, bloqueando severidade `ERROR` | DevSecOps |
-| 15 | Jobs com permissão mínima, ações pinadas por SHA, auditoria anti-tag mutável | DevSecOps |
-| 16 | 3 gates consolidados — verde = sem segredo, sem `ERROR`, sem CVE alta/crítica | DevSecOps |
-| 17 | **Produção:** merge com gates → deploy automático na VPS → healthcheck → rollback → auditoria | **Deploy** |
-| 18 | Cluster local multi-node, chart Helm, probes, limits, rollout sem downtime | Kubernetes |
+## ledger-service · trilha VPS
 
-**Fronteiras:** `Servidor` = `04–05` (e volta em `17`) · `Cloud real` = `12` só (`03` e `11` são laboratório) ·
-`DevSecOps` = `10 → 13–16` · **produção acende em `17`**, não em `04` (ali só existe um servidor público com deploy manual) ·
-`03` é **laboratório anexado**: fica no tracker, mas não é marco da narrativa (ver [Visão Geral](00-visao-geral.md)).
+> Java/Spring: `linux → hardening → caddy → isolamento → backups → deploy`.
+> **Estado final da trilha:** serviço endurecido numa VPS real, com entrada TLS única, rede segmentada, backup off-site provado, deploy por pipeline verde com rollback e tráfego sintético com alerta real.
 
-## Done
+- [x] [01 Linux Runtime](ledger-service/issues/01-linux-runtime.md) — a app vira serviço do sistema: sobe com o boot, responde healthcheck, morre sem cortar requisição
+- [x] [02 Docker Compose](ledger-service/issues/02-docker-compose.md) — tudo sobe com um comando, sem privilegiado, e a API espera o banco estar de pé
+- [ ] [03 VPS Hardening](ledger-service/issues/03-vps-hardening.md) — servidor exposto só aceita chave: sem senha, sem porta aberta, sem força bruta
+- [ ] [04 Caddy Reverse Proxy](ledger-service/issues/04-caddy-reverse-proxy.md) — uma única porta na frente, HTTPS emitido sozinho, cabeçalhos de segurança
+- [ ] [05 DB Backups](ledger-service/issues/05-db-backups-s3.md) — dado sobrevive se o servidor sumir: dump diário fora do servidor, restore provado
+- [ ] [06 Compose Isolation](ledger-service/issues/06-compose-isolation.md) — serviço vizinho não alcança o banco nem o Redis; nada estoura a memória
+- [ ] [07 CI/CD VPS Deploy](ledger-service/issues/07-cicd-vps-deploy.md) — merge vira produção sozinho, e volta sozinho se doer
+- [ ] [08 Tráfego sintético e alertas](ledger-service/issues/08-trafego-sintetico-alertas.md) — sei que está lento ou quebrado antes do usuário perceber
 
-- [x] [01 Linux Runtime](issues/01-linux-runtime.md) — a app vira serviço do sistema: sobe com o boot, responde healthcheck, morre sem cortar requisição
-- [x] [02 Docker Compose](issues/02-docker-compose.md) — tudo sobe com um comando, sem privilegiado, e a API espera o banco estar de pé
+## commerce-api · trilha AWS
 
-### Laboratório concluído (fora da narrativa principal)
+> Node/Postgres: `linux → compose → terraform/LocalStack → CI → observabilidade → S3/EC2`.
+> **Estado final da trilha:** API leve em computação real na nuvem, com estado Terraform remoto, relatório em bucket privado, pipeline que bloqueia merge e staging falho que prova a observabilidade.
 
-- [x] [03 Terraform VPC](issues/03-terraform-vpc.md) — rede que se recria do zero, com o banco inacessível de fora
-      _concluída cedo, como laboratório LocalStack sem custo. **NÃO** é marco da cadeia
-      manual → automatizado → cloud: ela pré-existe a dor que resolve. Permanece como
-      pré-requisito de `10`, `11` e `12` porque o gate de IaC valida o HCL que ela criou.
-      _carry-over condicionado a `elbv2`: reativar ALB e entrada da API pelo SG do ALB_
+- [ ] [01 Linux Runtime](commerce-api/issues/01-linux-runtime.md) — a API sobe como serviço do sistema, com healthcheck e shutdown gracioso
+- [ ] [02 Docker Compose](commerce-api/issues/02-docker-compose.md) — um comando sobe API e banco, imagem non-root e banco sem porta publicada
+- [ ] [03 Terraform VPC](commerce-api/issues/03-terraform-vpc.md) — rede que se recria do zero, com o banco inacessível de fora
+- [ ] [04 GitHub Actions](commerce-api/issues/04-github-actions.md) — teste quebrado, imagem com CVE ou Terraform inválido não passam revidos
+- [ ] [05 Observability](commerce-api/issues/05-observability.md) — sei que está lento ou quebrado antes do usuário perceber
+- [ ] [07 AWS Production](commerce-api/issues/07-aws-production.md) — ninguém aplica por cima de ninguém; sei o custo antes de subir
+- [ ] [08 Staging falho de observabilidade](commerce-api/issues/08-staging-falho-observabilidade.md) — a falha injetada aparece no painel, é diagnosticada por escrito e consertada com prova de antes e depois
 
-## Parked
+### Parked
 
-- [ ] [11 S3 Reports Infra](issues/11-s3-reports-infra.md) — relatório financeiro só sai no bucket certo, com permissão mínima
-      _estacionada (revertida); `S3_ENABLED=false` mantém o `NoOpReportRepository` ativo e nenhuma Issue depende dela_
+- [ ] [06 S3 Reports Infra](commerce-api/issues/06-s3-reports-infra.md) — relatório financeiro só sai no bucket certo, com permissão mínima
+      _estacionada (revertida): nenhuma Issue da trilha depende dela e ela não é marco da sequência `01 → 08`._
 
-## To Do
+## webhook-gateway · trilha DevSecOps
 
-### Servidor (04–05)
+> Node/Redis: `pipeline base → secrets → SAST → SCA → hardening → gates → DAST → mensageria`.
+> **Estado final da trilha:** pipeline agnóstica de cloud que barra segredo, erro estático e CVE alta/crítica, com SCA e DAST exercitados, Redis Streams em produção e staging inseguro de propósito como prova de que os gates pegam o que importa.
 
-- [ ] [04 VPS Hardening](issues/04-vps-hardening.md) — servidor exposto só aceita chave: sem senha, sem porta aberta, sem força bruta
-- [ ] [05 Reverse Proxy](issues/05-caddy-reverse-proxy.md) — uma única porta na frente, HTTPS emitido sozinho, cabeçalhos de segurança
+- [ ] [01 Linux Runtime](webhook-gateway/issues/01-linux-runtime.md) — o consumidor sobe como serviço do sistema, com restart e shutdown gracioso
+- [ ] [02 Docker Compose](webhook-gateway/issues/02-docker-compose.md) — imagem non-root, rota de saúde e Redis sem porta publicada
+- [ ] [03 Pipeline base agnóstica](webhook-gateway/issues/03-pipeline-base-agnostica.md) — build e teste rodam em script local, e o workflow só chama
+- [ ] [04 Secrets Hygiene](webhook-gateway/issues/04-secrets-hygiene.md) — credencial não entra no repositório
+- [ ] [05 SAST Semgrep](webhook-gateway/issues/05-sast-semgrep.md) — padrão inseguro não chega no merge
+- [ ] [06 SCA dependências e imagem](webhook-gateway/issues/06-sca-dependencias-imagem.md) — biblioteca vulnerável não entra, nem por dependência nem por camada da imagem
+- [ ] [07 Pipeline Hardening](webhook-gateway/issues/07-pipeline-hardening.md) — a pipeline não vira o caminho mais curto até o repositório
+- [ ] [08 DevSecOps Gates](webhook-gateway/issues/08-devsecops-gates.md) — verde significa: sem segredo, sem erro estático, sem CVE alta/crítica
+- [ ] [09 DAST OWASP ZAP](webhook-gateway/issues/09-dast-zap.md) — o serviço rodando é examinado, e o achado é corrigido ou justificado por escrito
+- [ ] [10 Containers e Redis](webhook-gateway/issues/10-containers-redis.md) — evento não se perde quando o consumidor cai
+- [ ] [11 Staging inseguro](webhook-gateway/issues/11-staging-inseguro.md) — gates verdes que nunca enfrentaram um ambiente inteiro montado errado
 
-### Recuperação (06)
+## Fora de escopo
 
-- [ ] [06 DB Backups](issues/06-db-backups-s3.md) — dado sobrevive se o servidor sumir: dump diário fora do servidor, restore provado
-
-### Observabilidade e mensageria (07–08)
-
-- [ ] [07 Observability](issues/07-observability.md) — sei que está lento ou quebrado antes do usuário perceber
-- [ ] [08 Containers e Redis](issues/08-containers-redis.md) — evento não se perde quando o consumidor cai
-
-### Isolamento e limites (09)
-
-- [ ] [09 Compose Isolation](issues/09-compose-isolation.md) — serviço vizinho não alcança o banco nem o Redis; nada estoura a memória
-
-### Automação (10)
-
-- [ ] [10 GitHub Actions](issues/10-github-actions.md) — teste quebrado, imagem com CVE ou Terraform inválido não passam revidos
-
-### IaC e Cloud (12)
-
-- [ ] [12 AWS Production](issues/12-aws-production.md) — ninguém aplica por cima de ninguém; sei o custo antes de subir
-
-### CI/CD + DevSecOps (13–17)
-
-- [ ] [13 Secrets Hygiene](issues/13-secrets-hygiene.md) — credencial não entra no repositório
-- [ ] [14 SAST Semgrep](issues/14-sast-semgrep.md) — padrão inseguro não chega no merge
-- [ ] [15 Pipeline Hardening](issues/15-pipeline-hardening.md) — a pipeline não vira o caminho mais curto até o repositório
-- [ ] [16 DevSecOps Gates](issues/16-devsecops-gates.md) — verde significa: sem segredo, sem erro, sem CVE crítica
-- [ ] [17 CI/CD VPS Deploy](issues/17-cicd-vps-deploy.md) — merge vira produção sozinho, e volta sozinho se doer
-
-### Kubernetes (18)
-
-- [ ] [18 Kubernetes Helm](issues/18-kubernetes-helm.md) — nó morre e o usuário não percebe
+- [`archive/18-kubernetes-helm/`](archive/18-kubernetes-helm/issue.md) — Issue 18 (cluster multi-node + chart Helm) arquivada por decisão: Kubernetes não é uma das 3 trilhas e segue como candidata a 4ª trilha futura.
+- `interview-prep-finops` e `ansible` — trilhas do `devops-study` que não foram escolhidas para este monorepo; continuam lá, fora daqui.
