@@ -98,5 +98,5 @@ Estado final: três redes separando fronteira, aplicação e dados; banco e Redi
   - Banco não pode ganhar entrada `ports:` em nenhuma hipótese
   - `ledger-service/app/.env` continua obrigatório (`env_file`)
 - Esta Issue é a **última palavra sobre topologia de rede**: tudo que entra na stack antes dela (coletor, dashboard, Redis) já está coberto pelas três redes. Serviços adicionados depois precisam ser declarados nas redes corretas explicitamente
-- O Redis ainda não está na stack: quando o Redis entrar (Issue 10 do `webhook-gateway`), ele deve cair na rede interna
+- O Redis ainda não está na stack: quando o Redis entrar ([Issue 10 do `webhook-gateway`](../../webhook-gateway/issues/10-containers-redis.md)), ele deve cair na rede isolada
 - O Redis não pode ser publicado em `0.0.0.0` — acesso externo à Stream é exposição de evento de pagamento
