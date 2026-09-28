@@ -23,7 +23,7 @@ O mesmo contrato em script, com prova L4 (porta) e L7 (`/actuator/health`), é o
 [`healthcheck.sh`](../healthcheck.sh) na raiz do repositório — exit 0 saudável, exit 1 falho:
 
 ```bash
-./healthcheck.sh
+../../healthcheck.sh
 ```
 
 Sem Docker, o caminho da Issue 01 é Postgres no host + `./mvnw spring-boot:run`, com o

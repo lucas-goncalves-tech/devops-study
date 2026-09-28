@@ -72,8 +72,8 @@ Todos a partir de `ledger-service/app/`.
 | `./mvnw spring-boot:run` | sobe a API contra o Postgres | `/actuator/health` responde 200 `UP` |
 | `docker compose up --build` | API + banco pelo Compose | `docker compose ps` mostra `database` `healthy` |
 | `docker compose logs -f securepay_api` | log da API | sem stack trace na subida |
-| `../healthcheck.sh` | prova L4+L7 | exit 0 com o serviço no ar, exit 1 com ele parado |
-| `../healthcheck.sh <host> <porta>` | healthcheck de host não local | mesmo contrato |
+| `../../healthcheck.sh` | prova L4+L7 | exit 0 com o serviço no ar, exit 1 com ele parado |
+| `../../healthcheck.sh <host> <porta>` | healthcheck de host não local | mesmo contrato |
 
 **Armadilha da Issue 01 que continua valendo:** `.env.example` traz
 `SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/...`, porque na Issue 01 o Postgres roda
