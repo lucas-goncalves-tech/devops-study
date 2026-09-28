@@ -691,3 +691,18 @@ Run: `git status --porcelain` → só `?? .learning/`
 Run: `git log --oneline <sha-da-task1>..HEAD` → ~11 commits na ordem das Tasks.
 
 - [ ] **Step 8: Commit** — só se houver correção; caso contrário, reportar resultados ao usuário.
+
+---
+
+## Addendum (durante a execução)
+
+### A1 — Identidade de app em issues reutilizadas (ruling da Task 5)
+
+Issues escritas para o app antigo (ledger/Spring) e reutilizadas em `commerce-api` (Fastify/Node) ou `webhook-gateway` (Node) não podem falar a stack de origem. Regra obrigatória em toda issue reutilizada:
+
+- Tokens que só existem no app de origem — `./mvnw`, `/actuator/*`, HikariCP, heap JVM, porta `8080`, `/api/v1/payments/*`, `ReportRepository`/código Java — são **reescritos** para o equivalente do app de destino (npm, `/metrics` ou `/health` da stack real, pool `pg`/RSS do Node, porta real do app, endpoints reais: `/api/v1/orders`, `/api/v1/products`), **ou** reenquadrados como pertencentes a outro app (cross-app link, `## Fora de escopo`, ou nota) quando o componente é de fato de outro app.
+- Critérios de aceitação mudam na mesma moeda (o que é verificável no app de destino muda junto).
+- Idade/âmbito correto: se o alvo é a stack de produção (compose do ledger), as referências ao contrato Java (`/actuator/health`) são válidas — mas a Issue deve dizer explicitamente que o alvo é aquela stack.
+- Alcance: commerce `03,04,05,06,07`; webhook `05` (SAST: `p/javascript`, não Java), `08` (gates), `10` (stack de produção — manter contrato Java com Contexto explícito); Issues novas da Task 8 já nascem adaptadas.
+
+Custo se errado: a Issue descreve trabalho impossível no app. Custo da correção: uma passada por app, feita por fixer subagente após o review da Task correspondente.
