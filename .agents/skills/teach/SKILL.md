@@ -5,6 +5,10 @@ disable-model-invocation: true
 argument-hint: "What would you like to learn about?"
 ---
 
+**Gate: this skill loads only when the user's message contains `/teach`.** If you arrived here
+from a prose request ("me ensina", "explica", "próxima issue"), stop — do not teach from this
+skill; continue with `teach-anything`.
+
 The user has asked you to teach them something. This is a stateful request - they intend to learn the topic over multiple sessions.
 
 ## Teaching Workspace
