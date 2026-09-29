@@ -52,10 +52,13 @@ de escrever ou fechar qualquer Issue. A numeração reinicia em `01` por app: `l
 ## Escopo de escrita
 
 Gravável: `ledger-service/`, `commerce-api/`, `webhook-gateway/`, `BOARD.md`,
-`00-visao-geral.md`, `README.md`, `AGENTS.md`, `archive/`.
+`00-visao-geral.md`, `README.md`, `AGENTS.md`, `archive/`, `docs/`, `.superpowers/`.
+
+`docs/` e `.superpowers/` são escrita do agente: guardam spec, plano e doc de design — nunca
+infraestrutura nem código de app. Escrever lá não abre exceção para o resto da lista de leitura.
 
 Leitura apenas — proponha o diff e aguarde pedido explícito: código dos apps (`<app>/app/`, com
-Dockerfile e compose), IaC/Terraform, `.github/workflows/`, `healthcheck.sh`, `docs/`, `.agents/`.
+Dockerfile e compose), IaC/Terraform, `.github/workflows/`, `healthcheck.sh`, `.agents/`.
 Enquanto ensinando, a skill sobrepõe o escopo: zero escrita em qualquer lugar.
 
 Padrão da casa: containers non-root e nenhuma porta de serviço publicada em `0.0.0.0/0` — vale para os 3 apps.
