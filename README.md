@@ -28,7 +28,6 @@ host do banco precisa ser o nome do serviço `database`.
 
 - **[BOARD.md](BOARD.md)** — status de cada Issue e a ordem de execução das 3 trilhas.
 - **[00-visao-geral.md](00-visao-geral.md)** — metodologia, template de Issue e política de status.
-- `docs/superpowers/` — specs e planos do trabalho em andamento.
 - `archive/` — Issues arquivadas por decisão (Kubernetes).
 
 ## Princípios

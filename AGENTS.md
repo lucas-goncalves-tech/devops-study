@@ -14,7 +14,6 @@ securepay-devops/
 ├── 00-visao-geral.md    # contexto consolidado, template de Issue, política de status
 ├── ledger-service/  commerce-api/  webhook-gateway/   # os 3 apps — trilhas em `BOARD.md`
 ├── archive/             # Issues arquivadas por decisão
-├── docs/                # specs e planos do trabalho
 ├── .github/             # CI (construção do usuário)
 ├── .agents/skills/      # Matt Pocock engineering skills
 └── .agents/memory/      # memória persistente — o que já foi aprendido
@@ -69,7 +68,7 @@ Gravável: `ledger-service/`, `commerce-api/`, `webhook-gateway/`, `BOARD.md`,
 Memória escreve lá).
 
 Leitura apenas — proponha o diff e aguarde pedido explícito: código dos apps (`<app>/app/`, com
-Dockerfile e compose), IaC/Terraform, `.github/workflows/`, `<app>/scripts/`, `docs/`, `.agents/`
+Dockerfile e compose), IaC/Terraform, `.github/workflows/`, `<app>/scripts/`, `.agents/`
 (exceto `.agents/memory/`).
 Enquanto ensinando, a skill sobrepõe o escopo: zero escrita em qualquer lugar.
 
