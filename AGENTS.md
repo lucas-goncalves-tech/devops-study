@@ -17,7 +17,8 @@ securepay-devops/
 ├── docs/                # specs e planos do trabalho
 ├── .github/             # CI (construção do usuário)
 ├── healthcheck.sh
-└── .agents/skills/      # Matt Pocock engineering skills
+├── .agents/skills/      # Matt Pocock engineering skills
+└── .agents/memory/      # memória persistente — o que já foi aprendido
 ```
 
 Antes de mexer num app, abra o `AGENTS.md` dele (`ledger-service/AGENTS.md`): é onde vive a
@@ -49,13 +50,28 @@ de escrever ou fechar qualquer Issue. A numeração reinicia em `01` por app: `l
 - Custo zero por regra: nenhuma Issue exige recurso pago para ser concluída. Infra local, LocalStack
   e `terraform plan` cobrem quase tudo; VPS pública e conta AWS só como prova final.
 
+## Memória
+
+`.agents/memory/` guarda o que já foi aprendido — é o que faz uma sessão nova saber o que você sabe
+mesmo que o tracker suma. Formato, taxonomia e o que nunca salvar: `.agents/skills/memory-system/`.
+
+- **Startup:** antes da primeira resposta, leia `.agents/memory/MEMORY.md` e aplique o que for
+  relevante em silêncio. Recite só se perguntado.
+- **Issue pronta:** antes de virar `status: done`, grave em `.agents/memory/progress.md` o que se
+  aprendeu até aquele ponto — o que a próxima Issue reusa (comandos, caminhos), o que travou e como
+  resolveu, decisões e o porquê — e acrescente a linha no índice `MEMORY.md`. Issue fechada sem essa
+  entrada está incompleta.
+- **Pedido explícito** ("guarda isso", "não esquece", "lembra disso") → skill `/remember`.
+
 ## Escopo de escrita
 
 Gravável: `ledger-service/`, `commerce-api/`, `webhook-gateway/`, `BOARD.md`,
-`00-visao-geral.md`, `README.md`, `AGENTS.md`, `archive/`.
+`00-visao-geral.md`, `README.md`, `AGENTS.md`, `archive/`, `.agents/memory/` (só a regra de
+Memória escreve lá).
 
 Leitura apenas — proponha o diff e aguarde pedido explícito: código dos apps (`<app>/app/`, com
-Dockerfile e compose), IaC/Terraform, `.github/workflows/`, `healthcheck.sh`, `docs/`, `.agents/`.
+Dockerfile e compose), IaC/Terraform, `.github/workflows/`, `healthcheck.sh`, `docs/`, `.agents/`
+(exceto `.agents/memory/`).
 Enquanto ensinando, a skill sobrepõe o escopo: zero escrita em qualquer lugar.
 
 Padrão da casa: containers non-root e nenhuma porta de serviço publicada em `0.0.0.0/0` — vale para os 3 apps.
