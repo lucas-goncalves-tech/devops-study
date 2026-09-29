@@ -118,7 +118,7 @@ Expected: exatamente `## Camadas de medição` e `## Invariante de disjunção`,
 grep -c '| novo |' docs/performance/dicionario-de-medicao.md
 ```
 
-Expected: `4`.
+Expected: `5`. São cinco linhas novas — event loop lag, as duas de `pg_stat_statements`, `EXPLAIN` e lock wait. Um `4` aqui significaria que uma delas foi perdida.
 
 - [ ] **Step 5: Commit**
 
