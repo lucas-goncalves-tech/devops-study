@@ -42,9 +42,23 @@ npm run build   # tsc -> dist/
 | [07](issues/07-aws-production.md) | Estado Terraform remoto e computação real | `todo` |
 | [08](issues/08-staging-falho-observabilidade.md) | Staging com falhas de observabilidade injetadas | `todo` |
 
+### Sequência complementar — capacidade e performance
+
+Fora da trilha `01 → 08`, que segue fechada. Numeração própria e dependências por link.
+
+| # | Issue | Status |
+|---|---|---|
+| [09](issues/09-plano-de-capacidade.md) | Plano de capacidade | `todo` |
+| [10](issues/10-carga-em-rampa.md) | Carga em rampa até degradação | `todo` |
+| [11](issues/11-localizacao-do-gargalo.md) | Localização do gargalo | `todo` |
+| [12](issues/12-correcao-com-prova.md) | Correção com prova de efeito | `todo` |
+| [13](issues/13-custo-da-vazao.md) | Custo da vazão e right-sizing | `todo` |
+
+Dicionário de medição compartilhado pelas cinco: [`docs/performance/`](../docs/performance/dicionario-de-medicao.md).
+
 Issue = uma capacidade, escrita como RFC. Não é tutorial: o passo a passo de cada uma está em
 [`estudos/`](estudos/) e o status de todas as trilhas no [`BOARD.md`](../BOARD.md).
 
-- [`issues/`](issues/) — as 8 Issues da trilha AWS
+- [`issues/`](issues/) — as 8 Issues da trilha AWS, mais a sequência complementar `09 → 13`
 - [`estudos/`](estudos/) — material de estudo, um arquivo por Issue
 - [`AGENTS.md`](AGENTS.md) — stack, variáveis de ambiente e gaps conhecidos, para quem vai mexer

@@ -51,6 +51,23 @@ tags: [tracker, board]
 - [ ] [06 S3 Reports Infra](commerce-api/issues/06-s3-reports-infra.md) — relatório financeiro só sai no bucket certo, com permissão mínima
       _estacionada (revertida): nenhuma Issue da trilha depende dela e ela não é marco da sequência `01 → 08`._
 
+### Sequência complementar — capacidade e performance
+
+> Complementar à trilha AWS, **não parte dela**. Numeração própria `09 → 13`; as dependências reais
+> estão declaradas por link em cada Issue, não pela ordem da trilha — que segue fechada em `01 → 08`.
+> Dicionário de medição compartilhado: [`docs/performance/`](docs/performance/dicionario-de-medicao.md).
+> **Estado final:** vazão-alvo calculada, limite real encontrado por rampa, gargalo nomeado com
+> número, correção com delta medido e custo por vazão — sem provisionar nada.
+
+- [ ] [09 Plano de capacidade](commerce-api/issues/09-plano-de-capacidade.md) — quanto o serviço deveria aguentar, com a conta fechada antes de medir
+- [ ] [10 Carga em rampa](commerce-api/issues/10-carga-em-rampa.md) — até onde aguenta de fato, e onde a curva quebra
+- [ ] [11 Localização do gargalo](commerce-api/issues/11-localizacao-do-gargalo.md) — o que satura primeiro, nomeado com número
+- [ ] [12 Correção com prova de efeito](commerce-api/issues/12-correcao-com-prova.md) — a mudança de maior efeito, com o delta do mesmo script lado a lado
+- [ ] [13 Custo da vazão](commerce-api/issues/13-custo-da-vazao.md) — quanto custa sustentar o pico medido, e se a instância é do tamanho certo
+
+> **Cadeia:** `05 → 09 → 10 → {11 → 12, 13}`. Custo zero: k6 como container contra o Compose da `02`.
+> Kubernetes, HPA e FinOps como programa seguem fora de escopo (`archive/18-kubernetes-helm`).
+
 ## webhook-gateway · trilha DevSecOps
 
 > Node/Redis: `pipeline base → secrets → SAST → SCA → hardening → gates → DAST → mensageria`.

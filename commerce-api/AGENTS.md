@@ -28,6 +28,20 @@ fonte, então uma das duas está desatualizada se elas divergirem.
 | [07](issues/07-aws-production.md) | Estado Terraform remoto com lock e computação em nuvem real | `todo` |
 | [08](issues/08-staging-falho-observabilidade.md) | Staging separado com três falhas de observabilidade injetadas, diagnosticadas e corrigidas | `todo` |
 
+**Sequência complementar — capacidade e performance.** Numeração própria, **fora** da trilha `01 → 08`,
+que segue fechada. Dependências por link em cada Issue, não pela ordem.
+
+| # | Issue | Status |
+|---|---|---|
+| [09](issues/09-plano-de-capacidade.md) | Conta de capacidade fechada antes de medir | `todo` |
+| [10](issues/10-carga-em-rampa.md) | Rampa até degradação com o ponto de inflexão registrado | `todo` |
+| [11](issues/11-localizacao-do-gargalo.md) | Veredito nomeando o recurso que satura primeiro | `todo` |
+| [12](issues/12-correcao-com-prova.md) | Uma mudança com o delta do mesmo script lado a lado | `todo` |
+| [13](issues/13-custo-da-vazao.md) | Custo por vazão e checagem de right-sizing | `todo` |
+
+Dicionário de medição compartilhado pelas cinco: [`docs/performance/`](../docs/performance/dicionario-de-medicao.md).
+Cadeia: `05 → 09 → 10 → {11 → 12, 13}`. Custo zero: k6 como container contra o Compose da `02`.
+
 **Próxima a entrar: `01`.** `06` está `parked` de propósito (revertida): nenhuma Issue da trilha
 depende dela e ela não é marco da sequência. Não a puxe de volta para fechar o gap.
 
