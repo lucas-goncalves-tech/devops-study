@@ -20,7 +20,7 @@
 - **Checkbox do board espelha o `status:` do frontmatter** (`00-visao-geral.md:72`). `09` a `13` nascem todas `todo` / `[ ]`.
 - **Kubernetes, HPA e autoscaling seguem fora de escopo** — `archive/18-kubernetes-helm` continua candidata a 4ª trilha.
 - **FinOps como programa segue fora de escopo** (`00-visao-geral.md:76`).
-- **Nenhuma Issue existente é reescrita.** `commerce 05` e `ledger 08` recebem apenas uma linha de desambiguação.
+- **Nenhuma Issue existente é reescrita.** `commerce 05` recebe uma linha em `## Fora de escopo`; `ledger 08` recebe duas — uma em `## Fora de escopo` e a correção da referência em `## Limitações / notas`, que hoje aponta a carga de desempenho para `05` quando quem faz a rampa é a `10`.
 - **As 5 Issues referenciam o dicionário.** Toda Issue da sequência liga para `../../docs/performance/dicionario-de-medicao.md` a partir da seção `Escopo`. Um dicionário que só o Task 1 cita é um arquivo órfão, e a spec o define como contrato compartilhado.
 - **A alteração de escopo de escrita do `AGENTS.md` já foi feita** na conversa que originou a spec (`docs/` e `.superpowers/` movidos para gravável). Este plano não a repete; o `AGENTS.md` só aparece em `Global Constraints` como a regra vigente.
 
@@ -56,7 +56,7 @@ Cinco modos de falha que a spec implica e que nenhuma verificação de conteúdo
 | `commerce-api/README.md` | índice dos arquivos novos |
 | `00-visao-geral.md` | 3 linhas: a sequência complementar existe e `archive/18` segue candidata a 4ª trilha |
 | `commerce-api/issues/05-observability.md` | **uma** linha em `## Fora de escopo` separando smoke test de rampa |
-| `ledger-service/issues/08-trafego-sintetico-alertas.md` | **uma** linha em `## Fora de escopo` separando tráfego sintético de teste de capacidade |
+| `ledger-service/issues/08-trafego-sintetico-alertas.md` | **duas** linhas: uma em `## Fora de escopo` separando tráfego sintético de teste de capacidade, e a correção da referência em `## Limitações / notas`, que hoje aponta a carga de desempenho para `05` quando quem faz a rampa é a `10` |
 
 **Não tocados:** qualquer arquivo sob `*/app/`, `infra/`, `.github/`, `healthcheck.sh`, `.agents/`.
 

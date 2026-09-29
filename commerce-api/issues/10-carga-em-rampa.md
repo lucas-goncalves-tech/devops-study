@@ -79,6 +79,8 @@ medida em lugar nenhum do repositório.
 - [ ] Escrever o script k6 com a vazão-alvo da [Issue 09](09-plano-de-capacidade.md) declarada em
       comentário, e estágios que crescem a partir dela
 - [ ] Fazer a rampa **parar no primeiro estágio em que o threshold falha**, e registrar esse estágio
+- [ ] Declarar em comentário qual recurso se espera que sature primeiro, para que a
+      [Issue 11](11-localizacao-do-gargalo.md) tenha uma hipótese declarada a confrontar
 - [ ] Registrar o último estágio que passou e o primeiro que quebrou, com a vazão de cada um
 - [ ] Publicar o event loop lag na rota `/metrics` que a Issue 05 já expõe
 - [ ] Manter a carga com `idempotencyKey` no corpo do checkout, como a Issue 05 já faz
@@ -91,11 +93,15 @@ medida em lugar nenhum do repositório.
 - [ ] Existe um estágio identificado onde o critério de falha quebrou, e ele é nomeado na Issue
 - [ ] O ponto de inflexão está registrado com a vazão atingida e o p95 naquele ponto
 - [ ] A série de event loop lag da janela está anexada como evidência
-- [ ] Durante toda a janela, `/health` responde `200` com `"status":"UP"` com o banco de pé, e
-      `503` com `"DEGRADED"` sem ele
-- [ ] Nenhum erro 5xx de aplicação aparece no log durante a janela
+- [ ] Durante a janela **até o último estágio que passou**, `/health` responde `200` com
+      `"status":"UP"` com o banco de pé, e `503` com `"DEGRADED"` sem ele
+- [ ] Nenhum erro 5xx de aplicação aparece no log **na mesma janela**, até o último estágio que
+      passou — a janela de encerramento é a de degradação esperada, e exigir 5xx zero nela tornaria
+      a Issue impossível de fechar
+- [ ] Nenhum pedido duplicado resultante da carga
 - [ ] `/metrics` e `/health` continuam registrados **fora** do `preHandler` de autenticação
-- [ ] Nenhum pedido duplicado e nenhum estoque negativo resultante da carga
+- [ ] Se houve estoque negativo, ele está registrado como observação da execução, com a consulta
+      que o mostra
 
 ## Validação
 
@@ -129,3 +135,11 @@ medida em lugar nenhum do repositório.
 - A carga escreve no banco. Ela usa `idempotencyKey` para não duplicar pedido, mas cria linhas de
   verdade: o que ela cria precisa ser identificado e removido ao final, como a Issue 08 já exige da
   carga sintética dela.
+- **Estoque negativo é um resultado esperado desta Issue, não uma falha dela.** A validação de
+  estoque em `orders.service.ts:45-47` não é bloqueante (sem `FOR UPDATE`), a transação roda em
+  READ COMMITTED, o `UPDATE` subtrai sem guarda e `schema.ts:36` não tem `CHECK`. O lock de linha
+  serializa as escritas, mas não impede que a segunda passe a validação com o saldo já gasto por
+  outro. Uma rampa com muitos VUs sobre o mesmo produto encontra isso, e encontrar é o que a Issue
+  promete. Exigir saldo limpo na rampa tornaria a Issue impossível de fechar e esconderia um defeito
+  real de correção — que é da [Issue 12](12-correcao-com-prova.md) consertar, com a guarda nomeada
+  lá como candidata.

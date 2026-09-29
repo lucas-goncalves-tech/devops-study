@@ -38,8 +38,11 @@ comparadas lado a lado.
 Para o veredito que este schema produz, os candidatos mais prováveis — nomeados aqui como
 possibilidade, **não** como escopo decidido — são a troca dos N `SELECT products` em `await`
 sequencial por uma única consulta com `id = ANY(...)`
-(`src/modules/orders/orders.service.ts:40-61`) e o tratamento da contenção de estoque no
-`UPDATE products` que pega lock de linha (`:80`).
+(`src/modules/orders/orders.service.ts:40-61`), o tratamento da contenção de estoque no
+`UPDATE products` que pega lock de linha (`:80`), e a **guarda de estoque** que hoje não existe: um
+`UPDATE` condicional com `WHERE stock_quantity >= ${quantity}`, ou `SELECT ... FOR UPDATE` na
+validação, ou `CHECK (stock_quantity >= 0)` em `schema.ts:36`. As três resolvem o mesmo defeito e
+escolher entre elas é o que o veredito da Issue 11 decide.
 
 O vocabulário de medição está em
 [`docs/performance/dicionario-de-medicao.md`](../../docs/performance/dicionario-de-medicao.md).
@@ -59,7 +62,9 @@ O vocabulário de medição está em
   patamar solto
 - Comparação de execuções: o que precisa estar igual para o delta ser atribuível
 - Idempotência transacional: por que otimizar o caminho de escrita pode duplicar pedido
-- Contenção de lock e as duas correções possíveis: evitar a contendedão ou tolerá-la com retry
+- Contenção de lock e as duas correções possíveis: evitar a contenção ou tolerá-la com retry
+- Guarda de concorrência: `UPDATE` condicional, `SELECT ... FOR UPDATE` e `CHECK`, e o que cada uma
+  resolve e o que deixa de resolver
 
 ## Estado atual
 
@@ -91,8 +96,12 @@ configurado em `max: 10` com `connect_timeout: 10` em `src/db/connection.ts:6-10
 - [ ] As duas execuções estão na Issue, lado a lado, vindas do **mesmo** script
 - [ ] Exatamente **uma** mudança foi aplicada, e ela está nomeada
 - [ ] O delta está em número nos três eixos, com sinal
-- [ ] **`checkout` continua idempotente por `idempotencyKey`**, e nenhum pedido duplicado nem
-      estoque negativo apareceu depois da rodada
+- [ ] **`checkout` continua idempotente por `idempotencyKey`**, e nenhum pedido duplicado apareceu
+      depois da rodada
+- [ ] Se a rodada anterior achou estoque negativo, **ele não aparece mais** depois da mudança — a
+      correção de desempenho não pode conviver com o defeito de correção que a rampa revelou
+- [ ] O delta move o **ponto de inflexão** registrado pela Issue 10, e não só o p95 de um patamar
+      solto — é isso que separa uma correção real de um ganho de 1%
 - [ ] `/health` continua respondendo `200` com `"UP"` e `503` com `"DEGRADED"`, e `/metrics`
       continua fora do `preHandler` de autenticação
 - [ ] Nenhum erro 5xx de aplicação durante a re-execução
@@ -126,5 +135,7 @@ configurado em `max: 10` com `connect_timeout: 10` em `src/db/connection.ts:6-10
   otimização, é troca de incidente.
 - A alteração de código é construção do usuário — o agente propõe o diff e o usuário implementa. Os
   limites de escrita do monorepo não mudam por causa desta Issue.
-- Um ganho pequeno mas real ainda é ganho. O critério é o delta estar medido e atribuído, não a
-  magnitude.
+- **A magnitude do delta é critério.** A spec de risco desta sequência é explícita: transformar o
+  ajuste de bottleneck em tweak infinito, e **melhorar 1% não fecha a Issue**. Um ganho pequeno e não
+  atribuído não é resultado — é ruído. O delta precisa mover o **ponto de inflexão** registrado pela
+  [Issue 10](10-carga-em-rampa.md), e o critério de aceitação exige que isso apareça em número.

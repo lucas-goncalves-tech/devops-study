@@ -29,7 +29,7 @@ arquitetura, as variáveis de ambiente e o contrato de infra que este arquivo n�
 | App | Trilha (ordem da sequência) | Estágio |
 |---|---|---|
 | `ledger-service` · 8 Issues | VPS — `linux → hardening → caddy → backups → isolamento → deploy` | `01`,`02` `done`; `03` a entrar |
-| `commerce-api` · 8 Issues | AWS — `linux → compose → terraform → CI → observabilidade → S3/EC2` | `01` a entrar; `06` `parked` |
+| `commerce-api` · 13 Issues | AWS — `linux → compose → terraform → CI → observabilidade → S3/EC2`, mais a sequência complementar `09 → 13` de capacidade e performance | `01` a entrar; `06` `parked` |
 | `webhook-gateway` · 11 Issues | DevSecOps — `pipeline → secrets → SAST → SCA → hardening → gates → DAST → mensageria` | `01` a entrar |
 
 **Status e ordem de execução → `BOARD.md`:** consulte quando precisar saber o que está feito e o que

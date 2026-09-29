@@ -1,5 +1,5 @@
 ---
-aliases: [issue-13, custo, finops, right-sizing]
+aliases: [issue-13, custo, right-sizing, custo-por-vazao]
 tags: [tracker, issue, todo, study-needed]
 status: todo
 prioridade: media
@@ -11,10 +11,10 @@ prioridade: media
 
 A [Issue 07 — AWS Production](07-aws-production.md) estima o custo de **provisionar** um recurso
 antes de subir, e essa trava de custo involuntário continua válida e não muda aqui. O que não existe
-é a conta do outro lado: quanto custa **sustentar** uma vazão. Um relatório de performance diz que a
-API quebra em 340 RPS; ninguém converts 340 RPS em reais por mês, e sem essa conta o
-right-sizing é opinião — não há como dizer se a instância dimensionada é do tamanho certo ou se está
-paying por capacidade que a aplicação nunca usa.
+é a conta do outro lado: quanto custa **sustentar** uma vazão. Se um relatório de performance dissesse que a
+API quebra em 340 RPS, ninguém converteria 340 RPS em reais por mês, e sem essa conta o
+right-sizing seria opinião — não haveria como dizer se a instância dimensionada é do tamanho certo
+ou se está pagando por capacidade que a aplicação nunca usa.
 
 ## Objetivo
 

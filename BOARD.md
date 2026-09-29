@@ -65,7 +65,9 @@ tags: [tracker, board]
 - [ ] [12 Correção com prova de efeito](commerce-api/issues/12-correcao-com-prova.md) — a mudança de maior efeito, com o delta do mesmo script lado a lado
 - [ ] [13 Custo da vazão](commerce-api/issues/13-custo-da-vazao.md) — quanto custa sustentar o pico medido, e se a instância é do tamanho certo
 
-> **Cadeia:** `05 → 09 → 10 → {11 → 12, 13}`. Custo zero: k6 como container contra o Compose da `02`.
+> **Cadeia:** `05 → 09 → 10 → {11 → 12, 13}`, com a `02` (Compose) como pré-requisito da `11`, que
+> configura a coleta de estatística de consulta no mesmo Postgres em que a rampa mediu.
+> Custo zero: k6 como container contra o Compose da `02`.
 > Kubernetes, HPA e FinOps como programa seguem fora de escopo (`archive/18-kubernetes-helm`).
 
 ## webhook-gateway · trilha DevSecOps

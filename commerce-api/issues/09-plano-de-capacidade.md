@@ -46,6 +46,9 @@ O vocabulário de medição usado por esta Issue e pelas outras quatro da sequê
 - Medir. A medição é da [Issue 10](10-carga-em-rampa.md).
 - Coleta de métricas, dashboards e alertas — [Issue 05](05-observability.md).
 - Dimensionamento em nuvem gerenciada ou Multi-AZ.
+- **Escolher e provisionar a instância em nuvem** — a [Issue 07](07-aws-production.md) é a dona da
+  trava de custo e da escolha de recurso pago. Esta Issue chega a um tipo de instância como
+  conclusão aritmética; ela não abre conta e não escolhe o que comprar.
 - Previsão de demanda por sazonalidade, crescimento orgânico ou projeção de receita.
 
 ## Conhecimentos envolvidos

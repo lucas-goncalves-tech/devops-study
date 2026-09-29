@@ -23,8 +23,12 @@ Estado final: um **veredito escrito nomeando o recurso que satura primeiro**, su
 ## Dependências
 
 - Requer [Issue 10 — Carga em rampa](10-carga-em-rampa.md): o ponto de inflexão registrado por ela
-  é o cenário onde o perfil é feito. Sem o limite conhecido, qualquer profiling mede o sistema em
-  um patamar arbitrário e não diz nada.
+  é o cenário onde o perfil é feito, e a hipótese que ela declara no script é o que esta Issue
+  confronta. Sem o limite conhecido, qualquer profiling mede o sistema em um patamar arbitrário e
+  não diz nada.
+- Requer [Issue 02 — Docker Compose](02-docker-compose.md): o perfil roda contra o Compose criado
+  por ela, com o Postgres que a rampa mediu — a coleta de estatística de consulta é habilitada
+  nesse mesmo Postgres, e a composição é o que torna a medição e o perfil o mesmo ambiente.
 
 ## Escopo
 
@@ -66,7 +70,10 @@ não há `EXPLAIN` registrado em lugar nenhum, e ninguém olhou para waits de lo
 pela Issue 05 ganhou event loop lag com a Issue 10, mas ele ainda não foi aplicado contra nada. O
 `checkout` emite 14 round-trips serializados por carrinho de 3 itens
 (`src/modules/orders/orders.service.ts:22-114`) e faz um `SELECT products` por item em `await`
-sequencial — hipótese forte, ainda não um número.
+sequencial — hipótese forte, ainda não um número. Há hipótese mais forte que essa, e ela é de
+correção, não de desempenho: a validação de estoque em `:45-47` não é bloqueante (sem `FOR UPDATE`),
+a transação roda em READ COMMITTED e o `UPDATE` em `:80-86` subtrai sem guarda, então duas compras
+concorrentes do mesmo produto podem levar o saldo a negativo.
 
 ## Resultado esperado
 
@@ -85,16 +92,18 @@ sequencial — hipótese forte, ainda não um número.
 - [ ] Registrar a contagem de waits de lock em `products` durante a janela do ponto de inflexão
 - [ ] Aplicar e escrever a disjunção do event loop lag, escolhendo entre Node e banco
 - [ ] **Escrever o veredito nomeando um recurso** — o que satura primeiro
-- [ ] Se a hipótese da Issue 10 for contrariada pelos dados, registrar o erro de hipótese
-      explicitamente
+- [ ] Se algum produto ficou com estoque negativo na janela, verificar se o mesmo lock de linha
+      aparece no plano e incluí-lo no veredito como recurso ou causa
+- [ ] Se a hipótese declarada no script da Issue 10 for contrariada pelos dados, registrar o erro de
+      hipótese explicitamente
 
 ## Critérios de aceitação
 
 - [ ] O veredito nomeia **um** recurso, com o número que sustenta a nomeação
 - [ ] Os dois números de `pg_stat_statements` estão registrados: tempo total e contagem de chamadas
 - [ ] A disjunção do event loop lag está aplicada e escrita, não apenas mencionada
-- [ ] Se a hipótese da Issue 10 (pool esgotado) for contrariada, o erro de hipótese está registrado
-      na Issue, e não omitido
+- [ ] Se a hipótese declarada na Issue 10 for contrariada, o erro de hipótese está registrado na
+      Issue, e não omitido
 - [ ] Nenhum código, schema ou índice foi alterado
 
 ## Validação

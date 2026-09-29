@@ -37,7 +37,7 @@ problema é do banco.**
 
 Essa disjunção é o que separa um relatório de performance de um palpite, e é o que a
 [Issue 11](../../commerce-api/issues/11-localizacao-do-gargalo.md) tem de aplicar e registrar. Sem
-ela, "rodei k6 e o p95 subiu" não diz se Increasinga o servidor ou Increasing banco — e otimizar a
+ela, "rodei k6 e o p95 subiu" não diz se o servidor está ocupado ou se é o banco — e otimizar a
 camada errada custa tempo e não devolve nada.
 
 Três fatos do código que as medições vão encontrar, registrados aqui para que a leitura não precise
@@ -46,10 +46,20 @@ abrir o repositório:
 - O pool é curto: `max: 10` e `connect_timeout: 10` saem de
   `commerce-api/app/src/db/connection.ts:6-10`. Com carga alta, a fila de pendentes cresce e o
   tempo de espera vira erro.
-- O `checkout` emite **14 round-trips serializados** por carrinho de 3 itens
-  (`commerce-api/app/src/modules/orders/orders.service.ts:22-114`): 1 `SELECT` de idempotência,
-  3 `SELECT products` um a um em `await` sequencial, 1 `INSERT orders` e 9 nas baixas, itens e
-  auditoria. A latência cresce linearmente com o tamanho do carrinho.
+- O `checkout` emite **14 round-trips serializados** por carrinho de 3 itens **com `idempotencyKey`
+  no corpo** (`commerce-api/app/src/modules/orders/orders.service.ts:22-114`): 1 `SELECT` de
+  idempotência, 3 `SELECT products` um a um em `await` sequencial, 1 `INSERT orders` e 9 nas baixas,
+  itens e auditoria. Sem `idempotencyKey` são 13, porque a query de idempotência é condicional
+  (`:24`); no caminho de replay são 15. A carga da [Issue 10](../../commerce-api/issues/10-carga-em-rampa.md)
+  usa `idempotencyKey`, então 14 é o número que a medição vai ver.
 - A baixa de estoque (`orders.service.ts:80`) pega lock de linha em `products`, retido até o commit
   da transação inteira. Duas compras simultâneas do mesmo produto travam uma na outra — e lock wait
   não aparece em nenhuma das métricas de latência, só na de contenção.
+- **O lock serializa, mas não protege o estoque.** A validação em `orders.service.ts:45-47` é um
+  `findFirst` sem `FOR UPDATE`, a transação roda em READ COMMITTED, o `UPDATE` subtrai sem guarda
+  (`stock_quantity - ${quantity}`, sem `WHERE stock_quantity >= ...`) e `schema.ts:36` não tem
+  `CHECK` na coluna. Duas compras concorrentes do mesmo produto leem o mesmo saldo, ambas passam a
+  validação, e a segunda aplica a subtração sobre o saldo já reduzido. **O saldo pode ficar
+  negativo**, e nenhuma métrica de latência mostra isso: só a contagem de lock e a leitura do saldo
+  revelam. Uma carga sintética que encontra estoque negativo **achou um defeito de correção**, e
+  isso é resultado da medição, não motivo para descartar a rodada.
