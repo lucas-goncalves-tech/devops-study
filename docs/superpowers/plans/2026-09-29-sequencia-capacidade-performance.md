@@ -489,7 +489,9 @@ Entrada para o dicionário de medição, referenciado com caminho relativo a par
 
 ```bash
 for n in 09-plano-de-capacidade 10-carga-em-rampa 11-localizacao-do-gargalo 12-correcao-com-prova 13-custo-da-vazao; do
-  board=$(grep -c "\[ \] \[$n\]" BOARD.md)
+  # O board escreve o TITULO no colchete e o SLUG no parentese: casar o slug direto
+  # da falso negativo nas cinco.
+  board=$(grep -c "\[ \] \[[^]]*\](commerce-api/issues/$n.md)" BOARD.md)
   fm=$(grep -c '^status: todo$' commerce-api/issues/$n.md)
   echo "$n board=$board status=$fm"
 done
@@ -592,14 +594,18 @@ Expected: cinco `OK`, nenhum `FORA DO TEMPLATE`.
 ```bash
 for n in 09-plano-de-capacidade 10-carga-em-rampa 11-localizacao-do-gargalo 12-correcao-com-prova 13-custo-da-vazao; do
   f=commerce-api/issues/$n.md
-  d=$(grep -oE '\.\./\.\./[^)]*issues/[0-9]+-[a-z0-9-]+\.md' "$f" | sort -u)
+  # Dependencia se declara como link IRMAO ("05-observability.md"), nao como caminho
+  # completo: as 5 Issues estao no mesmo diretorio. A forma "../../app/issues/..."
+  # e cross-app. E so a secao Dependencias conta — link em Fora de escopo e referencia.
+  d=$(awk '/^## Dependências$/{s=1;next} /^## /{s=0} s' "$f" | grep -oE '[0-9]{2}-[a-z0-9-]+\.md' | sort -u)
   [ -z "$d" ] && echo "SEM DEPENDENCIA: $n"
-  for l in $d; do
-    p=$(cd commerce-api/issues && cd "$(dirname "$l")" && pwd)/$(basename "$l")
-    [ -f "$p" ] || echo "LINK QUEBRADO: $n -> $l"
-  done
+  for l in $d; do [ -f "commerce-api/issues/$l" ] || echo "LINK QUEBRADO: $n -> $l"; done
 done
 ```
+
+Expected: sem `SEM DEPENDENCIA` e sem `LINK QUEBRADO`. A cadeia que deve aparecer, conferida
+seção a seção: `09 → [05]` · `10 → [05, 09]` · `11 → [10]` · `12 → [10, 11]` · `13 → [09, 10]`,
+que é a mesma que o `BOARD.md` declara.
 
 Expected: sem `SEM DEPENDENCIA` e sem `LINK QUEBRADO`. Os quatro links que devem existir: `05` (em `09` e em `10`), `09` (em `10`, `13`), `10` (em `11`, `13`), `11` (em `12`).
 
@@ -638,10 +644,16 @@ Expected: sem saída. A regra de custo zero vale para a sequência inteira.
 - [ ] **Step 5: Nada fora do escopo gravável foi tocado**
 
 ```bash
-git diff --name-only HEAD~8..HEAD | grep -vE '^(docs/|commerce-api/issues/|ledger-service/issues/|BOARD\.md|00-visao-geral\.md|AGENTS\.md)' 
+# MERGE_BASE, nao HEAD~N: a branch tem o commit de setup mais os 9 tasks, entao um
+# HEAD~8 cortaria o primeiro task e o falso-verde deixaria de ver infra tocada.
+MB=$(git merge-base main HEAD)
+git diff --name-only "$MB"..HEAD | grep -vE '^(docs/|commerce-api/issues/|commerce-api/AGENTS\.md$|commerce-api/README\.md$|ledger-service/issues/|BOARD\.md$|00-visao-geral\.md$|AGENTS\.md$)'
 ```
 
-Expected: sem saída. Qualquer `commerce-api/AGENTS.md` e `commerce-api/README.md` é esperado e já coberto pela regra; qualquer coisa sob `app/`, `infra/`, `.github/` ou `.agents/` é violação.
+Expected: sem saída. Qualquer coisa sob `app/`, `infra/`, `.github/`, `.agents/`, Terraform ou
+`healthcheck.sh` é violação de escopo. A alternação precisa ancorar cada arquivo com `$`: sem o
+âncora, o padrão de diretório `commerce-api/issues/` nunca casa uma Issue e a verificação acusa
+falso positivo em todos os arquivos legítimos.
 
 - [ ] **Step 6: Reportar ao usuário sem commit**
 
