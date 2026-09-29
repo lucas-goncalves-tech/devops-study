@@ -16,7 +16,6 @@ securepay-devops/
 ├── archive/             # Issues arquivadas por decisão
 ├── docs/                # specs e planos do trabalho
 ├── .github/             # CI (construção do usuário)
-├── healthcheck.sh
 ├── .agents/skills/      # Matt Pocock engineering skills
 └── .agents/memory/      # memória persistente — o que já foi aprendido
 ```
@@ -31,7 +30,7 @@ arquitetura, as variáveis de ambiente e o contrato de infra que este arquivo n�
 |---|---|---|
 | `ledger-service` · 8 Issues | VPS — `linux → hardening → caddy → backups → isolamento → deploy` | `01`,`02` `done`; `03` a entrar |
 | `commerce-api` · 10 Issues | AWS — `linux → compose → terraform → CI → observabilidade → S3/EC2 → apply → deploy` | `01` a entrar; `06` `parked` |
-| `webhook-gateway` · 11 Issues | DevSecOps — `pipeline → secrets → SAST → SCA → hardening → gates → DAST → mensageria` | `01` a entrar |
+| `webhook-gateway` · 12 Issues | DevSecOps — `pipeline → secrets → SAST → SCA → hardening → gates → DAST → mensageria → integração` | `01` a entrar |
 
 **Status e ordem de execução → `BOARD.md`:** consulte quando precisar saber o que está feito e o que
 entra em seguida. **Metodologia, pilares e política de status → `00-visao-geral.md`:** consulte antes
@@ -70,7 +69,7 @@ Gravável: `ledger-service/`, `commerce-api/`, `webhook-gateway/`, `BOARD.md`,
 Memória escreve lá).
 
 Leitura apenas — proponha o diff e aguarde pedido explícito: código dos apps (`<app>/app/`, com
-Dockerfile e compose), IaC/Terraform, `.github/workflows/`, `healthcheck.sh`, `docs/`, `.agents/`
+Dockerfile e compose), IaC/Terraform, `.github/workflows/`, `<app>/scripts/`, `docs/`, `.agents/`
 (exceto `.agents/memory/`).
 Enquanto ensinando, a skill sobrepõe o escopo: zero escrita em qualquer lugar.
 
@@ -96,3 +95,7 @@ CI/CD e observabilidade se repetem em cada app porque cada trilha precisa atrave
 própria — repetir a capacidade é o estudo. O que outra trilha já construiu vale como leitura e
 exemplo, **nunca como pré-requisito de uma Issue**. Nenhuma Issue antecipa tecnologia cujo
 problema ela não resolve.
+
+**Única exceção:** a integração de produção (`webhook-gateway/12`) entra na stack do `ledger` — é o
+único `Requer` cross-app permitido no repo. E scripts de check e troubleshooting moram em
+`<app>/scripts/` — um diretório por trilha, nunca na raiz, nunca compartilhado entre trilhas.

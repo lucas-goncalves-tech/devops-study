@@ -3,7 +3,8 @@
 Dispatcher de webhooks orientado a eventos em **Node 20 · TypeScript · ioredis · Redis Streams**:
 consome uma Stream em laço, assina cada evento com HMAC e despacha. É o app da **trilha
 DevSecOps** do monorepo: a jornada vai do consumidor na máquina até uma pipeline agnóstica de
-cloud que barra segredo, erro estático e CVE alta/crítica.
+cloud que barra segredo, erro estático e CVE alta/crítica — e até o gateway dentro da stack de
+produção real (Issue 12).
 
 **Este app não abre porta HTTP.** Ele é um consumidor de Redis Streams em laço — não há `listen`,
 nem rota, nem `PORT`.
@@ -51,6 +52,7 @@ Não há script `dev`: TypeScript só roda depois de compilado, então `npm star
 | [09](issues/09-dast-zap.md) | OWASP ZAP contra o serviço de pé | `todo` |
 | [10](issues/10-containers-redis.md) | Redis Streams e gateway de webhooks em contêineres | `todo` |
 | [11](issues/11-staging-inseguro.md) | Staging inseguro de propósito, com forense de mensageria | `todo` |
+| [12](issues/12-integracao-producao.md) | `redis` e gateway na stack de produção, ponta a ponta | `todo` |
 
 A trilha começa pela `01`: enquanto ela não vier, não há Dockerfile, `docker-compose.yaml`,
 `.env.example` nem rota de saúde — a `02` os cria.
@@ -58,7 +60,8 @@ A trilha começa pela `01`: enquanto ela não vier, não há Dockerfile, `docker
 Issue = uma capacidade, escrita como RFC. Não é tutorial: o passo a passo de cada uma está em
 [`estudos/`](estudos/) e o status de todas as trilhas no [`BOARD.md`](../BOARD.md).
 
-- [`issues/`](issues/) — as 11 Issues da trilha DevSecOps
+- [`issues/`](issues/) — as 12 Issues da trilha DevSecOps
 - [`estudos/`](estudos/) — material de estudo, um arquivo por Issue
+- [`scripts/`](scripts/) — healthcheck e demais checks de troubleshooting desta trilha (construídos aqui)
 - [`AGENTS.md`](AGENTS.md) — stack, variáveis de ambiente e o mapa de gates em outras trilhas
   (referência), para quem vai mexer

@@ -8,14 +8,15 @@ tags: [tracker, board]
 > Kanban DevSecOps. Contexto consolidado em [00 Visão Geral](00-visao-geral.md).
 > 1 card por capacidade. **A Issue define o trabalho; a `teach-anything` define o aprendizado.**
 > Cada linha descreve **o que a Issue resolve**, não a tecnologia que ela usa.
-> O monorepo tem **3 apps = 3 trilhas**. Cada trilha é uma sequência completa e autônoma para o seu app — CI/CD, gates e observabilidade são construídos do zero em cada uma; o que outra trilha já fez vale como leitura, nunca como pré-requisito.
+> O monorepo tem **3 apps = 3 trilhas**. Cada trilha é uma sequência completa e autônoma para o seu app — CI/CD, gates e observabilidade são construídos do zero em cada uma; o que outra trilha já fez vale como leitura, nunca como pré-requisito. **A única exceção é a integração de produção, `webhook-gateway/12`.**
 > O checkbox de cada linha espelha o `status:` do frontmatter da Issue.
 > Material de estudo de cada Issue vive em `<app>/estudos/` — fora do escopo da Issue.
+> Scripts de check e troubleshooting moram em `<app>/scripts/` — um diretório por trilha, nunca compartilhado.
 
 ## Produção e staging
 
 - **Produção:** sistema único e de verdade — stack `ledger + postgres` numa VPS atrás do Caddy com domínio/TLS (trilha VPS, Issues 03→07) e o `commerce` em EC2 com deploy por pipeline (trilha AWS, Issues 07 e 10).
-- **Integração pendente:** a entrada de `redis` e do `webhook-gateway` na stack da VPS, e o gateway consumindo os eventos do e-commerce, são cards de integração **ainda não escritos** — nenhum card do board depende deles.
+- **Integração de produção:** a entrada de `redis` e do `webhook-gateway` na stack da VPS é a [`webhook-gateway/12`](webhook-gateway/issues/12-integracao-producao.md) — a **única** Issue do repo autorizada a depender de outro app. O consumo dos eventos do e-commerce pelo gateway continua sem card.
 - **Staging:** ambiente separado, público e **deliberadamente falho**, que nunca toca a produção — `ledger 08` (tráfego/alerta), `commerce 08` (falha de observabilidade) e `webhook 11` (insegurança proposital + forense de mensageria).
 
 ## ledger-service · trilha VPS
@@ -56,8 +57,8 @@ tags: [tracker, board]
 
 ## webhook-gateway · trilha DevSecOps
 
-> Node/Redis: `pipeline base → secrets → SAST → SCA → hardening → gates → DAST → mensageria`.
-> **Estado final da trilha:** pipeline agnóstica de cloud que barra segredo, erro estático e CVE alta/crítica, com SCA e DAST exercitados, Redis Streams em produção e staging inseguro de propósito como prova de que os gates pegam o que importa.
+> Node/Redis: `pipeline base → secrets → SAST → SCA → hardening → gates → DAST → mensageria → integração`.
+> **Estado final da trilha:** pipeline agnóstica de cloud que barra segredo, erro estático e CVE alta/crítica, com SCA e DAST exercitados, Redis Streams provado na stack própria, staging inseguro de propósito e o gateway dentro da stack de produção real.
 
 - [ ] [01 Linux Runtime](webhook-gateway/issues/01-linux-runtime.md) — o consumidor sobe como serviço do sistema, com restart e shutdown gracioso
 - [ ] [02 Docker Compose](webhook-gateway/issues/02-docker-compose.md) — imagem non-root, rota de saúde e Redis sem porta publicada
@@ -70,8 +71,9 @@ tags: [tracker, board]
 - [ ] [09 DAST OWASP ZAP](webhook-gateway/issues/09-dast-zap.md) — o serviço rodando é examinado, e o achado é corrigido ou justificado por escrito
 - [ ] [10 Containers e Redis](webhook-gateway/issues/10-containers-redis.md) — evento não se perde quando o consumidor cai, provado na stack própria
 - [ ] [11 Staging inseguro](webhook-gateway/issues/11-staging-inseguro.md) — gates verdes que nunca enfrentaram um ambiente inteiro montado errado
+- [ ] [12 Integração de produção](webhook-gateway/issues/12-integracao-producao.md) — `redis` e gateway entram na stack da VPS e um pagamento vira webhook assinado ponta a ponta
 
-> **Dependências:** todas internas — cada Issue desta trilha requer apenas Issues da mesma trilha.
+> **Dependências:** internas, com a **única exceção do repo**: a **12** toca a stack do `ledger` (Issues 02, 06 e 07 dele) — nenhuma outra Issue de qualquer trilha pode depender de outro app.
 
 ## Fora de escopo
 

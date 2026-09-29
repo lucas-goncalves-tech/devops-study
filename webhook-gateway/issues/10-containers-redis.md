@@ -30,7 +30,7 @@ Estado final: stack multi-serviço deste app com Redis como buffer entre produto
 
 ## Fora de escopo
 
-- Entrada do gateway na stack de produção do `ledger-service` e ativação do publisher real — card de integração de produção, ainda não criado e registrado no `BOARD.md`
+- Entrada do gateway na stack de produção do `ledger-service` e ativação do publisher real — [Issue 12](12-integracao-producao.md) desta trilha; esta Issue não sai da stack própria
 - Publicação na internet, TLS e reverse proxy — fora desta Issue
 - Gates de segurança no CI — Issues 04, 05, 07 e 08
 - Kubernetes — fora de escopo por decisão (arquivado no repositório)
@@ -106,6 +106,6 @@ Estado final: stack multi-serviço deste app com Redis como buffer entre produto
 
 - **Formato de payload herdado do contrato do sistema, não de outro app:** `eventId`, `orderId`, `amount`, `currency`, `status` e `timestamp` são o formato que a suíte deste app já trava. O produtor sintético fala esse formato aqui; quando a integração de produção existir, os dois lados já se entendem
 - **Contrato do consumidor que não pode quebrar:** o group é criado com `MKSTREAM` e tolera `BUSYGROUP` (`src/consumer.ts`) — trocar isso faz o contêiner não subir em restart; e a verificação de assinatura usa `crypto.timingSafeEqual`, que exige buffer de mesmo tamanho — payload malformado é tratado, não lançado
-- **Integração de produção é card futuro, escrito à parte:** a entrada do gateway no compose do `ledger-service`, a ativação de `REDIS_ENABLED=true` e o Redis na stack real estão fora desta Issue e registradas no `BOARD.md`. Os contratos Java que esse card vai precisar honrar estão documentados no `AGENTS.md` do `ledger-service` (propriedade `redis.enabled` com default `false`, pares `@ConditionalOnProperty` complementares, `spring.data.redis.*`, e publicação síncrona dentro de `@Transactional`)
+- **Integração de produção é a Issue 12, escrita à parte:** a entrada do gateway no compose do `ledger-service`, a ativação de `REDIS_ENABLED=true` e o Redis na stack real estão fora desta Issue e são a [Issue 12](12-integracao-producao.md). Os contratos Java que aquela Issue honra estão documentados no `AGENTS.md` do `ledger-service` (propriedade `redis.enabled` com default `false`, pares `@ConditionalOnProperty` complementares, `spring.data.redis.*`, e publicação síncrona dentro de `@Transactional`)
 - O perfil de teste deste app não pode depender de Redis real, e a suíte `npm test` mocka o `ioredis` por completo: ela prova o contrato de Stream, não a integração — a prova de integração é a stack desta Issue
 - Comprovar "sem perda" exige acumular evento pendente de propósito: parar o consumidor antes de publicar é a única forma honesta de provocar o cenário, e limpar a Stream depois da prova faz parte da validação

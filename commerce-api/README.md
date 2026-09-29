@@ -49,4 +49,5 @@ Issue = uma capacidade, escrita como RFC. Não é tutorial: o passo a passo de c
 
 - [`issues/`](issues/) — as 10 Issues da trilha AWS
 - [`estudos/`](estudos/) — material de estudo, um arquivo por Issue
+- [`scripts/`](scripts/) — healthcheck e demais checks de troubleshooting desta trilha (construídos aqui)
 - [`AGENTS.md`](AGENTS.md) — stack, variáveis de ambiente e gaps conhecidos, para quem vai mexer

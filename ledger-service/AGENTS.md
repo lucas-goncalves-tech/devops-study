@@ -72,8 +72,8 @@ Todos a partir de `ledger-service/app/`.
 | `./mvnw spring-boot:run` | sobe a API contra o Postgres | `/actuator/health` responde 200 `UP` |
 | `docker compose up --build` | API + banco pelo Compose | `docker compose ps` mostra `database` `healthy` |
 | `docker compose logs -f securepay_api` | log da API | sem stack trace na subida |
-| `../../healthcheck.sh` | prova L4+L7 | exit 0 com o serviço no ar, exit 1 com ele parado |
-| `../../healthcheck.sh <host> <porta>` | healthcheck de host não local | mesmo contrato |
+| `../scripts/healthcheck.sh` | prova L4+L7 | exit 0 com o serviço no ar, exit 1 com ele parado |
+| `../scripts/healthcheck.sh <host> <porta>` | healthcheck de host não local | mesmo contrato |
 
 **Armadilha da Issue 01 que continua valendo:** `.env.example` traz
 `SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/...`, porque na Issue 01 o Postgres roda
@@ -83,7 +83,7 @@ herdado por todas as Issues que mexem em runtime.
 
 ## Healthcheck: L4 e L7
 
-[`healthcheck.sh`](../healthcheck.sh) prova duas coisas em ordem, e as duas importam:
+[`scripts/healthcheck.sh`](scripts/healthcheck.sh) prova duas coisas em ordem, e as duas importam:
 
 - **L4** — `bash -c "</dev/tcp/$HOST/$PORT"`: a porta aceita conexão. Não prova que a aplicação
   responde; prova que algo está escutando.
@@ -111,6 +111,7 @@ consomem. O contrato de porta e `SIGTERM` da Issue 01 é pressuposto de todo o r
 |---|---|---|
 | [`issues/`](issues/) | as 8 Issues da trilha, uma por capacidade, no template fixo | antes de implementar ou fechar qualquer Issue |
 | [`estudos/`](estudos/) | material de estudo, um arquivo por Issue | quando precisar do passo a passo; a Issue nunca é a aula |
+| [`scripts/`](scripts/) | scripts de check e troubleshooting desta trilha (construídos aqui) | para validar ou depurar sem depender de outra trilha |
 | [`../BOARD.md`](../BOARD.md) | status e ordem das 3 trilhas | para saber o que está feito e o que entra em seguida |
 | [`../00-visao-geral.md`](../00-visao-geral.md) | metodologia, template, política de status | antes de escrever ou fechar uma Issue |
 
@@ -118,7 +119,7 @@ consomem. O contrato de porta e `SIGTERM` da Issue 01 é pressuposto de todo o r
 
 Gravável aqui: `issues/`, `estudos/`, `AGENTS.md` e `README.md`.
 
-`app/` (código, `pom.xml`, `Dockerfile`, `docker-compose.yaml`), `../healthcheck.sh`,
+`app/` (código, `pom.xml`, `Dockerfile`, `docker-compose.yaml`), `scripts/`,
 `../.github/workflows/` e qualquer IaC são **construção do usuário** — proponha o diff e espere
 o pedido explícito. Fechar uma Issue exige a saída real do comando de validação colada em
 `## Evidências`; limitação de ambiente registrada em `Limitações / notas` não vale como evidência.

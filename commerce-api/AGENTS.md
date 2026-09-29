@@ -101,6 +101,7 @@ Os quatro gaps abaixo são **conhecidos e planejados**, não esquecidos: são as
 |---|---|---|
 | [`issues/`](issues/) | as 10 Issues da trilha, uma por capacidade, no template fixo | antes de implementar ou fechar qualquer Issue |
 | [`estudos/`](estudos/) | material de estudo, um arquivo por Issue | quando precisar do passo a passo; a Issue nunca é a aula |
+| [`scripts/`](scripts/) | scripts de check e troubleshooting desta trilha (construídos aqui) | para validar ou depurar sem depender de outra trilha |
 | [`../BOARD.md`](../BOARD.md) | status e ordem das 3 trilhas | para saber o que está feito e o que entra em seguida |
 | [`../00-visao-geral.md`](../00-visao-geral.md) | metodologia, template, política de status | antes de escrever ou fechar uma Issue |
 
@@ -108,7 +109,7 @@ Os quatro gaps abaixo são **conhecidos e planejados**, não esquecidos: são as
 
 Gravável aqui: `issues/`, `estudos/`, `AGENTS.md` e `README.md`.
 
-`app/` (código, `package.json`, `Dockerfile`), `infra/` (Terraform), `../.github/workflows/` e
-qualquer IaC são **construção do usuário** — proponha o diff e espere o pedido explícito. Fechar
+`app/` (código, `package.json`, `Dockerfile`), `infra/` (Terraform), `scripts/`,
+`../.github/workflows/` e qualquer IaC são **construção do usuário** — proponha o diff e espere o pedido explícito. Fechar
 uma Issue exige a saída real do comando de validação colada em `## Evidências`; limitação de
 ambiente registrada em `Limitações / notas` não vale como evidência.

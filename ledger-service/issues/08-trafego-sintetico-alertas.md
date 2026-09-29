@@ -78,7 +78,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 - [ ] Uma degradação induzida faz o alerta disparar de verdade e o canal configurado mostra o disparo, com a evidência arquivada nesta Issue
 - [ ] A regra de alerta tem expressão de PromQL, condição e `for` visíveis na configuração, não apenas descrita em texto
 - [ ] Nenhum requisito desta Issue depende de Issue de outro app: coleta, regra e canal nascem nesta trilha
-- [ ] Durante toda a janela do teste, `/actuator/health` responde `UP` e o `healthcheck.sh` da raiz do repo sai com 0
+- [ ] Durante toda a janela do teste, `/actuator/health` responde `UP` e o `scripts/healthcheck.sh` desta trilha sai com 0
 - [ ] Nenhum erro 5xx de aplicação aparece no log do serviço durante a janela do teste
 - [ ] O script k6 roda contra o domínio público atrás do Caddy, e não contra a porta do container
 - [ ] O que a carga sintética criou no banco de produção está identificado e limpo ao final da execução
@@ -89,7 +89,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 - Executar o agendamento manualmente uma vez e conferir o horário e a saída persistida
 - Induzir a degradação que o alerta observa (limiar artificialmente baixo ou latência adicionada no caminho) e esperar o disparo no canal
 - Reverter a degradação e confirmar que o alerta volta ao estado normal
-- Consultar `/actuator/health` e rodar `healthcheck.sh` durante a janela do teste
+- Consultar `/actuator/health` e rodar `scripts/healthcheck.sh` durante a janela do teste
 - Inspecionar o log do serviço procurando `5xx` no mesmo intervalo
 - Conferir no banco os registros criados pela carga e removê-los
 
@@ -99,7 +99,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 - Saída do k6 com o p95 da janela e o nome do thresholds avaliado
 - Evidência do disparo no canal (linha de log do canal de notificação ou captura de tela com horário)
 - Regra de alerta em arquivo, com PromQL e `for`
-- Saída de `/actuator/health` e do `healthcheck.sh` durante a janela
+- Saída de `/actuator/health` e do `scripts/healthcheck.sh` durante a janela
 - Trecho do log do serviço sem erro 5xx no mesmo intervalo
 - Consulta ao banco com o que a carga criou e o registro da limpeza
 

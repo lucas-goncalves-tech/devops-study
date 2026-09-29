@@ -32,7 +32,7 @@ Estado final: imagem multi-stage enxuta executando como usuário sem privilégio
 - Terraform, Kubernetes, CI/CD, gateway de webhooks com validação, idempotência e retry
 - Foco exclusivo: rota `/health`, multi-stage com usuário sem privilégios, `HEALTHCHECK`, `docker-compose.yaml` com Redis e `.env.example`
 - Segmentação de redes e limites de recursos — [Issue 06 do `ledger-service`](../../ledger-service/issues/06-compose-isolation.md)
-- Entrada do gateway na stack de produção — card de integração ainda não criado, registrado no `BOARD.md`; TLS e publicação de porta — fora desta Issue
+- Entrada do gateway na stack de produção — [Issue 12](12-integracao-producao.md) desta trilha; TLS e publicação de porta — fora desta Issue
 - Métricas de lag do consumer group — [Issue 10](10-containers-redis.md)
 
 ## Conhecimentos envolvidos

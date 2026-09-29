@@ -2,18 +2,19 @@
 
 Dispatcher de webhooks orientado a eventos: consome uma **Redis Stream** em laço, assina cada
 evento com HMAC e despacha. Carrega a **trilha DevSecOps** do monorepo:
-`pipeline → secrets → SAST → SCA → hardening → gates → DAST → mensageria`.
+`pipeline → secrets → SAST → SCA → hardening → gates → DAST → mensageria → integração`.
 
 Estado final da trilha: pipeline agnóstica de cloud que barra segredo, erro estático e CVE
-alta/crítica, com SCA e DAST exercitados, Redis Streams em produção e staging inseguro de
-propósito como prova de que os gates pegam o que importa.
+alta/crítica, com SCA e DAST exercitados, Redis Streams provado na stack própria, staging
+inseguro de propósito como prova de que os gates pegam o que importa — e o gateway dentro da
+stack de produção real, pela Issue 12, que é a única dependência cross-app do repo.
 
 Antes de qualquer coisa neste app, as regras da casa (escopo de escrita, padrão de container,
 skills e roteamento) valem: leia o [`AGENTS.md` da raiz](../AGENTS.md). Metodologia e política de
 status → [`00-visao-geral.md`](../00-visao-geral.md). Status e ordem de execução →
 [`BOARD.md`](../BOARD.md), seção `webhook-gateway · trilha DevSecOps`.
 
-## Trilha DevSecOps — 11 Issues
+## Trilha DevSecOps — 12 Issues
 
 O checkbox do board espelha o `status:` do frontmatter de cada Issue; a tabela abaixo é a mesma
 fonte, então uma das duas está desatualizada se elas divergirem.
@@ -31,8 +32,10 @@ fonte, então uma das duas está desatualizada se elas divergirem.
 | [09](issues/09-dast-zap.md) | DAST com OWASP ZAP em baseline contra o serviço de pé, com achado corrigido ou justificado | `todo` |
 | [10](issues/10-containers-redis.md) | Composição multi-serviço com Redis Streams e gateway de webhooks | `todo` |
 | [11](issues/11-staging-inseguro.md) | Staging inseguro de propósito, fora da produção, com forense de mensageria Redis | `todo` |
+| [12](issues/12-integracao-producao.md) | Entrada de `redis` e do gateway na stack de produção, ponta a ponta | `todo` |
 
-**Próxima a entrar: `01`.** Nada da trilha começou — os cards existem, o trabalho não.
+**Próxima a entrar: `01`.** Nada da trilha começou — os cards existem, o trabalho não. A `12` é a
+única Issue do repo com dependência cross-app: ela toca a stack do `ledger`.
 
 ## O app não é um servidor HTTP
 
@@ -110,8 +113,9 @@ só os chama. Um gate que só existe dentro do CI não é reproduzível na máqu
 
 | Caminho | O que é | Quando abrir |
 |---|---|---|
-| [`issues/`](issues/) | as 11 Issues da trilha, uma por capacidade, no template fixo | antes de implementar ou fechar qualquer Issue |
+| [`issues/`](issues/) | as 12 Issues da trilha, uma por capacidade, no template fixo | antes de implementar ou fechar qualquer Issue |
 | [`estudos/`](estudos/) | material de estudo, um arquivo por Issue | quando precisar do passo a passo; a Issue nunca é a aula |
+| [`scripts/`](scripts/) | scripts de check e troubleshooting desta trilha (construídos aqui) | para validar ou depurar sem depender de outra trilha |
 | [`../BOARD.md`](../BOARD.md) | status e ordem das 3 trilhas | para saber o que está feito e o que entra em seguida |
 | [`../00-visao-geral.md`](../00-visao-geral.md) | metodologia, template, política de status | antes de escrever ou fechar uma Issue |
 
@@ -119,7 +123,7 @@ só os chama. Um gate que só existe dentro do CI não é reproduzível na máqu
 
 Gravável aqui: `issues/`, `estudos/`, `AGENTS.md` e `README.md`.
 
-`app/` (código, `package.json`), os scripts de gate, `../.github/workflows/` e qualquer IaC são
-**construção do usuário** — proponha o diff e espere o pedido explícito. Fechar uma Issue exige a
+`app/` (código, `package.json`), `scripts/`, os scripts de gate, `../.github/workflows/` e
+qualquer IaC são **construção do usuário** — proponha o diff e espere o pedido explícito. Fechar uma Issue exige a
 saída real do comando de validação colada em `## Evidências`; limitação de ambiente registrada em
 `Limitações / notas` não vale como evidência.

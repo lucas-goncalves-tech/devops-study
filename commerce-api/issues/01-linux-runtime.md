@@ -98,7 +98,7 @@ Estado final: a aplicação gerenciada por um serviço `systemd` que sobe sozinh
 - O PostgreSQL roda no host nesta Issue — não há contêiner nem rede de orquestração; a Issue 02 é quem publica `3000` e isola o banco
 - O healthcheck L4 prova que a porta aceita conexão; não prova que a aplicação responde — por isso existe o teste L7
 - `/health` é liveness **e** readiness ao mesmo tempo: com o banco fora, responde `503` com `"status":"DEGRADED"`, então um healthcheck que aceite só HTTP 200 trata indisponibilidade de banco como queda do processo
-- O `healthcheck.sh` da raiz do repositório pertence ao `ledger-service` e aponta para o endpoint e a porta daquele app — ele não é reaproveitado aqui e não pode ser editado por causa desta Issue
+- Cada trilha tem seus próprios scripts de check em `scripts/`; o desta trilha é `commerce-api/scripts/healthcheck.sh` e nasce aqui — nenhum script de outra trilha é reaproveitado nem editado por causa desta Issue
 - O pool do Postgres é criado pelo driver `postgres` com `max: 10`, `idle_timeout: 20` e `connect_timeout: 10` (`src/db/connection.ts`): `SIGTERM` precisa de folga para `client.end({ timeout: 5 })` concluir
 - `HOST=0.0.0.0` é o default do código; a API escuta em todas as interfaces, então a exposição publicamente é decisão de Issue posterior, não desta
 - Este contrato de porta, de arquivo de ambiente e de `SIGTERM` é herdado por todas as Issues posteriores que mexem em runtime

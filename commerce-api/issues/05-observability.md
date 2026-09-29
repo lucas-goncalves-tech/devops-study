@@ -88,6 +88,6 @@ Estado final: Prometheus coletando de `/metrics` (exposta pelo app com `prom-cli
 
 - **Invariante:** `/metrics` precisa continuar registrada sem `preHandler` de autenticação e o mesmo vale para `/health` — se qualquer uma das duas cair atrás do JWT, o scraping e o `HEALTHCHECK` do `Dockerfile` param de funcionar
 - `/health` precisa continuar respondendo `200` com `"status":"UP"` quando o banco está de pé e `503`/`"DEGRADED"` quando não — o `HEALTHCHECK` do `Dockerfile` (linha de comando `wget --spider http://127.0.0.1:3000/health`) só falha por código de saída
-- **Contrato equivalente na stack Java:** o `healthcheck.sh` da raiz do repo (L4 + L7 em `/actuator/health`, porta `8080`) pertence ao `ledger-service` e ao Compose dele — a adaptação para esta app é o `HEALTHCHECK` do `Dockerfile` descrito acima, não o script
+- **Contrato equivalente na stack Java:** o `scripts/healthcheck.sh` do `ledger-service` (L4 + L7 em `/actuator/health`, porta `8080`) é daquela trilha e não é reaproveitado — a adaptação para esta app é o `HEALTHCHECK` do `Dockerfile` descrito acima, e o check desta trilha mora em `commerce-api/scripts/healthcheck.sh`
 - Os containers de coletor e dashboard entram na stack do Compose e passam a fazer parte da topologia de rede — por isso esta Issue vem antes de qualquer segmentação de rede desta stack, que precisa cobrir todos eles
 - O teste de carga precisa de Docker para subir a stack da Issue 02 (API + Postgres); a suíte `npm test` usa `app.inject()` e mocka o serviço, então não é ela que produz prova de carga

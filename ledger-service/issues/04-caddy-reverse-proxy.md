@@ -88,6 +88,6 @@ Estado final: o tráfego externo entra por um único reverse proxy na porta 80/4
 
 - **Não precisa de VPS pública nem de domínio real para começar.** Caddy emite certificado TLS local para um hostname resolvido via `/etc/hosts`, o que já prova emissão, renovação, redirect HTTP→HTTPS e headers. Domínio real e IP público só entram como prova final de TLS de internet.
 - Domínio apontado para o servidor e portas 80/443 liberadas são pré-requisito apenas quando a prova for contra internet real
-- **Invariante de porta:** `8080` é a única porta publicada pelo Compose do backend (`${PORT:-8080}:${PORT:-8080}`). Ao torná-la interna, `healthcheck.sh`, o `EXPOSE` do `Dockerfile`, `server.port` e o health check do target group precisam mudar juntos — mudança isolada de um deles quebra o healthcheck
+- **Invariante de porta:** `8080` é a única porta publicada pelo Compose do backend (`${PORT:-8080}:${PORT:-8080}`). Ao torná-la interna, `scripts/healthcheck.sh`, o `EXPOSE` do `Dockerfile`, `server.port` e o health check do target group precisam mudar juntos — mudança isolada de um deles quebra o healthcheck
 - O upstream do proxy deve apontar para o serviço `securepay_api` na rede interna, publicando a porta apenas para o proxy
 - O backend mantém `server.shutdown: graceful` — o proxy não pode encerrar a JVM abruptamente
