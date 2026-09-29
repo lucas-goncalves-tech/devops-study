@@ -33,6 +33,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 ## Fora de escopo
 
 - Coleta, dashboards e Alertmanager em si — [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md); esta Issue consome o que existe e prova que ele avisa
+- **Tráfego sintético agendado não é teste de capacidade.** Aqui a vazão é baixa de propósito, o tráfego escreve em produção e o objetivo é provar que a stack responde e que o alerta avisa. Descobrir até onde a API aguenta é a [Issue 10 do `commerce-api`](../../commerce-api/issues/10-carga-em-rampa.md), que roda em laboratório e não toca a produção
 - Chaos engineering, teste de penetração e carga destrutiva em massa
 - Endpoint de métricas novo: `/actuator/prometheus` já é exposto pela configuração atual
 - Kubernetes e orquestração — fora de escopo desta trilha
@@ -99,7 +100,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 
 ## Limitações / notas
 
-- **A carga escreve em produção.** `/api/v1/payments/transfer` debita carteira de verdade: a vazão tem de ser baixa, o script usa usuário sintético e o que ele cria é removido no fim. Carga de desempenho de verdade é a da [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md), que roda contra o ambiente de laboratório
+- **A carga escreve em produção.** `/api/v1/payments/transfer` debita carteira de verdade: a vazão tem de ser baixa, o script usa usuário sintético e o que ele cria é removido no fim. Carga de desempenho de verdade é a [Issue 10 do `commerce-api`](../../commerce-api/issues/10-carga-em-rampa.md), que roda contra o ambiente de laboratório e encontra o ponto de inflexão por rampa — a [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md) é o smoke test de patamar que ela consome, e não um teste de capacidade
 - "Alerta que dispara de verdade" não significa alerta sempre vermelho: a prova é um disparo registrado com horário e canal, depois o alerta em estado normal
 - Se a degradação induzida exigir mexer no limite da regra e não no tráfego, registre isso no relatório — induzir pelo lado do alerta e pelo lado da aplicação são provas diferentes, e a segunda é mais forte
 - O alerta depende de alguém coletar `/actuator/prometheus` nessa stack; se a coleta ainda não existir quando esta Issue começar, registre a dependência e não declare o critério de disparo como cumprido sem o canal

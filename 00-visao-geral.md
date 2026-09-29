@@ -18,7 +18,7 @@ uma sequência global de 18 números.
 | App | Trilha | Estágio atual |
 |---|---|---|
 | [`ledger-service`](ledger-service/) | **VPS** — `linux → hardening → caddy → backups → isolamento → deploy` | `01`, `02` `done`; `03` é a próxima a entrar |
-| [`commerce-api`](commerce-api/) | **AWS** — `linux → compose → terraform/LocalStack → CI → observabilidade → S3/EC2` | `01` a entrar; `06` `parked` |
+| [`commerce-api`](commerce-api/) | **AWS** — `linux → compose → terraform/LocalStack → CI → observabilidade → S3/EC2`, mais a sequência complementar `09 → 13` de **capacidade e performance** | `01` a entrar; `06` `parked` |
 | [`webhook-gateway`](webhook-gateway/) | **DevSecOps** — `pipeline base → secrets → SAST → SCA → hardening → gates → DAST → mensageria` | `01` a entrar |
 
 Os números reiniciam em `01` em cada app: `ledger 05` e `commerce 05` são Issues diferentes, de
@@ -78,11 +78,13 @@ Cada Issue é uma mudança concreta no sistema, redigida como RFC de problema co
 - **Kubernetes fora de escopo por decisão.** A Issue 18 (cluster multi-node + chart Helm) foi arquivada em [`archive/18-kubernetes-helm/`](archive/18-kubernetes-helm/issue.md) e registrada como candidata a 4ª trilha futura — não é marco de nenhuma das 3.
 - **A infraestrutura é construção do usuário.** CI, Terraform, Dockerfile, `docker-compose.yaml`, `healthcheck.sh` e código dos apps **nunca** são criados nem alterados pelo agente: o agente escreve Issues, estudos, tracker e docs.
 - Nenhuma Issue pode antecipar tecnologia cujo problema ela não resolve.
+- **Capacidade e performance são sequência complementar, não 4ª trilha.** As Issues `09 → 13` do `commerce-api` ([`BOARD.md`](BOARD.md), seção "Sequência complementar") têm numeração própria e dependências declaradas por link. Continuam sendo **3 apps e 3 trilhas**: a trilha AWS `01 → 08` segue fechada, e a capacidade não a antecipa nem a substitui. `archive/18-kubernetes-helm` continua sendo a candidata a 4ª trilha.
 
 ## Fora de escopo
 
 - [`archive/18-kubernetes-helm/`](archive/18-kubernetes-helm/issue.md) — a Issue 18 e seu estudo, arquivados: Kubernetes não entra neste momento.
 - `interview-prep-finops` e `ansible` — trilhas do `devops-study` fora das 3 escolhidas.
+- HPA, autoscaling e orquestração — vivem em [`archive/18-kubernetes-helm/`](archive/18-kubernetes-helm/issue.md), que segue candidata a 4ª trilha e fora do que `09 → 13` resolve.
 - Incorporar os apps num único serviço: cada app é um sistema, com sua trilha.
 
 ---

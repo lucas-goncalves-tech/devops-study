@@ -30,6 +30,7 @@ Estado final: Prometheus coletando de `/metrics` (exposta pelo app com `prom-cli
 
 - Jaeger com OpenTelemetry Collector, Chaos Engineering complexo, clusters ELK
 - Foco exclusivo: rota `/metrics`, `prometheus.yml`, Grafana (RPS, p95/p99, pool do Postgres) e carga sem starvation
+- **Este é o smoke test de patamar, não o teste de capacidade.** As 50–100 VUs com threshold fixo provam que o serviço aguenta um patamar; elas não dizem até onde aguenta. A rampa que encontra o limite é a [Issue 10](10-carga-em-rampa.md), que consome esta Issue em vez de substituí-la
 
 ## Conhecimentos envolvidos
 
