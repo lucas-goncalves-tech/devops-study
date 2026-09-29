@@ -9,30 +9,30 @@ prioridade: alta
 
 ## Contexto
 
-A stack de produção responde, mas ninguém sabe se ela responde em pé: nenhum dado prova a latência que um cliente real sente, e nenhum alerta existe para avisar que a latência subiu. Um dashboard bonito alimentado por scrape mostra o que já está acontecendo — quem descobre o problema primeiro é o usuário. O app já expõe o que um teste sintético precisa (`/actuator/health` e `/actuator/prometheus` em `application.yml`) e é a Issue 07 quem publica essa stack atrás do Caddy, mas não existe rotina que gere tráfego, não existe latência p95 registrada e nenhum alerta disparou até hoje.
+A stack de produção responde, mas ninguém sabe se ela responde em pé: nenhum dado prova a latência que um cliente real sente, e nenhum alerta existe para avisar que a latência subiu. Um dashboard bonito alimentado por scrape mostra o que já está acontecendo — quem descobre o problema primeiro é o usuário. O app já expõe o que um teste sintético precisa (`/actuator/health` e `/actuator/prometheus` em `application.yml`) e é a Issue 07 quem publica essa stack atrás do Caddy, mas não existe rotina que gere tráfego, não existe coleta que consuma a métrica exposta, não existe latência p95 registrada e nenhum alerta disparou até hoje.
 
 ## Objetivo
 
-Estado final: um script k6 agendado que autentica e transaciona contra o endpoint de produção com limite de vazão declarado, uma execução por janela de tempo cujo resumo registra p95, e pelo menos um alerta real disparado com evidência do canal que o recebeu — sem que a produção tenha falhado durante o teste.
+Estado final: um script k6 agendado que autentica e transaciona contra o endpoint de produção com limite de vazão declarado, uma execução por janela de tempo cujo resumo registra p95, e um alerta real — avaliado sobre métrica coletada desta própria stack — disparando com evidência do canal que o recebeu, sem que a produção tenha falhado durante o teste.
 
 ## Dependências
 
 - Requer Issue 07 — o tráfego só existe depois que há versão implantada e auditável na VPS
 - Requer Issue 04 — o Caddy é a porta única de entrada; o k6 fala com o domínio público, nunca com a porta `8080` do container
-- Requer a coleta e os painéis que nascem no `commerce-api` — [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md)
 
 ## Escopo
 
+- Coleta da métrica que o alerta observa, nesta stack: `scrape` de `/actuator/prometheus` pelo coletor desta VPS
 - Script k6 versionado: login em `/api/v1/auth/login`, transação em `/api/v1/payments/transfer` com `X-Idempotency-Key` e sondagem de `/actuator/health`
 - Agendamento fora do pedido (cron na VPS ou `schedule` de GitHub Actions) com horário e vazão declarada
 - Thresholds de p95 e de taxa de erro que reprovam a execução, não só imprimam
 - Saída persistida da execução, com p95 legível no resumo
-- Um alerta disparando de verdade, com evidência do canal que o recebeu
+- Regra de alerta sobre a métrica desta stack, com condição e tempo de espera, ligada a um canal observável
 - Verificação de ausência de dano: saúde da aplicação e ausência de erro 5xx durante a janela
 
 ## Fora de escopo
 
-- Coleta, dashboards e Alertmanager em si — [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md); esta Issue consome o que existe e prova que ele avisa
+- Painel de serviço completo e carga de laboratório: a medição desta Issue é a do k6 contra produção, e a carga pesada em ambiente descartável é assunto de outro app e outra trilha
 - Chaos engineering, teste de penetração e carga destrutiva em massa
 - Endpoint de métricas novo: `/actuator/prometheus` já é exposto pela configuração atual
 - Kubernetes e orquestração — fora de escopo desta trilha
@@ -40,26 +40,28 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 ## Conhecimentos envolvidos
 
 - k6: VUs, ritmo, thresholds e resumo de execução
-- Coleta de métricas HTTP: histograma de latência e cálculo de p95
+- Coleta de métricas HTTP: scrape, histograma de latência e cálculo de p95
 - Prometheus e Alertmanager: regra, `for`, severidade e roteamento por canal
 - Agendamento: crontab em servidor e `schedule` de GitHub Actions
 - Contrato da API: autenticação JWT, idempotência por `X-Idempotency-Key` e degradação de saúde por `/actuator/health`
 
 ## Estado atual
 
-- A aplicação expõe `/actuator/health` e `/actuator/prometheus` (exposição em `management.endpoints.web.exposure`), mas a stack da VPS não tem rotina que consuma isso periodicamente
+- A aplicação expõe `/actuator/health` e `/actuator/prometheus` (exposição em `management.endpoints.web.exposure`), mas nada nesta stack consome essas métricas: não há coletor, não há série e não há o que a regra de alerta observar
 - Nenhum script de tráfego sintético existe no repositório
 - Nenhum alerta foi configurado, portanto nenhum alerta pode ter disparado
 - A latência p95 da stack de produção nunca foi medida nem registrada
 
 ## Resultado esperado
 
+- A métrica da stack de produção é coletada por um coletor desta própria VPS
 - Uma execução agendada por janela de tempo, com resumo persistido e p95 visível
 - Alerta que dispara diante de uma degradação induzida e chega a um canal observável
 - Produção íntegra durante e depois da janela de teste
 
 ## Requisitos
 
+- [ ] Subir o coletor de métricas desta stack apontando para `/actuator/prometheus` da aplicação em produção, com a série visível
 - [ ] Escrever o script k6 versionado, com login, transação idempotente e sondagem de `/actuator/health`, e limite de vazão declarado em comentário no código
 - [ ] Agendar a execução fora do pedido (cron na VPS ou `schedule` de GitHub Actions), com horário e destino da saída declarados
 - [ ] Definir thresholds de p95 e de taxa de erro que reprovam a execução quando a degradação passar do limite
@@ -72,8 +74,10 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 ## Critérios de aceitação
 
 - [ ] A execução agendada acontece sem intervenção manual e o resumo da execução fica persistido com o p95 exibido
+- [ ] A regra de alerta é avaliada sobre métrica coletada desta stack: o scrape do `/actuator/prometheus` está ativo e a série é consultável
 - [ ] Uma degradação induzida faz o alerta disparar de verdade e o canal configurado mostra o disparo, com a evidência arquivada nesta Issue
 - [ ] A regra de alerta tem expressão de PromQL, condição e `for` visíveis na configuração, não apenas descrita em texto
+- [ ] Nenhum requisito desta Issue depende de Issue de outro app: coleta, regra e canal nascem nesta trilha
 - [ ] Durante toda a janela do teste, `/actuator/health` responde `UP` e o `healthcheck.sh` da raiz do repo sai com 0
 - [ ] Nenhum erro 5xx de aplicação aparece no log do serviço durante a janela do teste
 - [ ] O script k6 roda contra o domínio público atrás do Caddy, e não contra a porta do container
@@ -81,6 +85,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 
 ## Validação
 
+- Conferir o scrape ativo do `/actuator/prometheus` no coletor desta stack e a série resultante
 - Executar o agendamento manualmente uma vez e conferir o horário e a saída persistida
 - Induzir a degradação que o alerta observa (limiar artificialmente baixo ou latência adicionada no caminho) e esperar o disparo no canal
 - Reverter a degradação e confirmar que o alerta volta ao estado normal
@@ -90,8 +95,9 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 
 ## Evidências
 
+- Saída do coletor mostrando a série coletada desta stack
 - Saída do k6 com o p95 da janela e o nome do thresholds avaliado
-- Evidência do disparo no canal (linha de log do Alertmanager ou captura de tela com horário)
+- Evidência do disparo no canal (linha de log do canal de notificação ou captura de tela com horário)
 - Regra de alerta em arquivo, com PromQL e `for`
 - Saída de `/actuator/health` e do `healthcheck.sh` durante a janela
 - Trecho do log do serviço sem erro 5xx no mesmo intervalo
@@ -99,8 +105,8 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 
 ## Limitações / notas
 
-- **A carga escreve em produção.** `/api/v1/payments/transfer` debita carteira de verdade: a vazão tem de ser baixa, o script usa usuário sintético e o que ele cria é removido no fim. Carga de desempenho de verdade é a da [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md), que roda contra o ambiente de laboratório
+- **A carga escreve em produção.** `/api/v1/payments/transfer` debita carteira de verdade: a vazão tem de ser baixa, o script usa usuário sintético e o que ele cria é removido no fim. Carga pesada em ambiente descartável não é escopo desta Issue — aqui o que se prova é o comportamento sob tráfego real, não capacidade de aguentar carga
+- **A coleta é escopo desta Issue, não pré-requisito vindo de fora:** sem scrape ativo nesta stack, não existe série e o critério de disparo não pode ser declarado cumprido. Se a coleta falhar no meio do trabalho, registre a limitação em vez de afrouxar o critério
 - "Alerta que dispara de verdade" não significa alerta sempre vermelho: a prova é um disparo registrado com horário e canal, depois o alerta em estado normal
 - Se a degradação induzida exigir mexer no limite da regra e não no tráfego, registre isso no relatório — induzir pelo lado do alerta e pelo lado da aplicação são provas diferentes, e a segunda é mais forte
-- O alerta depende de alguém coletar `/actuator/prometheus` nessa stack; se a coleta ainda não existir quando esta Issue começar, registre a dependência e não declare o critério de disparo como cumprido sem o canal
 - Onde o alerta notifica (e-mail, chat, webhook) é escolha de operação: o critério exige o canal observável e a evidência, não um produto específico

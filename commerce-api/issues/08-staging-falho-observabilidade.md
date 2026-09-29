@@ -33,7 +33,7 @@ Estado final: um ambiente de staging claramente separado da produção, três fa
 ## Fora de escopo
 
 - Chaos engineering distribuído, biblioteca de experimentos e automação de falha em produção
-- Alertas, SLO e escalonamento — [Issue 08 do `ledger-service`](../../ledger-service/issues/08-trafego-sintetico-alertas.md)
+- Alertas, SLO e escalonamento — fora desta Issue; a observabilidade que esta trilha entrega está na Issue 05
 - Terraform novo para o staging: o ambiente nasce do que a Issue 07 já provisiona, com os recursos separados
 - Staging inseguro de propósito — [Issue 11 do `webhook-gateway`](../../webhook-gateway/issues/11-staging-inseguro.md)
 - Kubernetes e orquestração — fora de escopo por decisão, a Issue correspondente está arquivada em `archive/18-kubernetes-helm/`

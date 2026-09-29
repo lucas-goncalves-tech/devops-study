@@ -32,7 +32,7 @@ Estado final: imagem multi-stage enxuta executando como usuário sem privilégio
 - Terraform, Kubernetes, CI/CD, gateway de webhooks com validação, idempotência e retry
 - Foco exclusivo: rota `/health`, multi-stage com usuário sem privilégios, `HEALTHCHECK`, `docker-compose.yaml` com Redis e `.env.example`
 - Segmentação de redes e limites de recursos — [Issue 06 do `ledger-service`](../../ledger-service/issues/06-compose-isolation.md)
-- Entrada do gateway na stack de produção, publicação de porta e TLS — [Issue 03](../../ledger-service/issues/03-vps-hardening.md) e [Issue 04](../../ledger-service/issues/04-caddy-reverse-proxy.md) do `ledger-service`
+- Entrada do gateway na stack de produção — card de integração ainda não criado, registrado no `BOARD.md`; TLS e publicação de porta — fora desta Issue
 - Métricas de lag do consumer group — [Issue 10](10-containers-redis.md)
 
 ## Conhecimentos envolvidos
@@ -115,7 +115,7 @@ Estado final: imagem multi-stage enxuta executando como usuário sem privilégio
 - O `.env` real é ignorado por `.gitignore` e excluído por `.dockerignore`; `.env.example` é o único arquivo de configuração que pode ser versionado e ele só aceita placeholders
 - `REDIS_URL` muda de host conforme o ambiente: `localhost:6379` no host, nome do serviço na rede do Compose. O default do código (`redis://localhost:6379`) só é correto fora do contêiner
 - O serviço do Redis não pode ganhar entrada `ports:` em nenhuma Issue futura — acesso externo à Stream de eventos é exposição de dado de pedido
-- Esta Issue não segmenta redes: consumidor e Redis sobem na rede padrão do Compose. A rede isolada é [Issue 06 do `ledger-service`](../../ledger-service/issues/06-compose-isolation.md), e é lá que este serviço deve cair
+- Esta Issue não segmenta redes: consumidor e Redis sobem na rede padrão do Compose. A segmentação por perfil de rede é da [Issue 10](10-containers-redis.md) deste app
 - O consumidor cria o group com `MKSTREAM` e tolera `BUSYGROUP` (`src/consumer.ts`): manter isso é o que faz o contêiner subir em restart
 - Publicar a porta `PORT` (default `8081`) da rota de saúde no host é opcional e só serve para validação externa; em produção ela não precisa ser alcançável de fora
 - Esta Issue não entrega webhook: validação, idempotência, retry e lag são [Issue 10](10-containers-redis.md)

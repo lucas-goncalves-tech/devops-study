@@ -10,15 +10,15 @@ tags: [tracker, overview]
 ## As 3 trilhas
 
 O monorepo tem **3 apps, um por trilha**. Cada trilha é **autônoma e completa ponta a ponta** —
-segue do serviço local até o estágio final sem preencher lacuna de outra sequência — mas não é
-isolada: capacidades compartilhadas (CI, gates, observabilidade) nascem numa trilha e as outras as
-consomem por referência cruzada. Entrar no app `X` é fazer uma jornada inteira, não um pedaço de
-uma sequência global de 18 números.
+segue do serviço local até o estágio final sem pedir nada a outra sequência. CI/CD, gates e
+observabilidade se repetem em cada app de propósito: repetir a capacidade é o estudo. O que existe
+em outra trilha vale como leitura e exemplo, nunca como pré-requisito de uma Issue. Entrar no app
+`X` é fazer uma jornada inteira, não um pedaço de uma sequência global de 18 números.
 
 | App | Trilha | Estágio atual |
 |---|---|---|
 | [`ledger-service`](ledger-service/) | **VPS** — `linux → hardening → caddy → backups → isolamento → deploy` | `01`, `02` `done`; `03` é a próxima a entrar |
-| [`commerce-api`](commerce-api/) | **AWS** — `linux → compose → terraform/LocalStack → CI → observabilidade → S3/EC2` | `01` a entrar; `06` `parked` |
+| [`commerce-api`](commerce-api/) | **AWS** — `linux → compose → terraform/LocalStack → CI → observabilidade → S3/EC2 → apply → deploy` | `01` a entrar; `06` `parked` |
 | [`webhook-gateway`](webhook-gateway/) | **DevSecOps** — `pipeline base → secrets → SAST → SCA → hardening → gates → DAST → mensageria` | `01` a entrar |
 
 Os números reiniciam em `01` em cada app: `ledger 05` e `commerce 05` são Issues diferentes, de

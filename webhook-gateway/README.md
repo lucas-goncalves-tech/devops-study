@@ -60,5 +60,5 @@ Issue = uma capacidade, escrita como RFC. Não é tutorial: o passo a passo de c
 
 - [`issues/`](issues/) — as 11 Issues da trilha DevSecOps
 - [`estudos/`](estudos/) — material de estudo, um arquivo por Issue
-- [`AGENTS.md`](AGENTS.md) — stack, variáveis de ambiente e o mapa de rollout dos gates para os
-  outros apps, para quem vai mexer
+- [`AGENTS.md`](AGENTS.md) — stack, variáveis de ambiente e o mapa de gates em outras trilhas
+  (referência), para quem vai mexer

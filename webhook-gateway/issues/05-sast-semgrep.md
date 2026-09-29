@@ -85,4 +85,4 @@ Estado final: scanner SAST rodando como gate obrigatório na pipeline, bloqueand
 - Começar bloqueando só `ERROR` é deliberado: um gate barulhento vira ruído e é desativado
 - Dívida de código detectada aqui pode exigir alteração em `webhook-gateway/app/src/` — se o escopo da Issue não cobrir, registrar como dívida em vez de afrouxar o gate
 - A família de regras é a do app de destino: `p/javascript` aqui. O `ledger-service` é Java e precisaria de `p/java` — um gate por app, não um gate único para o monorepo
-- Esta Issue cria o gate de SAST que a Issue 08 reaproveita e que a [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md) exige como pré-requisito de deploy
+- Esta Issue cria o gate de SAST que a Issue 08 reaproveita nesta trilha — nenhuma Issue de outro app aguarda este gate, e cada trilha constrói as próprias barreiras

@@ -39,8 +39,8 @@ Sem Docker, o caminho da Issue 01 é Postgres no host + `./mvnw spring-boot:run`
 | [04](issues/04-caddy-reverse-proxy.md) | Reverse proxy com TLS automático | `todo` |
 | [05](issues/05-db-backups-s3.md) | Backup off-site com restore provado | `todo` |
 | [06](issues/06-compose-isolation.md) | Redes segmentadas e limites anti-OOM | `todo` |
-| [07](issues/07-cicd-vps-deploy.md) | Deploy por pipeline verde, com rollback | `todo` |
-| [08](issues/08-trafego-sintetico-alertas.md) | k6 agendado com alerta real | `todo` |
+| [07](issues/07-cicd-vps-deploy.md) | Pipeline própria e deploy por pipeline verde, com rollback | `todo` |
+| [08](issues/08-trafego-sintetico-alertas.md) | k6 agendado, coleta própria e alerta real | `todo` |
 
 Issue = uma capacidade, escrita como RFC. Não é tutorial: o passo a passo de cada uma está em
 [`estudos/`](estudos/) e o status de todas as trilhas no [`BOARD.md`](../BOARD.md).

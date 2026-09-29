@@ -1,18 +1,19 @@
 # commerce-api — trilha AWS
 
 API de e-commerce e inventário (Node 20 · Fastify · Drizzle ORM · Postgres). Carrega a **trilha
-AWS** do monorepo: `linux → compose → terraform → CI → observabilidade → S3/EC2`.
+AWS** do monorepo: `linux → compose → terraform → CI → observabilidade → S3/EC2 → apply → deploy`.
 
 Estado final da trilha: API leve em computação real na nuvem, com estado Terraform remoto e lock,
-pipeline que bloqueia merge e staging falho que prova a observabilidade — relatório em bucket
-privado previsto (Issue 06, `parked`).
+pipeline que bloqueia merge, infraestrutura aplicada só por pipeline identificada, deploy com
+rollback e staging falho que prova a observabilidade — relatório em bucket privado previsto
+(Issue 06, `parked`).
 
 Antes de qualquer coisa neste app, as regras da casa (escopo de escrita, padrão de container,
 skills e roteamento) valem: leia o [`AGENTS.md` da raiz](../AGENTS.md). Metodologia e política de
 status → [`00-visao-geral.md`](../00-visao-geral.md). Status e ordem de execução →
 [`BOARD.md`](../BOARD.md), seção `commerce-api · trilha AWS`.
 
-## Trilha AWS — 8 Issues
+## Trilha AWS — 10 Issues
 
 O checkbox do board espelha o `status:` do frontmatter de cada Issue; a tabela abaixo é a mesma
 fonte, então uma das duas está desatualizada se elas divergirem.
@@ -27,9 +28,12 @@ fonte, então uma das duas está desatualizada se elas divergirem.
 | [06](issues/06-s3-reports-infra.md) | Storage S3 para relatórios com IAM least privilege e endpoint privado | `parked` |
 | [07](issues/07-aws-production.md) | Estado Terraform remoto com lock e computação em nuvem real | `todo` |
 | [08](issues/08-staging-falho-observabilidade.md) | Staging separado com três falhas de observabilidade injetadas, diagnosticadas e corrigidas | `todo` |
+| [09](issues/09-pipeline-infra-apply.md) | Identidade da pipeline e `apply` de infraestrutura com credencial federada | `todo` |
+| [10](issues/10-deploy-ec2-pipeline.md) | Deploy da aplicação em computação real por pipeline, com rollback por healthcheck | `todo` |
 
 **Próxima a entrar: `01`.** `06` está `parked` de propósito (revertida): nenhuma Issue da trilha
-depende dela e ela não é marco da sequência. Não a puxe de volta para fechar o gap.
+depende dela e ela não é marco da sequência. Não a puxe de volta para fechar o gap. `09` e `10`
+entram depois da `07`: estado remoto e computação real existem antes de aplicar e publicar.
 
 ## Stack e comandos
 
@@ -74,8 +78,8 @@ devolver `ok`.
 
 ## O que ainda não existe aqui
 
-Os três gaps abaixo são **conhecidos e planejados**, não esquecidos: são as Issues 02, 03 e 04 que os
-criam, e elas são construção do usuário.
+Os quatro gaps abaixo são **conhecidos e planejados**, não esquecidos: são as Issues 02, 03, 04,
+09 e 10 que os criam, e elas são construção do usuário.
 
 - **Sem `docker-compose.yaml`.** Existe [`app/Dockerfile`](app/Dockerfile) multi-stage non-root, mas
   nada o orquestra: enquanto a Issue 02 não vier, o Postgres roda no host e o `DATABASE_URL`
@@ -87,12 +91,15 @@ criam, e elas são construção do usuário.
   [`.github/workflows/CI.yml`](../.github/workflows/CI.yml) (nome, gatilhos e um job sem passos).
   Issue 04 é o que dá testes, scan de imagem e gate de IaC — com gate de IaC, o `terraform validate`
   nasce junto com a pasta `infra/`, então `04` depende de `03`.
+- **Sem identidade de pipeline e sem deploy.** Nada aplica infraestrutura pela pipeline e nada
+  publica a API em computação: a Issue 09 cria a identidade federada e o `apply` com aprovação, e
+  a Issue 10 o deploy com rollback por healthcheck.
 
 ## Onde o trabalho vive
 
 | Caminho | O que é | Quando abrir |
 |---|---|---|
-| [`issues/`](issues/) | as 8 Issues da trilha, uma por capacidade, no template fixo | antes de implementar ou fechar qualquer Issue |
+| [`issues/`](issues/) | as 10 Issues da trilha, uma por capacidade, no template fixo | antes de implementar ou fechar qualquer Issue |
 | [`estudos/`](estudos/) | material de estudo, um arquivo por Issue | quando precisar do passo a passo; a Issue nunca é a aula |
 | [`../BOARD.md`](../BOARD.md) | status e ordem das 3 trilhas | para saber o que está feito e o que entra em seguida |
 | [`../00-visao-geral.md`](../00-visao-geral.md) | metodologia, template, política de status | antes de escrever ou fechar uma Issue |

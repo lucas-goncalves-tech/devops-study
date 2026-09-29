@@ -30,7 +30,7 @@ arquitetura, as variáveis de ambiente e o contrato de infra que este arquivo n�
 | App | Trilha (ordem da sequência) | Estágio |
 |---|---|---|
 | `ledger-service` · 8 Issues | VPS — `linux → hardening → caddy → backups → isolamento → deploy` | `01`,`02` `done`; `03` a entrar |
-| `commerce-api` · 8 Issues | AWS — `linux → compose → terraform → CI → observabilidade → S3/EC2` | `01` a entrar; `06` `parked` |
+| `commerce-api` · 10 Issues | AWS — `linux → compose → terraform → CI → observabilidade → S3/EC2 → apply → deploy` | `01` a entrar; `06` `parked` |
 | `webhook-gateway` · 11 Issues | DevSecOps — `pipeline → secrets → SAST → SCA → hardening → gates → DAST → mensageria` | `01` a entrar |
 
 **Status e ordem de execução → `BOARD.md`:** consulte quando precisar saber o que está feito e o que
@@ -82,17 +82,17 @@ Padrão da casa: containers non-root e nenhuma porta de serviço publicada em `0
    framework de skills está carregado.
 2. **Roteador:** o usuário digita `/ask-matt` quando precisa saber qual skill usar. O agente não
    invoca.
-3. **Dúvida pontual** ("dúvida", "explica", "como funciona", "não entendi") → `teach-anything`
-   automaticamente: resposta `EXPLICAÇÃO` no chat, read-only, nenhum arquivo tocado (exceto
-   `.md` via `consolidate`).
-4. **Curso longo:** o usuário digita `/teach` — nunca o agente (a skill é `disable-model-invocation`).
-   Modo curso grava só em `.learning/<missão>/`.
-5. **Grilling:** com `grilling`/`grill-me`/`grill-with-docs`, pergunte sempre pela tool
+3. **`/teach` só quando digitado.** A skill `teach` (curso longo, workspace stateful em
+   `.learning/<missão>/`) entra apenas se a mensagem do usuário contiver `/teach`. Pedido de
+   ensino em prosa — "me ensina X", "explica", "próxima issue" — segue com a `teach-anything`,
+   que tem gatilhos próprios. `consolidate` só dentro de um modo de ensino já ativo.
+4. **Grilling:** com `grilling`/`grill-me`/`grill-with-docs`, pergunte sempre pela tool
    `question` — nunca em texto plano na resposta.
 
 ## Trilha ≠ tecnologia
 
 Cada linha do board descreve **o que a Issue resolve**, não a ferramenta que ela usa. Linux, Docker,
 CI/CD e observabilidade se repetem em cada app porque cada trilha precisa atravessá-los por conta
-própria; quando uma trilha já resolveu, as outras referenciam em vez de repetir. Nenhuma Issue
-antecipa tecnologia cujo problema ela não resolve.
+própria — repetir a capacidade é o estudo. O que outra trilha já construiu vale como leitura e
+exemplo, **nunca como pré-requisito de uma Issue**. Nenhuma Issue antecipa tecnologia cujo
+problema ela não resolve.

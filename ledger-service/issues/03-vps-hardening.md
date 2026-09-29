@@ -31,7 +31,7 @@ Estado final: servidor com login exclusivamente por chave SSH, firewall liberand
 - Reverse proxy, TLS e publicação da API — Issue 04
 - Isolamento de redes do Compose e limites de recursos — Issue 06
 - Backup do banco — Issue 05
-- Monitoramento e alertas — [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md)
+- Monitoramento e alertas — [Issue 08](08-trafego-sintetico-alertas.md) desta trilha
 - Kubernetes, Cloud e Terraform
 
 ## Conhecimentos envolvidos

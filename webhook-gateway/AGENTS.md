@@ -88,11 +88,12 @@ procure estes arquivos antes dela:
   [`.github/workflows/`](../.github/workflows/) roda para este app ainda — o único workflow do
   repositório é um stub sem passos.
 
-## Rollout dos gates para os outros apps
+## Gates em outras trilhas (referência)
 
-Os gates DevSecOps nascem aqui (Issues 04 a 09) e são agnósticos de app. Portá-los para
-[`ledger-service`](../ledger-service/AGENTS.md) ou [`commerce-api`](../commerce-api/AGENTS.md) é
-**adaptar configuração, não reaprender a ferramenta** — o que muda está nesta tabela:
+Os gates DevSecOps nascem aqui (Issues 04 a 09), a fundo, e esta trilha não espera nenhum outro
+app para avançar. Quando outra trilha construir o próprio gate — como o gate de segredos do
+`ledger 07` —, esta tabela serve como **referência de configuração, nunca como pré-requisito**: o
+trabalho nasce naquela trilha. O que muda:
 
 | Gate | Aqui (Node/TypeScript) | Ao portar |
 |---|---|---|

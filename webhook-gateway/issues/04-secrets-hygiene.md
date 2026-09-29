@@ -88,4 +88,4 @@ Estado final: scanner de segredos no pré-commit e na pipeline, baseline de acha
 - `.env` é ignorado por `.gitignore`; o `.dockerignore` que o exclui da imagem só existe quando a imagem existir (Issue 02) — nenhum dos dois pode ser removido
 - Não há `.env.example` neste app ainda: ele nasce junto com a imagem (Issue 02) — este é o momento barato de não vazar nada
 - O bloqueio de merge depende de proteção de branch configurada na Issue 03; sem ela, o gate roda mas não impede nada
-- Esta Issue cria o gate de segredos que a Issue 08 reaproveita e que a [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md) exige como pré-requisito de deploy
+- Esta Issue cria o gate de segredos que a Issue 08 reaproveita nesta trilha — nenhuma Issue de outro app aguarda este gate, e cada trilha constrói as próprias barreiras

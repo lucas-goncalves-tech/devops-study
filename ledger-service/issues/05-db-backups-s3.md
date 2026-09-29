@@ -30,7 +30,7 @@ Estado final: dump diário comprimido, criptografado e enviado para storage fora
 
 - Provisionamento da infraestrutura de nuvem e do Terraform — [Issue 07 do `commerce-api`](../../commerce-api/issues/07-aws-production.md)
 - Bucket e IAM da [Issue 06 do `commerce-api`](../../commerce-api/issues/06-s3-reports-infra.md) — são para relatórios financeiros, com outro ciclo de retenção e outra política de custo
-- Monitoramento e alertas — [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md)
+- Monitoramento e alertas — [Issue 08](08-trafego-sintetico-alertas.md) desta trilha
 - Kubernetes — fora do escopo desta trilha
 
 ## Conhecimentos envolvidos

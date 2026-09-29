@@ -31,7 +31,7 @@ Estado final: três redes separando fronteira, aplicação e dados; banco e Redi
 
 - Alteração do proxy ou do TLS — Issue 04
 - Backup do banco — Issue 05
-- Monitoramento — [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md)
+- Monitoramento — [Issue 08](08-trafego-sintetico-alertas.md) desta trilha
 - Kubernetes e Cloud — [Issue 07 do `commerce-api`](../../commerce-api/issues/07-aws-production.md)
 
 ## Conhecimentos envolvidos
@@ -98,5 +98,5 @@ Estado final: três redes separando fronteira, aplicação e dados; banco e Redi
   - Banco não pode ganhar entrada `ports:` em nenhuma hipótese
   - `ledger-service/app/.env` continua obrigatório (`env_file`)
 - Esta Issue é a **última palavra sobre topologia de rede**: tudo que entra na stack antes dela (coletor, dashboard, Redis) já está coberto pelas três redes. Serviços adicionados depois precisam ser declarados nas redes corretas explicitamente
-- O Redis ainda não está na stack: quando o Redis entrar ([Issue 10 do `webhook-gateway`](../../webhook-gateway/issues/10-containers-redis.md)), ele deve cair na rede isolada
+- O Redis ainda não está na stack: quando ele entrar (card de integração de produção, ainda não criado e registrado no `BOARD.md`), deve cair na rede isolada
 - O Redis não pode ser publicado em `0.0.0.0` — acesso externo à Stream é exposição de evento de pagamento

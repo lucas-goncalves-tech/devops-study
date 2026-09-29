@@ -41,10 +41,12 @@ npm run build   # tsc -> dist/
 | [06](issues/06-s3-reports-infra.md) | S3 para relatórios com IAM mínimo | `parked` |
 | [07](issues/07-aws-production.md) | Estado Terraform remoto e computação real | `todo` |
 | [08](issues/08-staging-falho-observabilidade.md) | Staging com falhas de observabilidade injetadas | `todo` |
+| [09](issues/09-pipeline-infra-apply.md) | Identidade da pipeline e `apply` com credencial federada | `todo` |
+| [10](issues/10-deploy-ec2-pipeline.md) | Deploy da aplicação na EC2 com rollback por healthcheck | `todo` |
 
 Issue = uma capacidade, escrita como RFC. Não é tutorial: o passo a passo de cada uma está em
 [`estudos/`](estudos/) e o status de todas as trilhas no [`BOARD.md`](../BOARD.md).
 
-- [`issues/`](issues/) — as 8 Issues da trilha AWS
+- [`issues/`](issues/) — as 10 Issues da trilha AWS
 - [`estudos/`](estudos/) — material de estudo, um arquivo por Issue
 - [`AGENTS.md`](AGENTS.md) — stack, variáveis de ambiente e gaps conhecidos, para quem vai mexer

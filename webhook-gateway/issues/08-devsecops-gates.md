@@ -36,7 +36,7 @@ Estado final: os três gates (segredos, SAST, SCA) rodam em toda mudança, falha
 
 - Criação dos gates individuais — Issues 04, 05, 06 e 07
 - Deploy contínuo — [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md)
-- Monitoramento da aplicação — [Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md)
+- Monitoramento de aplicação (métricas, painéis, alertas) — fora desta Issue: o que esta trilha observa é o lag do consumer group da Issue 10
 - Kubernetes — fora de escopo por decisão (arquivado no repositório)
 - Cloud — [Issue 07 do `commerce-api`](../../commerce-api/issues/07-aws-production.md)
 - DAST — [Issue 09](09-dast-zap.md)
@@ -96,4 +96,4 @@ Estado final: os três gates (segredos, SAST, SCA) rodam em toda mudança, falha
 - Sintonizar para baixo a severidade bloqueante sem registrá-lo transforma o verde em ilusão: qualquer afrouxamento deve aparecer como decisão registrada
 - Os critérios de "mensagem acionável" e "severidade que alerta" precisam de artefato observável na saída do gate, não de descrição
 - A pipeline cobre os serviços já existentes no momento em que ela é construída; a stack multi-serviço chega na Issue 10, e os gates continuam valendo sem mudança de desenho
-- Esta Issue é pré-requisito da [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md), que exige os gates como barreira antes do deploy — gate verde aqui é o que autoriza aquele deploy, mas o job é deste app
+- Esta Issue consolida os gates desta trilha como barreira única do merge deste app — o job é deste app e nenhuma Issue de outro app espera por ele; deploy em outro app usa as barreiras que a própria trilha dele construir

@@ -99,8 +99,9 @@ consomem. O contrato de porta e `SIGTERM` da Issue 01 é pressuposto de todo o r
   hardening de host, não com código de nuvem. Terraform só entra pela trilha AWS, no
   [`commerce-api`](../commerce-api/AGENTS.md), onde a Issue 03 o cria. Não procure um diretório
   `infra/` neste app: procurá-lo é o sinal de que você leu a trilha errada.
-- **Sem observabilidade e sem CI próprios até a Issue 07** — `07` cria o workflow de deploy e `08`
-  o tráfego sintético com alerta.
+- **Sem pipeline, sem CI e sem observabilidade próprios até a Issue 08** — `07` cria a pipeline do
+  app (build, testes e gate de segredo) e o deploy com rollback; `08` cria a coleta de métricas, o
+  tráfego sintético e o alerta. Nada disso vem de outra trilha.
 - **Sem `docker-compose.yaml` além do de `app/`** — a Issue 06 é a que segmenta as redes e fecha os
   limites anti-OOM no mesmo arquivo.
 

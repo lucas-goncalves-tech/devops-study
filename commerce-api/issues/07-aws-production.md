@@ -29,7 +29,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 ## Fora de escopo
 
 - Kubernetes e orquestração — fora de escopo por decisão; a Issue correspondente está arquivada em `archive/18-kubernetes-helm/`
-- Pipeline de CI/CD — Issue 04 e [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md)
+- Pipeline de CI/CD — Issue 04; aplicação de infraestrutura e deploy automatizado — [Issue 09](09-pipeline-infra-apply.md) e [Issue 10](10-deploy-ec2-pipeline.md) desta trilha
 - Backups e monitoramento — [Issue 05 do `ledger-service`](../../ledger-service/issues/05-db-backups-s3.md) e Issue 05
 - Serviços gerenciados além da computação mínima
 

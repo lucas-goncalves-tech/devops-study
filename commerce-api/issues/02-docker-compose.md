@@ -32,7 +32,7 @@ Estado final: um `docker compose up` que sobe a API e o Postgres na mesma rede, 
 - Foco exclusivo: `docker-compose.yaml` com `postgres:16-alpine`, `env_file`, volume nomeado, healthcheck e `depends_on` por saúde
 - Segmentação de redes e limites de recursos — [Issue 06 do `ledger-service`](../../ledger-service/issues/06-compose-isolation.md)
 - Endpoint HTTP de métricas e dashboards — [Issue 05](05-observability.md)
-- Gateway de webhooks consumindo os eventos do e-commerce — [Issue 10 do `webhook-gateway`](../../webhook-gateway/issues/10-containers-redis.md)
+- Gateway de webhooks consumindo os eventos deste e-commerce — integração de produção, fora desta Issue (card ainda não criado, registrado no `BOARD.md`)
 
 ## Conhecimentos envolvidos
 

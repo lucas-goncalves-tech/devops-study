@@ -31,7 +31,7 @@ Estado final: cada job opera com a menor permissão possível, ações de tercei
 
 - Gates de conteúdo (segredos, SAST, SCA) — Issues 04, 05, 06 e 08
 - Deploy e proteção de ambiente — [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md)
-- Segredos de infraestrutura e credenciais de nuvem — [Issue 07 do `commerce-api`](../../commerce-api/issues/07-aws-production.md)
+- Segredos de infraestrutura e credenciais de nuvem — [Issue 09 do `commerce-api`](../../commerce-api/issues/09-pipeline-infra-apply.md), onde essa credencial vive
 - Kubernetes e Terraform
 
 ## Conhecimentos envolvidos
@@ -88,5 +88,5 @@ Estado final: cada job opera com a menor permissão possível, ações de tercei
 - Actions oficiais do próprio GitHub também beneficiam de pinagem — avaliar caso a caso em vez de criar exceção ampla
 - Pinagem por SHA exige atualização manual; sem a política documentada, a pipeline envelhece e a pinagem vira dívida
 - Os critérios de "permissão mínima" são observados pela presença ou ausência de declaração por job, não por juízo sobre o grau de exposição
-- Esta Issue endurece a pipeline criada na Issue 03 e é pré-requisito da proteção de ambiente do [ledger-service](../../ledger-service/issues/07-cicd-vps-deploy.md)
+- Esta Issue endurece a pipeline criada na Issue 03 desta trilha; nenhum outro app aguarda esse hardening — cada trilha endurece a própria pipeline
 - Fato do repositório compartilhado: `.github/workflows/CI.yml` existe com um job `build` sem `steps` — nada roda de fato ainda. A pipeline real é construção da Issue 03; esta Issue endurece o que ela construir

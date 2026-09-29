@@ -9,35 +9,32 @@ prioridade: media
 
 ## Contexto
 
-**O alvo desta Issue é a stack de produção — `ledger-service/app/docker-compose.yaml` —, não o código deste app.** O `webhook-gateway` é o novo serviço que entra nessa stack; o contrato Redis/Java que aparece nos requisitos abaixo pertence ao `ledger-service`, e é explícito aqui para que ninguém procure `/actuator` no Node.
-
-O sistema é um serviço único com chamada síncrona frágil: se o consumidor cai, o produtor perde o evento. O `ledger-service` já publica em `payment-events` via `RedisPaymentEventPublisher`, mas o serviço Redis não existe na stack e o publisher está desativado por padrão. O consumidor já existe: `webhook-gateway/app/src/consumer.ts` lê a Stream `payment-events` com `ioredis`, cria o consumer group `webhook-dispatcher-group` e assina cada payload com HMAC-SHA256 (`src/signer.ts`, com `crypto.timingSafeEqual`). `src/index.ts` lê a configuração do ambiente e trata `SIGTERM`/`SIGINT`, e a suíte de `tests/` (9 testes, `ioredis` mockado) é o que trava esse contrato.
-
-O que **não** existe neste app ainda: HTTP server, `Dockerfile` e `docker-compose.yaml`. O serviço que esta Issue adiciona à stack depende de imagem e healthcheck, que são trabalho da Issue 02.
+Este app é um consumidor sozinho: lê a Stream `payment-events`, cria o consumer group, assina cada payload com HMAC-SHA256 e dá `XACK` — mas não entrega nada para fora, não tem produtor nenhum na sua própria stack para consumir, e nunca foi montado como sistema multi-serviço com isolamento de rede. Sem produtor na stack, não existe como provocar a perda que esta Issue existe para provar: "evento não se perde quando o consumidor cai" é um comportamento deste app, e a prova tem de nascer aqui — com o que este app orquestra, não com stack, painel ou serviço de outro app.
 
 ## Objetivo
 
-Estado final: Redis na stack como buffer entre produtor e consumidor via Streams, múltiplos serviços orquestrados com isolamento de rede por perfil, e um gateway de webhooks com validação, idempotência e retry — com lag de consumer group observável.
+Estado final: stack multi-serviço deste app com Redis como buffer entre produtor e consumidor via Streams, redes separadas por perfil, um gateway de webhooks com validação, idempotência e retry, produtor sintético versionado que alimenta a Stream, e lag de consumer group observável por mecanismo declarado nesta Issue — tudo subindo a partir de `webhook-gateway/` e sem depender de Issue, arquivo ou serviço de outro app.
 
 ## Dependências
 
-- Requer Issue 02 — imagem e entrypoint próprios deste app, para que o serviço do gateway possa entrar na stack (a composição base com API e banco que esta Issue altera já existe: [Issue 02 do `ledger-service`](../../ledger-service/issues/02-docker-compose.md), concluída)
-- Requer a observabilidade que existe no `commerce-api` — os painéis são a base para observar lag de consumer group ([Issue 05 do `commerce-api`](../../commerce-api/issues/05-observability.md))
+- Requer Issue 01 — o contrato de arquivo de ambiente, a política de restart e o fechamento sob `SIGTERM` que os serviços desta stack herdam
+- Requer Issue 02 — a imagem, o `HEALTHCHECK` e o próprio Redis que formam a base desta stack
 
 ## Escopo
 
-- Adicionar o serviço Redis à stack e ativar o publisher de eventos
-- Orquestrar múltiplos serviços com isolamento de rede por perfil
+- Produtor sintético versionado publicando eventos na Stream da stack
+- Redis como buffer entre produtor e consumidor via Streams
+- Orquestração de múltiplos serviços com isolamento de rede por perfil
 - Gateway de webhooks com validação, idempotência e retry
-- Observabilidade de lag de consumer group
+- Observabilidade de lag de consumer group por mecanismo próprio
 
 ## Fora de escopo
 
-- Publicação da aplicação na internet, TLS e reverse proxy — [Issue 03](../../ledger-service/issues/03-vps-hardening.md) e [Issue 04](../../ledger-service/issues/04-caddy-reverse-proxy.md) do `ledger-service`
-- Segmentação final de redes e limites de recursos — [Issue 06 do `ledger-service`](../../ledger-service/issues/06-compose-isolation.md)
+- Entrada do gateway na stack de produção do `ledger-service` e ativação do publisher real — card de integração de produção, ainda não criado e registrado no `BOARD.md`
+- Publicação na internet, TLS e reverse proxy — fora desta Issue
 - Gates de segurança no CI — Issues 04, 05, 07 e 08
 - Kubernetes — fora de escopo por decisão (arquivado no repositório)
-- Cloud — [Issue 07 do `commerce-api`](../../commerce-api/issues/07-aws-production.md)
+- Cloud e provisionamento — trilha AWS, fora desta Issue
 
 ## Conhecimentos envolvidos
 
@@ -45,85 +42,70 @@ Estado final: Redis na stack como buffer entre produtor e consumidor via Streams
 - Mensageria assíncrona e desacoplamento
 - Webhooks confiáveis: validação, idempotência e retry
 - Redes de Compose por perfil
+- Lag de consumer group: `XINFO GROUPS` e `XPENDING` como observação sem painel externo
 
 ## Estado atual
 
-- Serviço único na stack de produção, chamada síncrona frágil
-- `ledger-service/app/docker-compose.yaml` não tem serviço Redis
-- No `ledger-service`, `REDIS_ENABLED` é `false` por padrão, então `NoOpPaymentEventPublisher` está ativo
-- O consumidor deste app já assina e faz `XACK`, mas não há entrega HTTP para fora: nada é despachado como webhook, e não há idempotência nem retry de entrega
+- O consumidor deste app assina e faz `XACK`, mas não há entrega HTTP para fora: nada é despachado como webhook, e não há idempotência nem retry de entrega
+- A stack deste app tem consumidor e Redis, e nenhum produtor: nada publica eventos dentro dela
+- Sem produtor na stack não há como acumular evento pendente e provar a retomada
+- Nenhum mecanismo de lag está declarado neste app
+- A integração com a stack de produção não existe e não é escopo desta Issue
 
 ## Resultado esperado
 
-- Produtor e consumidor desacoplados por Stream
-- Restart do consumidor retoma de onde parou, sem duplicar efeito
-- Lag de consumer group visível em tempo real
+- Produtor e consumidor desacoplados por Stream dentro da stack deste app
+- Reinício do consumidor retoma de onde parou, sem duplicar efeito
+- Destino de entrega indisponível não custa evento: retry com backoff declarado
+- Lag de consumer group visível antes e depois do consumidor voltar
 - Stack com múltiplos serviços em redes separadas por perfil
 
 ## Requisitos
 
-**Lado `ledger-service` (stack de produção, `ledger-service/app/docker-compose.yaml`):**
+**Stack deste app (`webhook-gateway/`):**
 
-- [ ] Adicionar serviço Redis ao `ledger-service/app/docker-compose.yaml` sem publicar a porta `6379` no host
-- [ ] Dar healthcheck ao Redis e ligá-lo à API por `depends_on` com `condition: service_healthy`
-- [ ] Manter a API e o Redis na mesma rede interna, onde o DNS do serviço resolve
-- [ ] Ativar `REDIS_ENABLED=true` e apontar `SPRING_DATA_REDIS_HOST` para o nome do serviço Redis
-- [ ] Preservar o par de implementações complementares: `NoOpPaymentEventPublisher` com `matchIfMissing = true` e `RedisPaymentEventPublisher` com `havingValue = "true"`
-- [ ] Preservar o `catch (Exception)` do publisher e a publicação síncrona dentro do `@Transactional`
-- [ ] Preservar a chave de Stream `payment-events` e o formato de payload atual (`eventId`, `orderId`, `amount`, `currency`, `status`, `timestamp`)
-
-**Lado `webhook-gateway` (este app):**
-
-- [ ] Orquestrar múltiplos serviços com isolamento de rede por perfil
-- [ ] Criar gateway com validação, idempotência e retry
-- [ ] Garantir entrega sem perda sob restart do consumidor
-- [ ] Expor lag de consumer group em tempo real
-- [ ] Preservar o contrato que o consumidor já cumpre: Stream `payment-events`, group `webhook-dispatcher-group`, `XACK` por evento e assinatura HMAC-SHA256 do payload — a suíte `npm test` (9 testes) é o que trava esse contrato
-- [ ] Configurar o serviço por ambiente (`REDIS_URL`, `STREAM_KEY`, `GROUP_NAME`, `CONSUMER_NAME`, `WEBHOOK_SECRET`) sem valor real versionado
+- [ ] Criar produtor sintético versionado que publica na Stream `payment-events` no formato que a suíte deste app trava (`eventId`, `orderId`, `amount`, `currency`, `status`, `timestamp`), configurado por ambiente e sem credencial real versionada
+- [ ] Orquestrar os serviços da stack com redes separadas por perfil, com consumidor e Redis na rede interna
+- [ ] Manter o Redis sem porta publicada no host e com healthcheck, conforme a base declarada na Issue 02
+- [ ] Criar gateway de entrega com validação de payload, chave de idempotência e retry com backoff declarado e limite de tentativas
+- [ ] Garantir entrega sem perda sob reinício do consumidor
+- [ ] Expor o lag de consumer group por mecanismo declarado nesta Issue (saída de comando versionado ou leitura do próprio serviço) — legível antes e depois de uma queda
+- [ ] Preservar o contrato que o consumidor já cumpre: Stream `payment-events`, group `webhook-dispatcher-group`, criação com `MKSTREAM`, tolerância a `BUSYGROUP`, `XACK` por evento e assinatura HMAC-SHA256 com `crypto.timingSafeEqual` — a suíte `npm test` (9 testes) é o que trava esse contrato
+- [ ] Configurar os serviços por ambiente (`REDIS_URL`, `STREAM_KEY`, `GROUP_NAME`, `CONSUMER_NAME`, `WEBHOOK_SECRET`) sem valor real versionado
 
 ## Critérios de aceitação
 
-**Lado `ledger-service` (stack de produção):**
-
-- [ ] `docker compose ps` mostra o Redis saudável e a API iniciando depois dele
+- [ ] A stack sobe inteira a partir de `webhook-gateway/`, sem arquivo, serviço ou Issue de outro app
+- [ ] Parar o consumidor com eventos pendentes e reiniciá-lo: todos os eventos são entregues e nenhum efeito se repete
+- [ ] Payload repetido não gera segunda entrega — a chave de idempotência segura o duplicado
+- [ ] Destino de entrega fora do ar: o retry com backoff aparece no log e nenhum evento é descartado silenciosamente
+- [ ] O lag do consumer group é lido antes da queda e depois da volta, com a diferença registrada
 - [ ] A porta `6379` não aceita conexão a partir de fora do host
-- [ ] `/actuator/health` responde `200` com `"status":"UP"` com Redis no ar
-- [ ] Um pagamento publica evento na Stream `payment-events` com `status=PROCESSED` e `eventId` iniciando por `evt_`
-- [ ] Parar o Redis e repetir o pagamento: a transferência retorna sucesso e o log registra falha de publicação
-
-**Lado `webhook-gateway` (este app):**
-
-- [ ] Reiniciar o consumidor: a entrega retoma sem duplicar efeito
-- [ ] Lag do consumer group visível e recuperável após o consumidor voltar
 - [ ] `npm test` continua verde (9 testes) — o contrato de Stream, group e assinatura não regrediu
 
 ## Validação
 
-- Inspeção do Compose confirmando ausência de `ports:` no Redis e presença de healthcheck
-- Requisição a `/actuator/health` com Redis no ar (esperado: 200 `UP`)
-- Leitura da Stream confirmando o payload publicado
-- **Build to break:** parar o contêiner Redis e executar um pagamento — a transferência deve continuar retornando sucesso, com erro registrado no log
-- **Build to defend:** com Redis de volta, o health volta a `UP` e novos eventos fluem sem intervenção manual
-- Reinício do consumidor com medição do lag antes e depois
+- Subir a stack a partir do diretório deste app e inspecionar `docker compose ps`
+- **Build to break:** parar o consumidor, publicar eventos pelo produtor sintético, reiniciar e observar a retomada sem duplicação
+- Publicar o mesmo payload duas vezes e conferir uma única entrega
+- Derrubar o destino de entrega e observar o retry com backoff no log
+- Ler o lag do consumer group antes da queda e depois da volta
+- Inspeção do Compose confirmando ausência de `ports:` no Redis, healthcheck e redes por perfil
 - `npm test` em `webhook-gateway/app/` antes e depois da integração
 
 ## Evidências
 
-- `docker compose ps` com Redis e API saudáveis
-- Output de `/actuator/health` (200, `UP`) com Redis ativo
-- Payload capturado da Stream `payment-events`
-- Log do pagamento com Redis parado mostrando a falha capturada e a transferência concluída
-- Série de lag do consumer group
+- `docker compose ps` com serviços da stack própria saudáveis
+- Log do reinício do consumidor com a retomada e a ausência de entrega duplicada
+- Log do payload repetido entregue uma única vez
+- Log do retry com backoff contra destino indisponível, com os eventos retidos
+- Leitura do lag do consumer group antes e depois da queda
 - Saída do `npm test` do `webhook-gateway/app/`
 
 ## Limitações / notas
 
-- **Contrato de Redis do `ledger-service` (código Java, stack de produção) que não pode ser quebrado:**
-  - A propriedade é `redis.enabled` (não `spring.redis.*`), com default `false`; os pares `@ConditionalOnProperty` precisam permanecer complementares, senão o contexto falha por ausência de bean
-  - `management.health.redis.enabled` segue o **mesmo** flag: com `REDIS_ENABLED=true` e Redis inalcançável, `/actuator/health` responde **503** e o `healthcheck.sh` da raiz do repo sai com 1 — qualquer gate baseado em saúde, incluindo o rollback da [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md), passa a falhar
-  - `publishPaymentProcessed` é chamado síncrono dentro de `@Transactional transfer`; mover para depois do commit ou deixar a exceção propagar acopla a disponibilidade do pagamento ao Redis
-  - Os nomes de propriedade são `spring.data.redis.host` e `spring.data.redis.port`
-- **Contrato deste app que também não pode quebrar:** o consumidor cria o group com `MKSTREAM` e tolera `BUSYGROUP` (`src/consumer.ts`) — trocar isso faz o contêiner não subir em restart; e a verificação de assinatura usa `crypto.timingSafeEqual`, que exige buffer de mesmo tamanho — payloads malformados são tratados, não lançados
-- Neste ponto a stack está completa o bastante para a [Issue 06 do `ledger-service`](../../ledger-service/issues/06-compose-isolation.md) segmentar as redes — o Redis precisa entrar na rede interna, nunca numa rede exposta
-- O perfil de teste do `ledger-service` mantém `redis.enabled: false`; os testes existentes não podem depender de Redis real
-- A suíte deste app (`npm test`, vitest) mocka o `ioredis` por completo — ela prova o contrato de Stream, mas não prova integração com Redis real; a prova de integração é o `docker compose ps` da stack de produção
+- **Formato de payload herdado do contrato do sistema, não de outro app:** `eventId`, `orderId`, `amount`, `currency`, `status` e `timestamp` são o formato que a suíte deste app já trava. O produtor sintético fala esse formato aqui; quando a integração de produção existir, os dois lados já se entendem
+- **Contrato do consumidor que não pode quebrar:** o group é criado com `MKSTREAM` e tolera `BUSYGROUP` (`src/consumer.ts`) — trocar isso faz o contêiner não subir em restart; e a verificação de assinatura usa `crypto.timingSafeEqual`, que exige buffer de mesmo tamanho — payload malformado é tratado, não lançado
+- **Integração de produção é card futuro, escrito à parte:** a entrada do gateway no compose do `ledger-service`, a ativação de `REDIS_ENABLED=true` e o Redis na stack real estão fora desta Issue e registradas no `BOARD.md`. Os contratos Java que esse card vai precisar honrar estão documentados no `AGENTS.md` do `ledger-service` (propriedade `redis.enabled` com default `false`, pares `@ConditionalOnProperty` complementares, `spring.data.redis.*`, e publicação síncrona dentro de `@Transactional`)
+- O perfil de teste deste app não pode depender de Redis real, e a suíte `npm test` mocka o `ioredis` por completo: ela prova o contrato de Stream, não a integração — a prova de integração é a stack desta Issue
+- Comprovar "sem perda" exige acumular evento pendente de propósito: parar o consumidor antes de publicar é a única forma honesta de provocar o cenário, e limpar a Stream depois da prova faz parte da validação

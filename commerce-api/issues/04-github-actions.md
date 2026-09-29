@@ -32,8 +32,8 @@ Estado final: a cada push e pull request, a pipeline executa a suíte de testes,
 
 - GitOps (ArgoCD/Flux), deploy ECS Fargate, Ansible
 - Foco exclusivo: workflow YAML, `npm ci` e `npm test`, build Docker, scan de imagem bloqueante, `fmt` e `validate`
-- Deploy contínuo — [Issue 07 do `ledger-service`](../../ledger-service/issues/07-cicd-vps-deploy.md)
-- Gates de segredos, SAST, SCA e hardening do pipeline — [Issue 04](../../webhook-gateway/issues/04-secrets-hygiene.md), [Issue 05](../../webhook-gateway/issues/05-sast-semgrep.md), [Issue 06](../../webhook-gateway/issues/06-sca-dependencias-imagem.md) e [Issue 07](../../webhook-gateway/issues/07-pipeline-hardening.md) do `webhook-gateway`
+- Deploy da aplicação e aplicação de infraestrutura — [Issue 10](10-deploy-ec2-pipeline.md) e [Issue 09](09-pipeline-infra-apply.md) desta trilha
+- Gates de conteúdo (segredos, SAST, SCA) e hardening do pipeline — fora desta Issue; a trilha DevSecOps do `webhook-gateway` é onde essas ferramentas são estudadas a fundo — leitura, nunca pré-requisito
 - **FinOps de staging (auto-stop de ambiente)** — fora de escopo por decisão registrada em `00-visao-geral.md`; além disso não existe ambiente de staging para desligar antes da Issue 07
 - Foco exclusivo do gate de IaC: consistência entre `commerce-api/infra/provider.tf` e o serviço que o emulador realmente inicializa
 

@@ -9,24 +9,23 @@ prioridade: alta
 
 ## Contexto
 
-O deploy é manual: alguém conecta por SSH, roda comandos e não deixa rastro. Não há barreira entre um merge e produção, não há rollback automático e não há como dizer em 30 segundos quem implantou o quê.
+O deploy é manual: alguém conecta por SSH, roda comandos e não deixa rastro. Não há barreira entre um merge e produção, não há rollback automático e não há como dizer em 30 segundos quem implantou o quê. E antes de existir deploy, não existe pipeline nenhuma deste app: build, teste e varredura de credencial não rodam em pull request, então a primeira barreira a ser construída — a pipeline — é trabalho desta Issue, não herança de outra trilha.
 
 ## Objetivo
 
-Estado final: cada merge com gates verdes vira deploy automático na VPS via chave efêmera, com healthcheck pós-deploy e rollback automático em falha, e trilha de auditoria de versão, autor e horário.
+Estado final: uma pipeline própria deste app, com build, testes e varredura de credencial em pull request, proteção de branch exigindo o verde, e cada merge aprovado virando deploy automático na VPS via chave efêmera, com healthcheck pós-deploy e rollback automático em falha, e trilha de auditoria de versão, autor e horário.
 
 ## Dependências
 
-- Requer [Issue 04 do `commerce-api`](../../commerce-api/issues/04-github-actions.md) — pipeline e proteção de branch
-- Requer [Issue 04 do `webhook-gateway`](../../webhook-gateway/issues/04-secrets-hygiene.md) — gate de segredos
-- Requer [Issue 05 do `webhook-gateway`](../../webhook-gateway/issues/05-sast-semgrep.md) — gate de SAST
-- Requer [Issue 08 do `webhook-gateway`](../../webhook-gateway/issues/08-devsecops-gates.md) — gates consolidados como pré-requisito
+- Requer Issue 02 — a imagem e a composição que este deploy publica
 - Requer Issue 03 — acesso ao servidor somente por chave SSH
 - Requer Issue 04 — o proxy é a porta única de entrada
 - Requer Issue 06 — topologia de rede alvo do deploy
 
 ## Escopo
 
+- Pipeline própria deste app no CI: build, suíte de testes e proteção de branch
+- Gate de varredura de credencial versionada como barreira mínima de merge
 - Gates como pré-requisito obrigatório do deploy
 - Separação de produção e staging por aprovação ou filtro de branch
 - Deploy via SSH com chave efêmera, sem credencial em log
@@ -35,13 +34,15 @@ Estado final: cada merge com gates verdes vira deploy automático na VPS via cha
 
 ## Fora de escopo
 
-- Criação dos gates — [Issue 04](../../webhook-gateway/issues/04-secrets-hygiene.md), [Issue 05](../../webhook-gateway/issues/05-sast-semgrep.md), [Issue 07](../../webhook-gateway/issues/07-pipeline-hardening.md) e [Issue 08](../../webhook-gateway/issues/08-devsecops-gates.md) do `webhook-gateway`
-- Provisionamento de servidor e firewall — Issue 03; a stack com Redis e webhook chega na [Issue 10 do `webhook-gateway`](../../webhook-gateway/issues/10-containers-redis.md)
-- Kubernetes e orquestração — fora do escopo desta trilha
+- SAST, SCA e DAST aprofundados — não são pré-requisito desta Issue; a trilha DevSecOps do `webhook-gateway` é onde essas ferramentas são estudadas a fundo, e existir lá não cria dependência aqui
+- Provisionamento de servidor e firewall — Issue 03; Redis e gateway de webhooks entram na stack de produção por card de integração ainda não criado, registrado no `BOARD.md`
+- Kubernetes e orquestração — fora de escopo desta trilha
 - Rollout blue-green com duas versões simultâneas — esta Issue entrega deploy com rollback, não dual-run
 
 ## Conhecimentos envolvidos
 
+- Pipeline de CI: jobs, triggers, cache e proteção de branch como barreira de merge
+- Varredura de credencial versionada como gate
 - SSH e acesso por chave em automação
 - Environments e proteção de credencial de deploy
 - Estratégias de deploy e rollback
@@ -51,18 +52,22 @@ Estado final: cada merge com gates verdes vira deploy automático na VPS via cha
 
 - Deploy manual por SSH, sem rastro
 - Nenhuma barreira entre merge e produção
-- Sem healthcheck pós-deploy nem rollback automático
+- Não existe pipeline deste app: build, teste e varredura de credencial não rodam em pull request
+- Sem healthcheck pós-deploy nem rollback
 
 ## Resultado esperado
 
 - Só pipeline verde dispara deploy
+- Pull request com teste quebrado ou credencial versionada é barrado antes do merge
 - Produção e staging separados por aprovação ou filtro de branch
 - Falha de healthcheck reverte automaticamente para a versão anterior
 - Versão, autor e horário auditáveis em 30 segundos
 
 ## Requisitos
 
-- [ ] Reutilizar os gates (segredos, SAST, SCA) como pré-requisito do deploy
+- [ ] Criar a pipeline deste app no CI: build e suíte de testes em pull request, com proteção de branch exigindo o resultado verde
+- [ ] Adicionar gate de varredura de credencial versionada, reprovando o pull request quando encontrar chave
+- [ ] Exigir os gates verdes como pré-requisito do deploy
 - [ ] Separar produção de staging por aprovação ou filtro de branch
 - [ ] Deploy via SSH com chave efêmera, sem senha ou chave em log
 - [ ] Healthcheck pós-deploy com rollback automático se falhar
@@ -70,6 +75,9 @@ Estado final: cada merge com gates verdes vira deploy automático na VPS via cha
 
 ## Critérios de aceitação
 
+- [ ] Pull request com teste quebrado não passa pela proteção de branch deste app — build to break
+- [ ] Commit contendo credencial de teste é recusado pelo gate de varredura — build to break, revertido em seguida
+- [ ] Nenhum requisito desta Issue depende de Issue de outro app: pipeline, gate e deploy nascem todos nesta trilha
 - [ ] Pull request sem gates verdes não dispara deploy
 - [ ] Produção e staging não aceitam deploy pelo mesmo caminho sem a separação declarada
 - [ ] Nenhum log de execução contém credencial de acesso
@@ -79,6 +87,8 @@ Estado final: cada merge com gates verdes vira deploy automático na VPS via cha
 ## Validação
 
 - Abrir pull request com um gate falhando e confirmar que o deploy não inicia
+- Introduzir um teste quebrado e confirmar o bloqueio na proteção de branch; reverter
+- Commitar uma chave de teste formato credencial e confirmar a reprovação do gate; reverter
 - Conferir a separação entre os caminhos de produção e de staging
 - Varredura dos logs de execução procurando credencial
 - **Build to break:** implantar uma versão com healthcheck falhando e observar o rollback automático
@@ -88,6 +98,8 @@ Estado final: cada merge com gates verdes vira deploy automático na VPS via cha
 ## Evidências
 
 - Execução do pipeline sem deploy quando um gate falha
+- Log da pipeline verde no commit atual
+- Log do gate de varredura reprovando a credencial de teste, com o commit corrigido
 - Configuração de separação de ambientes
 - Trecho de log sem credencial
 - Log do rollback automático com a versão revertida
@@ -95,8 +107,8 @@ Estado final: cada merge com gates verdes vira deploy automático na VPS via cha
 
 ## Limitações / notas
 
+- **Os gates deste app nascem aqui:** a pipeline e o gate de varredura de credencial são escopo desta Issue, construídos do zero para este app — esta trilha não consome pipeline, gate nem proteção de branch de outra trilha. SAST, SCA e DAST aprofundados ficam deliberadamente fora: eles são o conteúdo da trilha DevSecOps do [`webhook-gateway`](../../webhook-gateway/AGENTS.md), e existir ali não cria pré-requisito aqui
 - **Invariante de saúde:** o rollback usa `healthcheck.sh`, que depende de `curl` em `/actuator/health` retornando HTTP 200 e do literal `"status":"UP"`. Se qualquer Issue ligar `REDIS_ENABLED=true` sem Redis alcançável, `/actuator/health` responde 503 e o rollback entra em loop — manter o healthcheck do Redis acoplado a `service_healthy`
 - **Invariante de porta:** se a Issue 04 tornou `8080` interna, o healthcheck precisa apontar para o upstream correto; `PORT`, o `EXPOSE` do `Dockerfile` e `server.port` devem continuar coerentes entre si
 - A chave efêmera depende do acesso por chave estabelecido na Issue 03
 - `/actuator/**` precisa continuar `permitAll` — senão o healthcheck e o scraping falham por autenticação
-- **Onde estão os scans deste app:** esta Issue não declara Trivy nem Gitleaks porque esses gates não nascem duas vezes — quem os entrega é a trilha DevSecOps do [`webhook-gateway`](../../webhook-gateway/AGENTS.md): Issue 04 (segredos), Issue 05 (SAST), Issue 06 (SCA) e Issue 08 (gates consolidados), com o modo de portar para `p/java`, SCA Maven e a imagem Java descrito na seção "Rollout dos gates para os outros apps" do `AGENTS.md` daquele app. Esta Issue consome esses gates como pré-requisito de pipeline verde
