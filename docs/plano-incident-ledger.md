@@ -198,7 +198,7 @@ Estado final: um incidente real ou induzido nesta stack, detectado pelo alerta d
 
 ## Escopo
 
-- Runbook de uma página por regra de alerta da Issue 08, referenciado pela regra e entregue na própria notificação
+- Runbook de uma página por regra de alerta da Issue 08, em `ledger-service/runbooks/<alerta>.md`, referenciado pela regra e entregue na própria notificação
 - Conteúdo do runbook: como confirmar o sintoma, como chegar ao log, o que restaura o serviço e como confirmar que voltou
 - Escalonamento declarado em arquivo: quem é notificado, em que ordem, por qual canal, e em quanto tempo sem resposta o canal secundário é acionado
 - Exercício cego: pessoa sem contexto da causa executa o runbook e devolve o serviço ao estado saudável
@@ -240,7 +240,7 @@ Estado final: um incidente real ou induzido nesta stack, detectado pelo alerta d
 
 ## Requisitos
 
-- [ ] Runbook de uma página por regra de alerta da Issue 08, referenciado pela regra, começando pelo primeiro comando a executar
+- [ ] Runbook de uma página por regra de alerta da Issue 08, em `ledger-service/runbooks/<alerta>.md`, referenciado pela regra e começando pelo primeiro comando a executar
 - [ ] Conteúdo do runbook cobrindo: confirmar o sintoma, chegar ao log relevante, restaurar o serviço e confirmar que voltou
 - [ ] Escalonamento declarado em arquivo: quem é notificado, em qual ordem, por qual canal, e em quanto tempo sem resposta o canal secundário é acionado
 - [ ] Canal secundário declarado e exercitado pelo menos uma vez com o canal primário indisponível
@@ -252,7 +252,7 @@ Estado final: um incidente real ou induzido nesta stack, detectado pelo alerta d
 ## Critérios de aceitação
 
 - [ ] O exercício cego devolveu o serviço ao estado saudável sem nenhum passo improvisado fora do runbook — o que improvisou, se houve, está anotado e entrou no post-incident review
-- [ ] Cada regra de alerta da Issue 08 referencia, por anotação na configuração, um arquivo de runbook que existe no repositório
+- [ ] Cada regra de alerta da Issue 08 referencia, por anotação na configuração, um arquivo de runbook que existe em `ledger-service/runbooks/`
 - [ ] A notificação de escalonamento chegou ao canal secundário com o primário indisponível, com data e hora registradas
 - [ ] O post-incident review está versionado no repositório, tem linha do tempo em UTC e nenhuma frase atribuindo a falha a uma pessoa
 - [ ] A causa raiz registrada descreve o mecanismo que falhou, e não a ação de alguém

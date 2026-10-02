@@ -69,7 +69,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 - [ ] Persistir a saída da execução em arquivo ou artefato, com o p95 legível no resumo do k6
 - [ ] Configurar ao menos um alerta sobre métrica desta stack (por exemplo p95 de requisição ou taxa de erro) com condição e tempo de espera
 - [ ] Ligar o alerta a um canal observável e capturar a evidência do disparo (log do canal ou captura de tela)
-- [ ] Cada regra de alerta declara o procedimento que o operador segue ao receber o disparo — o caminho do runbook e o primeiro comando a rodar — e a notificação entrega esse caminho junto da mensagem
+- [ ] Cada regra de alerta declara o procedimento que o operador segue ao receber o disparo — o caminho do runbook e o primeiro comando a rodar — e a notificação entrega esse caminho junto da mensagem; o conteúdo do procedimento é escopo da Issue 09
 - [ ] Registrar, na mesma janela do teste, a saúde da aplicação e a ausência de erro 5xx no log do serviço
 - [ ] Declarar o impacto da carga sintética no banco de produção (o que ela cria) e registrar a limpeza do que foi criado
 - [ ] Declarar a exposição do coletor: ele entra nas redes da Issue 06, nenhuma porta nova fora do firewall da Issue 03, e o acesso externo ao painel é somente pelo Caddy da Issue 04 com autenticação
