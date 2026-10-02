@@ -23,7 +23,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 
 - Backend remoto com versionamento
 - Lock contra applies concorrentes
-- Separação de ambientes por workspace ou prefixo
+- Separação de ambientes por workspace, prefixo ou `tfvars` por ambiente
 - Estimativa de custo, computação mínima e destruição sem órfãos
 
 ## Fora de escopo
@@ -37,6 +37,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 
 - Backends remotos e locking do Terraform
 - Workspaces e separação de ambientes
+- Bloco `variable`, `tfvars` e sobreposição de valor por ambiente
 - Cálculo de custo e right-sizing em nuvem
 
 ## Estado atual
@@ -57,7 +58,9 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 
 - [ ] Migrar o estado para backend remoto com versionamento
 - [ ] Ativar locking contra `apply` concorrentes
-- [ ] Separar ambientes por workspace ou prefixo
+- [ ] Separar ambientes por workspace, prefixo ou `tfvars` por ambiente
+- [ ] Parametrizar com bloco `variable` tudo que muda entre ambientes: valor de laboratório nunca é o de produção e nenhum valor de ambiente fica hardcoded nos arquivos `.tf`
+- [ ] Antes do primeiro `apply` real, apontar o provider para a AWS remota: remover os `endpoints` de `http://localhost:4566`, as credenciais mock e os `skip_credentials_validation`/`skip_requesting_account_id` do laboratório
 - [ ] Estimar custo mensal antes de subir qualquer recurso
 - [ ] Provisionar computação mínima para API e banco
 - [ ] Desligar após validar, sem recursos órfãos
@@ -69,6 +72,8 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - [ ] Ambientes não escrevem na mesma chave de estado
 - [ ] O custo mensal estimado está documentado **antes** do primeiro `apply` de recursos pagos
 - [ ] Após `terraform destroy`, não resta cobrança de recurso
+- [ ] O provider da execução real não mantém nenhum resíduo do laboratório (`localhost:4566`, credencial mock, `skip_*`) — build to break: remover um e observar o `plan` falhar ou apontar para o lab
+- [ ] Os valores que diferem entre ambientes vêm de `variable`/`tfvars` ou da separação escolhida, nunca de valor fixo reaproveitado do laboratório
 
 ## Validação
 
@@ -77,6 +82,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - Rodar o mesmo comando em dois ambientes e confirmar chaves distintas
 - Conferir a estimativa registrada antes do provisionamento
 - Rodar `destroy` e verificar a ausência de recursos remanescentes e de cobrança
+- Inspecionar o `provider.tf` usado no apply real confirmando ausência de endpoints locais e `skip_*`
 
 ## Evidências
 
@@ -85,6 +91,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - Chaves de estado por ambiente
 - Estimativa de custo documentada antes do apply
 - Output do `destroy` sem recursos órfãos
+- Trecho do `provider.tf` de produção sem endpoints locais nem credenciais mock
 
 ## Limitações / notas
 
