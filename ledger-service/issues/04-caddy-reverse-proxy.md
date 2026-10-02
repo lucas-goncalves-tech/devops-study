@@ -25,11 +25,12 @@ Estado final: o tráfego externo entra por um único reverse proxy na porta 80/4
 - Roteamento por domínio para upstreams internos
 - Emissão e renovação automática de TLS
 - Headers de segurança padrão, compressão e logs estruturados
+- Caddy como serviço do mesmo Compose: a rede pública existe por causa do proxy — ele é a única fronteira que publica 80/443
 
 ## Fora de escopo
 
 - Isolamento de redes do Compose e limites de recursos — Issue 06
-- Alteração do compose do backend — a API continua em `ledger-service/app/docker-compose.yaml`
+- Reescrita da aplicação (código, Dockerfile, server.port) — quem mexe no `docker-compose.yaml` é esta Issue, que adiciona o serviço do proxy, mantendo os serviços da Issue 02
 - Backup do banco — Issue 05
 - Monitoramento e alertas — [Issue 08](08-trafego-sintetico-alertas.md) desta trilha
 - Kubernetes, Cloud e Terraform
