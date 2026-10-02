@@ -69,7 +69,7 @@ Estado final: configuração lida do ambiente, healthcheck em duas camadas com c
 ## Validação
 
 - Subir o banco e a API na ordem documentada e confirmar `curl` em `/actuator/health` retornando HTTP 200 com `"status":"UP"`
-- Rodar `scripts/healthcheck.sh` da trilha com o serviço no ar (esperado: exit 0) e com o serviço parado (esperado: exit 1)
+- Rodar o healthcheck L4/L7 em comando direto — sem arquivo auxiliar: L4 `bash -c '</dev/tcp/$HOST/$PORT'` e L7 `curl -fsS http://$HOST:$PORT/actuator/health | grep -q '"status":"UP"'` — exit 0 com o serviço no ar, exit 1 com o serviço parado
 - Conferir a porta com `ss -tulpn`
 - Enviar `SIGTERM` ao processo e observar desligamento ordenado, sem erro de pool aberto
 

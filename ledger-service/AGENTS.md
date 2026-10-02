@@ -72,8 +72,8 @@ Todos a partir de `ledger-service/app/`.
 | `./mvnw spring-boot:run` | sobe a API contra o Postgres | `/actuator/health` responde 200 `UP` |
 | `docker compose up --build` | API + banco pelo Compose | `docker compose ps` mostra `database` `healthy` |
 | `docker compose logs -f securepay_api` | log da API | sem stack trace na subida |
-| `../scripts/healthcheck.sh` | prova L4+L7 | exit 0 com o serviço no ar, exit 1 com ele parado |
-| `../scripts/healthcheck.sh <host> <porta>` | healthcheck de host não local | mesmo contrato |
+| healthcheck L4/L7 (comandos da `Issue 01`) | prova L4+L7 | exit 0 com o serviço no ar, exit 1 com ele parado |
+| `HOST` e `PORT` nos mesmos comandos | healthcheck de host não local | mesmo contrato |
 
 **Armadilha da Issue 01 que continua valendo:** `.env.example` traz
 `SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/...`, porque na Issue 01 o Postgres roda
@@ -83,7 +83,7 @@ herdado por todas as Issues que mexem em runtime.
 
 ## Healthcheck: L4 e L7
 
-[`scripts/healthcheck.sh`](scripts/healthcheck.sh) prova duas coisas em ordem, e as duas importam:
+Os comandos do healthcheck L4/L7 — `bash -c '</dev/tcp/$HOST/$PORT'` e `curl /actuator/health` — provam duas coisas em ordem, e as duas importam:
 
 - **L4** — `bash -c "</dev/tcp/$HOST/$PORT"`: a porta aceita conexão. Não prova que a aplicação
   responde; prova que algo está escutando.

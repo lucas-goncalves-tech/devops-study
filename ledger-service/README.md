@@ -19,11 +19,11 @@ docker compose up --build
 Em macOS/BSD o `sed -i` precisa do sufixo: `sed -i '' 's#…#…#' .env`.
 
 Conferir: <http://localhost:8080/actuator/health> deve responder `200` com `"status":"UP"`.
-O mesmo contrato em script, com prova L4 (porta) e L7 (`/actuator/health`), é o
-[`../scripts/healthcheck.sh`](scripts/healthcheck.sh) desta trilha — exit 0 saudável, exit 1 falho:
+O mesmo contrato em comando direto, com prova L4 (porta) e L7 (`/actuator/health`) — exit 0 saudável, exit 1 falho:
 
 ```bash
-../scripts/healthcheck.sh
+bash -c '</dev/tcp/${HOST:-localhost}/${PORT:-8080}'
+curl -fsS "http://${HOST:-localhost}/${PORT:-8080}/actuator/health" | grep -q '"status":"UP"'
 ```
 
 Sem Docker, o caminho da Issue 01 é Postgres no host + `./mvnw spring-boot:run`, com o
@@ -47,5 +47,5 @@ Issue = uma capacidade, escrita como RFC. Não é tutorial: o passo a passo de c
 
 - [`issues/`](issues/) — as 8 Issues da trilha VPS
 - [`estudos/`](estudos/) — material de estudo, um arquivo por Issue
-- [`scripts/`](scripts/) — healthcheck e demais checks de troubleshooting desta trilha (construídos aqui)
+- [`scripts/`](scripts/) — demais checks de troubleshooting desta trilha (construídos aqui)
 - [`AGENTS.md`](AGENTS.md) — arquitetura, variáveis de ambiente e comandos, para quem vai mexer

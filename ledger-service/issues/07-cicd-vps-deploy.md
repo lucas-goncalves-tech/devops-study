@@ -113,7 +113,7 @@ Estado final: uma pipeline própria deste app, com build, testes e varredura de 
 ## Limitações / notas
 
 - **Os gates deste app nascem aqui:** a pipeline e o gate de varredura de credencial são escopo desta Issue, construídos do zero para este app — esta trilha não consome pipeline, gate nem proteção de branch de outra trilha. SAST, SCA e DAST aprofundados ficam deliberadamente fora: eles são o conteúdo da trilha DevSecOps do [`webhook-gateway`](../../webhook-gateway/AGENTS.md), e existir ali não cria pré-requisito aqui
-- **Invariante de saúde:** o rollback usa `scripts/healthcheck.sh` desta trilha, que depende de `curl` em `/actuator/health` retornando HTTP 200 e do literal `"status":"UP"`. Se qualquer Issue ligar `REDIS_ENABLED=true` sem Redis alcançável, `/actuator/health` responde 503 e o rollback entra em loop — manter o healthcheck do Redis acoplado a `service_healthy`
+- **Invariante de saúde:** o rollback executa o healthcheck L4/L7 desta trilha (`curl` em `/actuator/health` retornando HTTP 200 e o literal `"status":"UP"`, contrato da `Issue 01`). Se qualquer Issue ligar `REDIS_ENABLED=true` sem Redis alcançável, `/actuator/health` responde 503 e o rollback entra em loop — manter o healthcheck do Redis acoplado a `service_healthy`
 - **Invariante de porta:** se a Issue 04 tornou `8080` interna, o healthcheck precisa apontar para o upstream correto; `PORT`, o `EXPOSE` do `Dockerfile` e `server.port` devem continuar coerentes entre si
 - A chave efêmera depende do acesso por chave estabelecido na Issue 03
 - `permitAll` restrito a `/actuator/health` e `/actuator/prometheus` (healthcheck e scraping); os demais endpoints do actuator ficam inalcançáveis pelo proxy público
