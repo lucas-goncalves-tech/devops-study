@@ -193,7 +193,7 @@ for f in webhook-gateway/issues/*.md; do
 done
 [ "$broken" -eq 0 ] || exit 1
 git diff "$B2" HEAD -- webhook-gateway \
-  | grep '^+' | grep -vE '^\+\+\+|^\+ *- ' && { echo "ESTILO ERRADO"; exit 1; } || true
+  | grep '^+' | grep -vE '^\+\+\+|^\+ *- |^\+$' && { echo "ESTILO ERRADO"; exit 1; } || true
 echo "VALIDAÇÃO FINAL: OK — 12 issues × 13 seções, status 12 todo, diff só em issues+planos desta branch (âncora B2), links e estilo OK"
 ```
 Expected: `VALIDAÇÃO FINAL: OK — ...` e nenhuma linha de erro antes dela. Se falhar: corrigir, commitar o ajuste e reexecutar a bateria antes de considerar o plano concluído.
