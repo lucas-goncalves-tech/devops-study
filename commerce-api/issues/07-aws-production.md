@@ -64,7 +64,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - [ ] Estimar custo mensal antes de subir qualquer recurso
 - [ ] Provisionar computação mínima para API e banco
 - [ ] Provisionar a instância na subnet pública da VPC da Issue 03, com rota padrão para o IGW (sem NAT), bootstrap com Docker antes do primeiro deploy e entrada `22` restrita à variável `admin_cidr` — nunca `0.0.0.0/0`
-- [ ] Desligar após validar, sem recursos órfãos
+- [ ] Provar o ciclo de vida (`destroy` sem cobrança residual) e deixar o ambiente re-provisionado ao final, sem recursos órfãos — a máquina viva é premissa das Issues 08 e 10
 
 ## Critérios de aceitação
 
@@ -72,7 +72,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - [ ] O estado não está mais apenas no disco local e mantém histórico de versão
 - [ ] Ambientes não escrevem na mesma chave de estado
 - [ ] O custo mensal estimado está documentado **antes** do primeiro `apply` de recursos pagos
-- [ ] Após `terraform destroy`, não resta cobrança de recurso
+- [ ] Após `terraform destroy`, não resta cobrança de recurso, e um `apply` de re-provisionamento devolve a instância `running` — destroy é prova de ciclo de vida, não o estado final desta Issue
 - [ ] O provider da execução real não mantém nenhum resíduo do laboratório (`localhost:4566`, credencial mock, `skip_*`) — build to break: sem os `endpoints`, nenhuma chamada vai mais para `localhost:4566`; sem as credenciais mock (ou removido um `skip_*`), o `plan` falha por falta de credencial real
 - [ ] Os valores que diferem entre ambientes vêm de `variable`/`tfvars` ou da separação escolhida, nunca de valor fixo reaproveitado do laboratório
 - [ ] O plano real mostra a instância na subnet pública com rota para o IGW, entrada `22` limitada a `admin_cidr`, nenhuma porta `0.0.0.0/0` e o `docker pull` na instância nova conclui antes do deploy
@@ -93,7 +93,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - Inspeção do backend com histórico de versão
 - Chaves de estado por ambiente
 - Estimativa de custo documentada antes do apply
-- Output do `destroy` sem recursos órfãos
+- Output do `destroy` sem recursos órfãos e do `apply` de re-provisionamento com a instância `running`
 - Trecho do `provider.tf` de produção sem endpoints locais nem credenciais mock
 - Saída do `docker pull` na instância nova e regra de ingress `22` com `admin_cidr`
 
