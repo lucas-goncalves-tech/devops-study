@@ -72,7 +72,7 @@ pagamento na API → ledger publica na Stream → consumidor lê → gateway ent
 
 ## Requisitos
 
-- [ ] Serviço `redis` na stack do `ledger-service`, com healthcheck, sem porta publicada, em rede interna com a aplicação e autenticação por `senha` injetada via ambiente — `REDIS_URL` do gateway com a credencial e `SPRING_DATA_REDIS_PASSWORD` no ambiente do `ledger`
+- [ ] Serviço `redis` na stack do `ledger-service`, com healthcheck, sem porta publicada, na rede isolada da topologia da [`Issue 06`](../../ledger-service/issues/06-compose-isolation.md) do `ledger-service` (o `redis` e a aplicação dividem rede como aquele invariante exige) e autenticação por `senha` injetada via ambiente — `REDIS_URL` do gateway com a credencial, e `SPRING_DATA_REDIS_HOST=redis` (nome do serviço) + `SPRING_DATA_REDIS_PASSWORD` no ambiente do `ledger`
 - [ ] Serviço `webhook-gateway` na mesma stack e rede, apontando para o `redis` por nome de serviço
 - [ ] `REDIS_ENABLED=true` no ambiente da aplicação, com o healthcheck do `redis` condicionando a subida da aplicação
 - [ ] Caminho da imagem do gateway até a produção declarado nesta Issue — build no deploy a partir do `Dockerfile` do app ou imagem publicada pelo pipeline —, sem construção manual na VPS
@@ -93,6 +93,7 @@ pagamento na API → ledger publica na Stream → consumidor lê → gateway ent
 - [ ] Configuração com destino de entrega sem `https` é recusada em produção — build to break da configuração
 
 - [ ] Conexão ao `redis` de produção **sem credencial é recusada** (build to break), com a porta `6379` seguindo inalcançável de fora do host
+- [ ] `SPRING_DATA_REDIS_HOST=redis` está declarada no ambiente do `ledger` e `/actuator/health` responde `UP` com o publisher ligado — build to break: sem a variável a saúde cai para `503`
 
 ## Validação
 
@@ -103,6 +104,7 @@ pagamento na API → ledger publica na Stream → consumidor lê → gateway ent
 - Rodar o healthcheck da trilha VPS com o sistema completo de pé (esperado: exit 0)
 - Varredura dos dois apps por credencial versionada
 - Configurar o destino de entrega sem `https` e confirmar a recusa; reverter em seguida
+- Remover `SPRING_DATA_REDIS_HOST` do ambiente, observar `503`, restaurar e confirmar `UP` e conferir na stack que o `redis` está na rede isolada da `Issue 06`
 
 ## Evidências
 
@@ -112,6 +114,7 @@ pagamento na API → ledger publica na Stream → consumidor lê → gateway ent
 - Saída do healthcheck da trilha VPS com o publisher ativo (exit 0)
 - Saída da inspeção do Compose sem `ports:` nos serviços internos
 - Saída da varredura de credenciais nos dois apps
+- Saída do `UP` com a variável e do `503` sem ela
 
 ## Limitações / notas
 
