@@ -19,6 +19,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 
 - Requer Issue 07 — o tráfego só existe depois que há versão implantada e auditável na VPS
 - Requer Issue 04 — o Caddy é a porta única de entrada; o k6 fala com o domínio público, nunca com a porta `8080` do container
+- Requer Issue 06 — o coletor entra nas redes já declaradas da stack segmentada; nenhuma porta nova fora do firewall da Issue 03
 
 ## Escopo
 
@@ -70,6 +71,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 - [ ] Ligar o alerta a um canal observável e capturar a evidência do disparo (log do canal ou captura de tela)
 - [ ] Registrar, na mesma janela do teste, a saúde da aplicação e a ausência de erro 5xx no log do serviço
 - [ ] Declarar o impacto da carga sintética no banco de produção (o que ela cria) e registrar a limpeza do que foi criado
+- [ ] Declarar a exposição do coletor: ele entra nas redes da Issue 06, nenhuma porta nova fora do firewall da Issue 03, e o acesso externo ao painel é somente pelo Caddy da Issue 04 com autenticação
 
 ## Critérios de aceitação
 
@@ -82,6 +84,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 - [ ] Nenhum erro 5xx de aplicação aparece no log do serviço durante a janela do teste
 - [ ] O script k6 roda contra o domínio público atrás do Caddy, e não contra a porta do container
 - [ ] O que a carga sintética criou no banco de produção está identificado e limpo ao final da execução
+- [ ] O coletor está nas redes declaradas da Issue 06, o firewall da Issue 03 não ganha regra nova e qualquer acesso externo ao painel, se existir, passa pelo proxy com autenticação
 
 ## Validação
 
@@ -92,6 +95,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 - Consultar `/actuator/health` e rodar o healthcheck L4/L7 da `Issue 01` durante a janela do teste
 - Inspecionar o log do serviço procurando `5xx` no mesmo intervalo
 - Conferir no banco os registros criados pela carga e removê-los
+- Conferir que a porta do coletor não responde fora do proxy e que o firewall da Issue 03 não mudou
 
 ## Evidências
 
