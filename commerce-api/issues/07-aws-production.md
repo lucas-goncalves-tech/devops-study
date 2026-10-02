@@ -30,7 +30,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 
 - Kubernetes e orquestração — fora de escopo por decisão; a Issue correspondente está arquivada em `archive/18-kubernetes-helm/`
 - Pipeline de CI/CD — Issue 04; aplicação de infraestrutura e deploy automatizado — [Issue 09](09-pipeline-infra-apply.md) e [Issue 10](10-deploy-ec2-pipeline.md) desta trilha
-- Backups e monitoramento — [Issue 05 do `ledger-service`](../../ledger-service/issues/05-db-backups-s3.md) e Issue 05
+- Monitoramento — [Issue 05](05-observability.md) deste app
 - Serviços gerenciados além da computação mínima
 
 ## Conhecimentos envolvidos
@@ -63,6 +63,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - [ ] Antes do primeiro `apply` real, declarar o provider da AWS remota em diretório próprio de produção, sem editar `commerce-api/infra/provider.tf` — ele é contrato de saída da Issue 03 e o `plan` do gate da [Issue 04](04-github-actions.md) roda com ele; `endpoints` de `http://localhost:4566`, credenciais mock e `skip_credentials_validation`/`skip_requesting_account_id` ficam fora da declaração de produção
 - [ ] Declarar o mecanismo de reuso do código da Issue 03: a raiz de produção instancia o módulo (source para commerce-api/infra, providers/configuration_aliases resolvidos para a AWS real), os endpoints do laboratório ficam atrás de variable vazia em produção e nenhum .tf do lab é editado
 - [ ] Estimar custo mensal antes de subir qualquer recurso
+- [ ] Backup diário do banco para o bucket securepay-financial-reports da Issue 03, com retenção declarada, e restore provado a partir do objeto fora da instância antes de encerrar
 - [ ] Provisionar computação mínima para API e banco
 - [ ] Provisionar a instância na subnet pública da VPC da Issue 03, com rota padrão para o IGW (sem NAT), bootstrap com Docker antes do primeiro deploy e entrada `22` restrita à variável `admin_cidr` — nunca `0.0.0.0/0`
 - [ ] Reativar o `elbv2` no provider de produção, com ALB na subnet pública, target group para a API na porta `3000` e listener `80`; quando houver domínio apontado: certificado ACM e redirect `80` para `443` (sem domínio, registrar a pendência em Limitações)
@@ -77,6 +78,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - [ ] Após `terraform destroy`, não resta cobrança de recurso, e um `apply` de re-provisionamento devolve a instância `running` — destroy é prova de ciclo de vida, não o estado final desta Issue
 - [ ] O provider da execução real não mantém nenhum resíduo do laboratório (`localhost:4566`, credencial mock, `skip_*`) — build to break: sem os `endpoints`, nenhuma chamada vai mais para `localhost:4566`; sem as credenciais mock (ou removido um `skip_*`), o `plan` falha por falta de credencial real
 - [ ] Os valores que diferem entre ambientes vêm de `variable`/`tfvars` ou da separação escolhida, nunca de valor fixo reaproveitado do laboratório
+- [ ] Um dump do banco existe no bucket (fora da instância) e o restore a partir dele devolve os dados — teste registrado nesta Issue
 - [ ] Reuso por instanciação, não por cópia: o apply de produção termina com `git diff` vazio em commerce-api/infra/ e o plan da raiz de produção não referencia localhost:4566
 - [ ] O plano real mostra a instância na subnet pública com rota para o IGW, entrada `22` limitada a `admin_cidr`, nenhuma porta `0.0.0.0/0` e o `docker pull` na instância nova conclui antes do deploy
 - [ ] O plano real mostra o ALB ativo, health check do target group `healthy`, entrada `3000` da API restrita ao SG do ALB e nenhuma regra com `0.0.0.0/0`
@@ -91,6 +93,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - Inspecionar o `provider.tf` usado no apply real confirmando ausência de endpoints locais e `skip_*`
 - Na instância provisionada, executar o bootstrap e confirmar `docker pull` e `ssh` pelo endereço restrito à CIDR de admin
 - Inspecionar o ALB: DNS responde, health check `healthy` e a API só é alcançável através dele
+- Gerar o dump, restaurar uma cópia de teste a partir do objeto e conferir os dados
 
 ## Evidências
 
@@ -102,6 +105,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - Trecho do `provider.tf` de produção sem endpoints locais nem credenciais mock
 - Saída do `docker pull` na instância nova e regra de ingress `22` com `admin_cidr`
 - DNS do ALB e estado `healthy` do target group
+- Saída do objeto de backup no bucket e do restore com os dados conferidos
 
 ## Limitações / notas
 
