@@ -209,13 +209,14 @@ git commit -m "docs(tracker): staging definido na trilha VPS e correção do car
 
 - [ ] **Step 5: Bateria final de validação**
 
-Executar **depois** dos commits (árvore limpa): os ranges ancoram em `B=$(git merge-base main HEAD)` — o ponto de branch —, imunes a commits de ajuste feitos entre a primeira e a reexecução. O `grep -cv` do escopo leva `|| true`: contagem zero sai com exit 1 e derrubaria o `set -e` silenciosamente.
+Executar **depois** dos commits (árvore limpa): ranges fixos `B0=0a5356b..B1=b03660a` — do ponto de branch ao último commit deste plano (âncoras registradas nos ranges do ledger). `merge-base..HEAD` não serve num re-run: depois da execução do plano irmão do webhook-gateway ele englobaria os commits daquele plano. O `grep -cv` do escopo leva `|| true`: contagem zero sai com exit 1 e derrubaria o `set -e` silenciosamente.
 
 Run:
 ```bash
 set -euo pipefail
 [ -z "$(git status --porcelain)" ] || { echo "ÁRVORE SUJA: execute após os commits"; exit 1; }
-B=$(git merge-base main HEAD)
+B0=0a5356b  # ponto de branch
+B1=b03660a  # último commit deste plano (Task 4 + ajuste da bateria)
 for f in ledger-service/issues/*.md; do
   [ "$(grep -c '^## ' "$f")" -eq 13 ] || { echo "SEÇÃO ERRADA: $f"; exit 1; }
 done
@@ -223,9 +224,9 @@ done
   || { echo "STATUS ERRADO (esperado 2 done)"; exit 1; }
 [ "$(grep -h '^status:' ledger-service/issues/*.md | grep -c '^status: todo$')" -eq 6 ] \
   || { echo "STATUS ERRADO (esperado 6 todo)"; exit 1; }
-out=$(git diff --name-only "$B" HEAD -- | grep -cv '^ledger-service/issues/\|^BOARD.md$\|^docs/plano-correcoes-' || true)
+out=$(git diff --name-only "$B0" "$B1" -- | grep -cv '^ledger-service/issues/\|^BOARD.md$\|^docs/plano-correcoes-' || true)
 [ "$out" -eq 0 ] || { echo "ESCOPO ERRADO: $out arquivos fora"; exit 1; }
-[ "$(git diff --unified=0 "$B" HEAD -- BOARD.md | grep -E '^[+-][^+-]' | grep -vc 'Staging')" -eq 0 ] \
+[ "$(git diff --unified=0 "$B0" "$B1" -- BOARD.md | grep -E '^[+-][^+-]' | grep -vc 'Staging')" -eq 0 ] \
   || { echo "BOARD ERRADO: linha fora da seção Staging alterada"; exit 1; }
 broken=0
 for f in ledger-service/issues/*.md; do
@@ -236,9 +237,9 @@ for f in ledger-service/issues/*.md; do
   done < <(grep -oE '\]\([^)]*\.md\)' "$f" | sed 's/^](//; s/)$//')
 done
 [ "$broken" -eq 0 ] || exit 1
-git diff "$B" HEAD -- ledger-service BOARD.md \
+git diff "$B0" "$B1" -- ledger-service BOARD.md \
   | grep '^+' | grep -vE '^\+\+\+|^\+ *- ' && { echo "ESTILO ERRADO"; exit 1; } || true
-echo "VALIDAÇÃO FINAL: OK — 8 issues × 13 seções, status 2 done/6 todo, diff só em issues+BOARD+planos desta branch, BOARD só na linha Staging, links e estilo OK"
+echo "VALIDAÇÃO FINAL: OK — 8 issues × 13 seções, status 2 done/6 todo, diff só em issues+BOARD+planos desta branch (âncoras B0..B1), BOARD só na linha Staging, links e estilo OK"
 ```
 Expected: `VALIDAÇÃO FINAL: OK — ...` e nenhuma linha de erro antes dela. Se falhar: corrigir, commitar o ajuste e reexecutar a bateria antes de considerar a planilha concluída.
 

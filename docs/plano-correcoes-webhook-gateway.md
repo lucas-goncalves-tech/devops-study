@@ -169,19 +169,19 @@ git commit -m "docs(tracker): autenticação do redis de produção declarada na
 
 - [ ] **Step 6: Bateria final de validação**
 
-Executar **depois** dos commits (árvore limpa): os ranges ancoram em `B=$(git merge-base main HEAD)` — o ponto de branch —, imunes a commits de ajuste entre a primeira e a reexecução. O `grep -cv` do escopo leva `|| true`: contagem zero sai com exit 1 e derrubaria o `set -e` silenciosamente.
+Executar **depois** dos commits (árvore limpa): a âncora é `B2=b03660a`, o commit imediatamente anterior à Task 1 deste plano (BASE registrado no ledger do plano) — `merge-base` não serve aqui: os dois planos compartilham branch e ele englobaria os commits do plano irmão. Ranges `B2..HEAD` crescem com commits de ajuste sem mudar de significado. O `grep -cv` do escopo leva `|| true`: contagem zero sai com exit 1 e derrubaria o `set -e` silenciosamente.
 
 Run:
 ```bash
 set -euo pipefail
 [ -z "$(git status --porcelain)" ] || { echo "ÁRVORE SUJA: execute após os commits"; exit 1; }
-B=$(git merge-base main HEAD)
+B2=b03660a  # início deste plano (Task 1 BASE no ledger)
 for f in webhook-gateway/issues/*.md; do
   [ "$(grep -c '^## ' "$f")" -eq 13 ] || { echo "SEÇÃO ERRADA: $f"; exit 1; }
 done
 [ "$(grep -h '^status:' webhook-gateway/issues/*.md | grep -c '^status: todo$')" -eq 12 ] \
   || { echo "STATUS ERRADO (esperado 12 todo)"; exit 1; }
-out=$(git diff --name-only "$B" HEAD -- | grep -cv '^webhook-gateway/issues/' || true)
+out=$(git diff --name-only "$B2" HEAD -- | grep -cv '^webhook-gateway/issues/\|^docs/plano-correcoes-' || true)
 [ "$out" -eq 0 ] || { echo "ESCOPO ERRADO: $out arquivos fora"; exit 1; }
 broken=0
 for f in webhook-gateway/issues/*.md; do
@@ -192,9 +192,9 @@ for f in webhook-gateway/issues/*.md; do
   done < <(grep -oE '\]\([^)]*\.md\)' "$f" | sed 's/^](//; s/)$//')
 done
 [ "$broken" -eq 0 ] || exit 1
-git diff "$B" HEAD -- webhook-gateway \
+git diff "$B2" HEAD -- webhook-gateway \
   | grep '^+' | grep -vE '^\+\+\+|^\+ *- ' && { echo "ESTILO ERRADO"; exit 1; } || true
-echo "VALIDAÇÃO FINAL: OK — 12 issues × 13 seções, status 12 todo, diff só em issues, links e estilo OK"
+echo "VALIDAÇÃO FINAL: OK — 12 issues × 13 seções, status 12 todo, diff só em issues+planos desta branch (âncora B2), links e estilo OK"
 ```
 Expected: `VALIDAÇÃO FINAL: OK — ...` e nenhuma linha de erro antes dela. Se falhar: corrigir, commitar o ajuste e reexecutar a bateria antes de considerar o plano concluído.
 
