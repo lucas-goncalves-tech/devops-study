@@ -34,7 +34,7 @@ Estado final: um ambiente de staging claramente separado da produção, três fa
 
 - Chaos engineering distribuído, biblioteca de experimentos e automação de falha em produção
 - Alertas, SLO e escalonamento — fora desta Issue; a observabilidade que esta trilha entrega está na Issue 05
-- Terraform novo para o staging: o ambiente nasce do que a Issue 07 já provisiona, com os recursos separados
+- Terraform novo para o staging: o ambiente nasce do que a Issue 07 já provisiona, com os recursos separados e os valores por ambiente parametrizados
 - Staging inseguro de propósito — [Issue 11 do `webhook-gateway`](../../webhook-gateway/issues/11-staging-inseguro.md)
 - Kubernetes e orquestração — fora de escopo por decisão, a Issue correspondente está arquivada em `archive/18-kubernetes-helm/`
 
@@ -62,6 +62,7 @@ Estado final: um ambiente de staging claramente separado da produção, três fa
 ## Requisitos
 
 - [ ] Provisionar staging com URL, credencial de banco, volume e nome de ambiente próprios, a partir dos recursos da Issue 07
+- [ ] Provisionar o staging pela mesma declaração da produção, com os valores do ambiente vindo de `variable`/`tfvars` ou da separação da Issue 07 — nenhum arquivo `.tf` duplicado para criar o staging
 - [ ] Tornar o staging identificável de fora: nome de serviço, cabeçalho ou URL distintos, e nenhum recurso compartilhado com a produção
 - [ ] Injetar latência artificial por mecanismo declarado (variável de ambiente lida pelo app), com valor e duração registrados
 - [ ] Injetar esgotamento de pool de conexões por mecanismo declarado (limite de pool reduzido ou consulta lenta segurando conexão), com valor registrado
@@ -82,6 +83,7 @@ Estado final: um ambiente de staging claramente separado da produção, três fa
 - [ ] O diagnóstico de cada falha cita a métrica do painel que a revelou, e não apenas uma linha de log da aplicação
 - [ ] O conserto não é desligar a injeção: a repetição da injeção após o conserto é registrada e o comportamento é o esperado
 - [ ] A regra de descarte do ambiente e o custo estimado do staging estão registrados
+- [ ] Nenhum arquivo `.tf` é copiado entre produção e staging: o que difere é valor de ambiente, não declaração; quando o fallback local da nota de limitações for usado, a separação vale por compose e nome próprios
 
 ## Validação
 
