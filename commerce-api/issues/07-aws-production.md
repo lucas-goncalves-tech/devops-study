@@ -61,6 +61,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - [ ] Separar ambientes por workspace, prefixo ou `tfvars` por ambiente
 - [ ] Parametrizar com bloco `variable` tudo que muda entre ambientes: valor de laboratório nunca é o de produção e nenhum valor de ambiente fica hardcoded nos arquivos `.tf`
 - [ ] Antes do primeiro `apply` real, declarar o provider da AWS remota em diretório próprio de produção, sem editar `commerce-api/infra/provider.tf` — ele é contrato de saída da Issue 03 e o `plan` do gate da [Issue 04](04-github-actions.md) roda com ele; `endpoints` de `http://localhost:4566`, credenciais mock e `skip_credentials_validation`/`skip_requesting_account_id` ficam fora da declaração de produção
+- [ ] Declarar o mecanismo de reuso do código da Issue 03: a raiz de produção instancia o módulo (source para commerce-api/infra, providers/configuration_aliases resolvidos para a AWS real), os endpoints do laboratório ficam atrás de variable vazia em produção e nenhum .tf do lab é editado
 - [ ] Estimar custo mensal antes de subir qualquer recurso
 - [ ] Provisionar computação mínima para API e banco
 - [ ] Provisionar a instância na subnet pública da VPC da Issue 03, com rota padrão para o IGW (sem NAT), bootstrap com Docker antes do primeiro deploy e entrada `22` restrita à variável `admin_cidr` — nunca `0.0.0.0/0`
@@ -76,6 +77,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - [ ] Após `terraform destroy`, não resta cobrança de recurso, e um `apply` de re-provisionamento devolve a instância `running` — destroy é prova de ciclo de vida, não o estado final desta Issue
 - [ ] O provider da execução real não mantém nenhum resíduo do laboratório (`localhost:4566`, credencial mock, `skip_*`) — build to break: sem os `endpoints`, nenhuma chamada vai mais para `localhost:4566`; sem as credenciais mock (ou removido um `skip_*`), o `plan` falha por falta de credencial real
 - [ ] Os valores que diferem entre ambientes vêm de `variable`/`tfvars` ou da separação escolhida, nunca de valor fixo reaproveitado do laboratório
+- [ ] Reuso por instanciação, não por cópia: o apply de produção termina com `git diff` vazio em commerce-api/infra/ e o plan da raiz de produção não referencia localhost:4566
 - [ ] O plano real mostra a instância na subnet pública com rota para o IGW, entrada `22` limitada a `admin_cidr`, nenhuma porta `0.0.0.0/0` e o `docker pull` na instância nova conclui antes do deploy
 - [ ] O plano real mostra o ALB ativo, health check do target group `healthy`, entrada `3000` da API restrita ao SG do ALB e nenhuma regra com `0.0.0.0/0`
 
