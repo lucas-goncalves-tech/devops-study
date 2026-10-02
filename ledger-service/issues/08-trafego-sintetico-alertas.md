@@ -61,7 +61,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 
 ## Requisitos
 
-- [ ] Subir o coletor de métricas desta stack apontando para `/actuator/prometheus` da aplicação em produção, com a série visível
+- [ ] Subir o coletor de métricas desta stack apontando para `/actuator/prometheus` da aplicação em produção, com a série visível e o acesso ao `painel/API do coletor` restrito por `autenticação`
 - [ ] Escrever o script k6 versionado, com login, transação idempotente e sondagem de `/actuator/health`, e limite de vazão declarado em comentário no código
 - [ ] Agendar a execução fora do pedido (cron na VPS ou `schedule` de GitHub Actions), com horário e destino da saída declarados
 - [ ] Definir thresholds de p95 e de taxa de erro que reprovam a execução quando a degradação passar do limite

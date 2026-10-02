@@ -58,7 +58,7 @@ Estado final: o tráfego externo entra por um único reverse proxy na porta 80/4
 ## Requisitos
 
 - [ ] Subir reverse proxy como porta única de entrada
-- [ ] Rotejar por domínio para upstreams internos
+- [ ] Rotejar por domínio para upstreams internos, alcançáveis pelo proxy apenas os `caminhos declarados` de cada upstream — no actuator, somente `/actuator/health` e `/actuator/prometheus`
 - [ ] Emitir TLS automático com renovação sem downtime
 - [ ] Aplicar headers de segurança padrão
 - [ ] Ativar compressão e logs estruturados

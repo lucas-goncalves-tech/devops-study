@@ -113,4 +113,4 @@ Estado final: uma pipeline própria deste app, com build, testes e varredura de 
 - **Invariante de saúde:** o rollback usa `scripts/healthcheck.sh` desta trilha, que depende de `curl` em `/actuator/health` retornando HTTP 200 e do literal `"status":"UP"`. Se qualquer Issue ligar `REDIS_ENABLED=true` sem Redis alcançável, `/actuator/health` responde 503 e o rollback entra em loop — manter o healthcheck do Redis acoplado a `service_healthy`
 - **Invariante de porta:** se a Issue 04 tornou `8080` interna, o healthcheck precisa apontar para o upstream correto; `PORT`, o `EXPOSE` do `Dockerfile` e `server.port` devem continuar coerentes entre si
 - A chave efêmera depende do acesso por chave estabelecido na Issue 03
-- `/actuator/**` precisa continuar `permitAll` — senão o healthcheck e o scraping falham por autenticação
+- `permitAll` restrito a `/actuator/health` e `/actuator/prometheus` (healthcheck e scraping); os demais endpoints do actuator ficam inalcançáveis pelo proxy público
