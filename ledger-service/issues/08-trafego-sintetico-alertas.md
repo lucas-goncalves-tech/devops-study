@@ -100,6 +100,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 ## Evidências
 
 - Saída do coletor mostrando a série coletada desta stack
+- Tentativa de acesso direto à porta do coletor recusada fora do proxy e firewall da Issue 03 sem mudança
 - Saída do k6 com o p95 da janela e o nome do thresholds avaliado
 - Evidência do disparo no canal (linha de log do canal de notificação ou captura de tela com horário)
 - Regra de alerta em arquivo, com PromQL e `for`

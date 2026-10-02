@@ -121,13 +121,13 @@ exit=1
 
 ```console
 $ kill -TERM 114020
-$ grep -E 'Graceful shutdown|HikariPool-1 - Shutdown|Closing JPA' .superpowers/sdd/plano-correcoes-auditoria2-ledger-service/api-run.log
+$ grep -E 'Graceful shutdown|HikariPool-1 - Shutdown|Closing JPA' .superpowers/sdd/plano-correcoes-auditoria2-ledger-service/api-run.log  # (log desta execução, no workspace)
 2026-10-02T18:32:40.251-03:00  INFO 114020 --- [ledger-service] [ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
 2026-10-02T18:32:40.256-03:00  INFO 114020 --- [ledger-service] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
 2026-10-02T18:32:40.292-03:00  INFO 114020 --- [ledger-service] [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-10-02T18:32:40.309-03:00  INFO 114020 --- [ledger-service] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2026-10-02T18:32:40.318-03:00  INFO 114020 --- [ledger-service] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-$ grep -ciE 'connection is not available|PoolInitialization|connection reset|HikariPool.*ERROR' .superpowers/sdd/plano-correcoes-auditoria2-ledger-service/api-run.log
+$ grep -ciE 'connection is not available|PoolInitialization|connection reset|HikariPool.*ERROR' .superpowers/sdd/plano-correcoes-auditoria2-ledger-service/api-run.log  # (log desta execução, no workspace)
 0
 ```
 

@@ -30,7 +30,7 @@ Estado final: o tráfego externo entra por um único reverse proxy na porta 80/4
 ## Fora de escopo
 
 - Isolamento de redes do Compose e limites de recursos — Issue 06
-- Reescrita da aplicação (código, Dockerfile, server.port) — quem mexe no `docker-compose.yaml` é esta Issue, que adiciona o serviço do proxy, mantendo os serviços da Issue 02
+- Reescrita da aplicação (código, Dockerfile, server.port) — nesta Issue o `docker-compose.yaml` adiciona o serviço do proxy, mantendo os serviços da Issue 02
 - Backup do banco — Issue 05
 - Monitoramento e alertas — [Issue 08](08-trafego-sintetico-alertas.md) desta trilha
 - Kubernetes, Cloud e Terraform

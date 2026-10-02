@@ -47,5 +47,5 @@ Issue = uma capacidade, escrita como RFC. Não é tutorial: o passo a passo de c
 
 - [`issues/`](issues/) — as 8 Issues da trilha VPS
 - [`estudos/`](estudos/) — material de estudo, um arquivo por Issue
-- [`scripts/`](scripts/) — demais checks de troubleshooting desta trilha (construídos aqui)
+- `scripts/` — demais checks de troubleshooting desta trilha (construídos aqui; o diretório nasce com o primeiro script)
 - [`AGENTS.md`](AGENTS.md) — arquitetura, variáveis de ambiente e comandos, para quem vai mexer

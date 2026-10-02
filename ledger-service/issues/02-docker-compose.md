@@ -91,8 +91,14 @@ app-securepay_api:latest 447MB
 - Output do `docker compose up` mostrando a condição `service_healthy`
 
 ```console
-$ docker compose up --build -d
-$ docker compose ps -a --format '{{.Service}} {{.Status}}'  # amostragem por segundo durante a subida (trecho)
+$ docker compose up --build -d > .superpowers/sdd/plano-correcoes-auditoria2-ledger-service/compose-up.log 2>&1; echo "up exit=$?"
+up exit=0
+$ tail -4 .superpowers/sdd/plano-correcoes-auditoria2-ledger-service/compose-up.log
+ Container app-database-1 Waiting 
+ Container app-database-1 Healthy 
+ Container app-securepay_api-1 Starting 
+ Container app-securepay_api-1 Started 
+$ grep -E '^\[(075|076)s\]' .superpowers/sdd/plano-correcoes-auditoria2-ledger-service/02-snapshots.txt  # amostragem por segundo durante a subida (trecho)
 [075s] database: Up 11 seconds (healthy) | securepay_api: Created
 [076s] database: Up 13 seconds (healthy) | securepay_api: Up 2 seconds
 $ docker compose ps --format '{{.Service}} {{.Status}}'
@@ -138,6 +144,7 @@ securepay_api Exited (143) 3 seconds ago
 ## Limitações / notas
 
 - `ledger-service/app/docker-compose.yaml` publica apenas a porta da API (`${PORT:-8080}:${PORT:-8080}`) e **não** publica a porta do banco — manter assim
+- **Divergência registrada nesta reexecução:** o `docker image inspect` mede `size=447386841` (447 MB — base `eclipse-temurin:21-jre-alpine` ~363 MB + jar ~84 MB) e os critérios `menos de 220 MB` não foram atendidos por esta build; a correção é reduzir a base da imagem — a medição fica registrada aqui em vez de silenciar a evidência
 - O serviço do banco não pode ganhar entrada `ports:` em nenhuma Issue futura
 - `ledger-service/app/.env` é obrigatório para o Compose (`env_file`) e nunca deve ser commitado nem embutido na imagem
 - O serviço se chama `database` — o nome é nome DNS dentro da rede do Compose
