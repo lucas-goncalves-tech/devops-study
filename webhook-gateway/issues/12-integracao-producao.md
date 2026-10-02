@@ -72,7 +72,7 @@ pagamento na API → ledger publica na Stream → consumidor lê → gateway ent
 
 ## Requisitos
 
-- [ ] Serviço `redis` na stack do `ledger-service`, com healthcheck, sem porta publicada, em rede interna com a aplicação
+- [ ] Serviço `redis` na stack do `ledger-service`, com healthcheck, sem porta publicada, em rede interna com a aplicação e autenticação por `senha` injetada via ambiente — `REDIS_URL` do gateway com a credencial e `SPRING_DATA_REDIS_PASSWORD` no ambiente do `ledger`
 - [ ] Serviço `webhook-gateway` na mesma stack e rede, apontando para o `redis` por nome de serviço
 - [ ] `REDIS_ENABLED=true` no ambiente da aplicação, com o healthcheck do `redis` condicionando a subida da aplicação
 - [ ] Caminho da imagem do gateway até a produção declarado nesta Issue — build no deploy a partir do `Dockerfile` do app ou imagem publicada pelo pipeline —, sem construção manual na VPS
@@ -90,6 +90,8 @@ pagamento na API → ledger publica na Stream → consumidor lê → gateway ent
 - [ ] A porta `6379` não aceita conexão de fora do host e o gateway não publica porta nenhuma
 - [ ] Nenhum segredo em arquivo versionado dos dois apps
 - [ ] Esta é a única Issue do repo com `Requer` apontando para outro app — varredura no tracker confirma que nenhuma outra ganhou dependência cross-app
+
+- [ ] Conexão ao `redis` de produção **sem credencial é recusada** (build to break), com a porta `6379` seguindo inalcançável de fora do host
 
 ## Validação
 
@@ -118,3 +120,4 @@ pagamento na API → ledger publica na Stream → consumidor lê → gateway ent
 - O contrato de payload da Stream é o mesmo provado na Issue 10 (`eventId`, `orderId`, `amount`, `currency`, `status`, `timestamp`) — o publisher Java já existe e fala esse formato; só falta ligá-lo
 - O `WEBHOOK_SECRET` precisa existir no ambiente da VPS: mesma semâthica das Issues 01 e 02 deste app, segredo fora do repositório
 - **Limite de evidência:** a `terceira ponta` das três pontas é provada contra o `destino de entrega` declarado; o consumidor do e-commerce segue `sem card` no `BOARD.md` (`BOARD.md:19`) e a fronteira de escopo não muda nesta Issue
+- **Decisão de autenticação:** a decisão declarada é senha própria em produção — rede interna sozinha `não basta` —, na mesma semântica do staging da [Issue 11](11-staging-inseguro.md)
