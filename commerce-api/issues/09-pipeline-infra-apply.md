@@ -67,6 +67,7 @@ merge em main → plan verde → aprovação → apply identificado → plan sem
 
 - [ ] Declarar IAM Role com política de confiança cujo principal é a identidade federada do provedor de CI, restringida ao repositório e à branch `main`
 - [ ] Configurar o job para obter credencial efêmera via `id-token`, sem access key estática em secret, arquivo ou variável
+- [ ] Declarar a política de ações da Role com as ações mínimas que o job executa (só o que plan/apply da trilha usa), sem `*` em `Action` ou `Resource`
 - [ ] Restringir o job de `apply` a `main` e a um environment com aprovação declarada
 - [ ] Exigir o job de `plan` verde do mesmo commit antes do `apply`
 - [ ] Passar os valores de ambiente ao `plan` e ao `apply` por `-var`/`TF_VAR_` vindos do environment do repositório (segredo ou `vars.*`), sem valor literal colado no YAML da pipeline
@@ -83,6 +84,7 @@ merge em main → plan verde → aprovação → apply identificado → plan sem
 - [ ] O `terraform plan -detailed-exitcode` logo após o `apply` retorna exit 0
 - [ ] Nenhum valor de ambiente (CIDR, tipo de instância) aparece literal no workflow: o YAML declara a origem do valor, não o valor
 - [ ] O histórico da execução recupera commit, autor e horário da última mudança de infraestrutura
+- [ ] O JSON da política não contém `Action: *` nem `Resource: *`, cada ação corresponde a um comando da pipeline — evidência: trecho da política
 
 ## Validação
 
@@ -92,6 +94,7 @@ merge em main → plan verde → aprovação → apply identificado → plan sem
 - Conferir a política de confiança confirmando o escopo de repositório e branch
 - Rodar `plan` após o `apply` e capturar o exit 0
 - Inspecionar o log da execução procurando credencial
+- Inspecionar a política da Role e confrontar cada `Action` com os comandos que o job executa
 
 ## Evidências
 
@@ -101,6 +104,7 @@ merge em main → plan verde → aprovação → apply identificado → plan sem
 - Trecho do log do `apply` sem credencial
 - Output do `plan` pós-apply com exit 0
 - Página do histórico da execução com commit, autor e horário
+- JSON da política da Role sem `*` nas ações
 
 ## Limitações / notas
 
