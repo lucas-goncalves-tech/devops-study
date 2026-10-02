@@ -85,3 +85,4 @@ Estado final: configuração lida do ambiente, healthcheck em duas camadas com c
 - O PostgreSQL roda no host nesta Issue — não há contêiner nem rede de orquestração
 - O healthcheck L4 prova que a porta aceita conexão; não prova que a aplicação responde — por isso existe o teste L7
 - Este contrato de portas e de `SIGTERM` é herdado por todas as Issues posteriores que mexem em runtime
+- Os valores do `## Resultado esperado` desta Issue são de `laboratório` (`postgres`/`postgres`, JWT de exemplo): o `contrato de segredos de produção` — geração, guarda e rotação — é requisito da `Issue 07`, e nenhum default embutido sobrevive ao primeiro deploy
