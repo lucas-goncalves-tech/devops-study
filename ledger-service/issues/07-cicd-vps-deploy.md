@@ -114,3 +114,4 @@ Estado final: uma pipeline própria deste app, com build, testes e varredura de 
 - **Invariante de porta:** se a Issue 04 tornou `8080` interna, o healthcheck precisa apontar para o upstream correto; `PORT`, o `EXPOSE` do `Dockerfile` e `server.port` devem continuar coerentes entre si
 - A chave efêmera depende do acesso por chave estabelecido na Issue 03
 - `permitAll` restrito a `/actuator/health` e `/actuator/prometheus` (healthcheck e scraping); os demais endpoints do actuator ficam inalcançáveis pelo proxy público
+- **Staging nesta trilha:** a separação entre produção e staging é `aprovação ou filtro de branch` — não existe ambiente paralelo nesta trilha; o `ledger 08` mede a própria produção, não um ambiente de teste

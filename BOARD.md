@@ -17,7 +17,7 @@ tags: [tracker, board]
 
 - **Produção:** sistema único e de verdade — stack `ledger + postgres` numa VPS atrás do Caddy com domínio/TLS (trilha VPS, Issues 03→07) e o `commerce` em EC2 com deploy por pipeline (trilha AWS, Issues 07 e 10).
 - **Integração de produção:** a entrada de `redis` e do `webhook-gateway` na stack da VPS é a [`webhook-gateway/12`](webhook-gateway/issues/12-integracao-producao.md) — a **única** Issue do repo autorizada a depender de outro app. O consumo dos eventos do e-commerce pelo gateway continua sem card.
-- **Staging:** ambiente separado, público e **deliberadamente falho**, que nunca toca a produção — `ledger 08` (tráfego/alerta), `commerce 08` (falha de observabilidade) e `webhook 11` (insegurança proposital + forense de mensageria).
+- **Staging:** ambiente separado, público e **deliberadamente falho**, que nunca toca a produção — `commerce 08` (falha de observabilidade) e `webhook 11` (insegurança proposital + forense de mensageria). No `ledger`, o que separa produção de staging é `aprovação ou filtro de branch` (Issue 07), sem ambiente paralelo.
 
 ## ledger-service · trilha VPS
 
