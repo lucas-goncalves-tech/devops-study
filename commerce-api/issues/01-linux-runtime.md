@@ -95,6 +95,7 @@ Estado final: a aplicação gerenciada por um serviço `systemd` que sobe sozinh
 
 ## Limitações / notas
 
+- **`drizzle-kit push` é o método desta trilha, não de produção:** ele escreve o schema direto no banco comparando com o código — sem histórico, sem rollback, sem artefato revisável; laboratório e host único aceitam isso. Produção usa migrações versionadas (`drizzle-kit generate` → arquivos no repositório → `drizzle-kit migrate`). Trocar o método mexe no `app/`, construção do usuário, e fica registrado aqui como dívida, não como esquecimento
 - O PostgreSQL roda no host nesta Issue — não há contêiner nem rede de orquestração; a Issue 02 é quem publica `3000` e isola o banco
 - O healthcheck L4 prova que a porta aceita conexão; não prova que a aplicação responde — por isso existe o teste L7
 - `/health` é liveness **e** readiness ao mesmo tempo: com o banco fora, responde `503` com `"status":"DEGRADED"`, então um healthcheck que aceite só HTTP 200 trata indisponibilidade de banco como queda do processo

@@ -104,6 +104,7 @@ Estado final: um `docker compose up` que sobe a API e o Postgres na mesma rede, 
 
 ## Limitações / notas
 
+- O `npx drizzle-kit push` exigido aqui é o mesmo atalho de laboratório da Issue 01 — não trate `push` como método definitivo; produção migra com histórico, como aquela nota descreve
 - O `Dockerfile` desta app já é multi-stage, `USER node` e com `HEALTHCHECK` em `/health` — esta Issue **não** o reescreve; se algo precisar mudar nele, é revisão do contrato de imagem, não orquestração
 - `commerce-api/app/.dockerignore` já exclui `.env`, `node_modules` e `dist` do contexto de build — ele não pode ser removido
 - `commerce-api/app/docker-compose.yaml` publica apenas a porta da API (`${PORT:-3000}:${PORT:-3000}`) e **não** publica a porta do banco — manter assim
