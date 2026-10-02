@@ -30,7 +30,7 @@ Estado final: scanner de segredos no pré-commit e na pipeline, baseline de acha
 
 - SAST e SCA — Issues 05 e 06
 - Endurecimento de permissões e pinagem de ações — Issue 07
-- Rotação de credenciais já vazadas — operação, não esta Issue
+- Rotação reativa por credencial vazada — operação, fora desta Issue; a política de rotação do `WEBHOOK_SECRET` (gatilho e troca coordenada) é requisito desta Issue
 - Kubernetes, Cloud e Terraform
 
 ## Conhecimentos envolvidos
@@ -59,6 +59,7 @@ Estado final: scanner de segredos no pré-commit e na pipeline, baseline de acha
 - [ ] Bloquear merge se novo segredo for detectado
 - [ ] Higienizar variáveis sensíveis nos arquivos de exemplo
 - [ ] Documentar o fluxo: exemplo versionado, valor real só via ambiente ou secret
+- [ ] Declarar o ciclo de vida do `WEBHOOK_SECRET` de produção: geração de no mínimo `32 caracteres`, armazenamento fora do repositório, gatilho de rotação e troca coordenada com o `receptor` do destino
 
 ## Critérios de aceitação
 
@@ -66,6 +67,8 @@ Estado final: scanner de segredos no pré-commit e na pipeline, baseline de acha
 - [ ] A baseline existe no repositório e o pipeline passa sobre o código atual sem falso positivo pendente
 - [ ] Pull request com segredo novo é reprovado e o merge fica bloqueado
 - [ ] Nenhum arquivo versionado contém valor de segredo real — apenas placeholders
+
+- [ ] O `WEBHOOK_SECRET` declarado no ciclo de vida atende ao piso de `32 caracteres` e é distinto do literal versionado de exemplo
 
 ## Validação
 
