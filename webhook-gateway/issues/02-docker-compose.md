@@ -73,7 +73,7 @@ Estado final: imagem multi-stage enxuta executando como usuário sem privilégio
 - [ ] Dar healthcheck ao Redis via `redis-cli ping` e ligar o consumidor a ele por `depends_on` com `condition: service_healthy`
 - [ ] Usar `env_file` no serviço do consumidor, com `REDIS_URL` apontando para o nome do serviço Redis
 - [ ] Criar `webhook-gateway/app/.env.example` com `REDIS_URL`, `STREAM_KEY`, `GROUP_NAME`, `CONSUMER_NAME`, `WEBHOOK_SECRET` e `PORT` (default `8081`) em placeholder
-- [ ] Publicar no host apenas a porta `PORT` (default `8081`) da rota de saúde, se e somente se a validação exigir consultá-la de fora
+- [ ] Publicar no host apenas a porta `PORT` (default `8081`) da rota de saúde, e somente em loopback (`127.0.0.1:${PORT:-8081}:${PORT:-8081}`), se e somente se a validação exigir consultá-la de fora
 - [ ] Confirmar que `SIGTERM` no contêiner fecha o `quit()` do `ioredis` e encerra com código de saída 0
 - [ ] Manter a suíte `npm test` (9 testes) verde — a rota de saúde não pode regreder o contrato de Stream, group e assinatura
 
@@ -117,5 +117,5 @@ Estado final: imagem multi-stage enxuta executando como usuário sem privilégio
 - O serviço do Redis não pode ganhar entrada `ports:` em nenhuma Issue futura — acesso externo à Stream de eventos é exposição de dado de pedido
 - Esta Issue não segmenta redes: consumidor e Redis sobem na rede padrão do Compose. A segmentação por perfil de rede é da [Issue 10](10-containers-redis.md) deste app
 - O consumidor cria o group com `MKSTREAM` e tolera `BUSYGROUP` (`src/consumer.ts`): manter isso é o que faz o contêiner subir em restart
-- Publicar a porta `PORT` (default `8081`) da rota de saúde no host é opcional e só serve para validação externa; em produção ela não precisa ser alcançável de fora
+- Publicar a porta `PORT` (default `8081`) da rota de saúde no host é opcional e só serve para validação externa; em produção ela não precisa ser alcançável de fora — e o bind é sempre `127.0.0.1`, nunca `0.0.0.0`
 - Esta Issue não entrega webhook: validação, idempotência, retry e lag são [Issue 10](10-containers-redis.md)
