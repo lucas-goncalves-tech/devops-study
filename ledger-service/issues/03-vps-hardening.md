@@ -25,6 +25,7 @@ Estado final: servidor com login exclusivamente por chave SSH, firewall liberand
 - Firewall restrito a SSH, HTTP e HTTPS
 - Proteção contra brute-force com ban temporário
 - Swap anti-OOM e auditoria de portas abertas
+- Preparo do servidor para a stack: runtime de contêiner instalado, stack copiada e primeira subida saudável
 
 ## Fora de escopo
 
@@ -62,6 +63,7 @@ Estado final: servidor com login exclusivamente por chave SSH, firewall liberand
 - [ ] Ativar ban temporário contra brute-force
 - [ ] Configurar swap anti-OOM
 - [ ] Auditar portas abertas e fechar o que não for público
+- [ ] Preparar o servidor para receber a stack: instalar o Docker, copiar a stack da Issue 02 e subir com healthcheck verde
 
 ## Critérios de aceitação
 
@@ -69,6 +71,7 @@ Estado final: servidor com login exclusivamente por chave SSH, firewall liberand
 - [ ] Todo firewall lista exatamente SSH, HTTP e HTTPS; nenhuma outra porta aceita conexão externa
 - [ ] Após tentativas de senha repetidas, o IP é banido e o ban aparece no log
 - [ ] `free -h` mostra swap ativo e o processo sobrevive a consumo de memória além da RAM
+- [ ] A stack copiada sobe no servidor preparado e /actuator/health responde 200 UP a partir dele
 
 ## Validação
 
@@ -76,6 +79,7 @@ Estado final: servidor com login exclusivamente por chave SSH, firewall liberand
 - Varredura de portas de fora do servidor comparada com a lista do firewall
 - Sequência de tentativas de senha falhas seguida de inspeção do log do mecanismo de ban
 - Leitura de `free -h` e teste de consumo de memória
+- Subir a stack copiada no servidor e consultar `/actuator/health`
 
 ## Evidências
 
@@ -83,6 +87,7 @@ Estado final: servidor com login exclusivamente por chave SSH, firewall liberand
 - Lista de regras do firewall
 - Linha de log com o ban aplicado
 - Output de `free -h` mostrando swap configurado
+- Saída de `docker compose ps` com serviços `healthy` e do `curl` de `/actuator/health` no servidor
 
 ## Limitações / notas
 
