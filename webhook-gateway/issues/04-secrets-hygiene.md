@@ -25,6 +25,7 @@ Estado final: scanner de segredos no pré-commit e na pipeline, baseline de acha
 - Baseline separando falso positivo de vazamento real
 - Bloqueio de merge sobre novo segredo
 - Higienização dos arquivos de exemplo e documentação do fluxo
+- Ciclo de vida do `WEBHOOK_SECRET` de produção: geração, guarda e rotação coordenada
 
 ## Fora de escopo
 

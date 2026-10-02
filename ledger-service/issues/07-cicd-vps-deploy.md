@@ -31,6 +31,7 @@ Estado final: uma pipeline própria deste app, com build, testes e varredura de 
 - Deploy via SSH com chave efêmera, sem credencial em log
 - Healthcheck pós-deploy com rollback automático
 - Registro auditável de versão, autor e timestamp
+- Contrato de segredos de produção declarado e conferido antes do primeiro deploy
 
 ## Fora de escopo
 
@@ -70,7 +71,7 @@ Estado final: uma pipeline própria deste app, com build, testes e varredura de 
 - [ ] Exigir os gates verdes como pré-requisito do deploy
 - [ ] Separar produção de staging por aprovação ou filtro de branch
 - [ ] Deploy via SSH com chave efêmera, sem senha ou chave em log
-- [ ] Declarar o `contrato de segredos de produção` antes do primeiro deploy: inventário com `JWT_SECRET` (geração de `256 bits`), `SPRING_DATASOURCE_PASSWORD`, a credencial do backup (Issue 05) e o token do canal de alerta (Issue 08); cada segredo vive fora do repositório — arquivo de ambiente da VPS com `permissão restrita` ou `environment` do CI —, com `geração` documentada e `rotação` definida; nenhum default de laboratório segue para produção
+- [ ] Declarar o `contrato de segredos de produção` antes do primeiro deploy: inventário com `JWT_SECRET` (geração de `256 bits`), `SPRING_DATASOURCE_PASSWORD`, a credencial do backup quando a Issue 05 a criar (Issue 05) e o token do canal de alerta quando a Issue 08 o criar (Issue 08); cada segredo vive fora do repositório — arquivo de ambiente da VPS com `permissão restrita` ou `environment` do CI —, com `geração` documentada e `rotação` definida; nenhum default de laboratório segue para produção
 - [ ] Healthcheck pós-deploy com rollback automático se falhar — com a `compatibilidade de schema` entre a versão nova e a revertida declarada como pré-condição antes do primeiro rollback
 - [ ] Registrar versão, autor e timestamp de forma auditável
 
@@ -84,6 +85,7 @@ Estado final: uma pipeline própria deste app, com build, testes e varredura de 
 - [ ] Nenhum log de execução contém credencial de acesso
 - [ ] Deploy com healthcheck falhando reverte sozinho para a versão anterior
 - [ ] A versão implantada, o autor e o horário são recuperáveis em até 30 segundos
+- [ ] Inventário do contrato de segredos confrontado com o ambiente de produção: cada segredo já criado presente e nenhum default de laboratório ativo
 
 ## Validação
 
@@ -95,6 +97,7 @@ Estado final: uma pipeline própria deste app, com build, testes e varredura de 
 - **Build to break:** implantar uma versão com healthcheck falhando e observar o rollback automático
 - **Build to defend:** implantar versão saudável e confirmar que ela permanece
 - Consultar o registro de auditoria cronometrando a recuperação
+- Conferir o arquivo de ambiente da VPS contra o inventário do contrato, listando cada variável presente
 
 ## Evidências
 
@@ -105,7 +108,7 @@ Estado final: uma pipeline própria deste app, com build, testes e varredura de 
 - Trecho de log sem credencial
 - Log do rollback automático com a versão revertida
 - Registro de auditoria com versão, autor e timestamp
-- Conferência do ambiente de produção: cada segredo do contrato presente e nenhum default de laboratório ativo
+- Conferência do ambiente de produção: cada segredo já criado está presente e nenhum default de laboratório ativo
 
 ## Limitações / notas
 

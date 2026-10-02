@@ -58,7 +58,7 @@ Estado final: o tráfego externo entra por um único reverse proxy na porta 80/4
 ## Requisitos
 
 - [ ] Subir reverse proxy como porta única de entrada
-- [ ] Rotejar por domínio para upstreams internos, alcançáveis pelo proxy apenas os `caminhos declarados` de cada upstream — no actuator, somente `/actuator/health` e `/actuator/prometheus`
+- [ ] Rotejar por domínio para upstreams internos, alcançáveis pelo proxy apenas os `caminhos declarados` de cada upstream — para a aplicação, `/api/v1/**`, e no actuator somente `/actuator/health` e `/actuator/prometheus`
 - [ ] Emitir TLS automático com renovação sem downtime
 - [ ] Aplicar headers de segurança padrão
 - [ ] Ativar compressão e logs estruturados
@@ -69,6 +69,7 @@ Estado final: o tráfego externo entra por um único reverse proxy na porta 80/4
 - [ ] `http://` redireciona para `https://` com status 301 ou 308
 - [ ] Resposta inclui os headers de segurança declarados (verificáveis com inspeção de cabeçalhos)
 - [ ] A API não é alcançável diretamente de fora — apenas via proxy
+- [ ] Endpoints do actuator fora dos dois declarados não passam pelo proxy — recusa antes de chegar na aplicação
 
 ## Validação
 
@@ -76,6 +77,7 @@ Estado final: o tráfego externo entra por um único reverse proxy na porta 80/4
 - Requisição HTTP conferindo o código de redirecionamento
 - Inspeção dos cabeçalhos de resposta
 - Tentativa de alcançar a porta da API diretamente de fora do servidor, esperada recusada
+- Requisição a `/actuator/env` pelo caminho público esperada recusada pelo proxy (404 ou 401)
 
 ## Evidências
 

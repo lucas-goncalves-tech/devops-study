@@ -90,6 +90,7 @@ pagamento na API → ledger publica na Stream → consumidor lê → gateway ent
 - [ ] A porta `6379` não aceita conexão de fora do host e o gateway não publica porta nenhuma
 - [ ] Nenhum segredo em arquivo versionado dos dois apps
 - [ ] Esta é a única Issue do repo com `Requer` apontando para outro app — varredura no tracker confirma que nenhuma outra ganhou dependência cross-app
+- [ ] Configuração com destino de entrega sem `https` é recusada em produção — build to break da configuração
 
 - [ ] Conexão ao `redis` de produção **sem credencial é recusada** (build to break), com a porta `6379` seguindo inalcançável de fora do host
 
@@ -101,6 +102,7 @@ pagamento na API → ledger publica na Stream → consumidor lê → gateway ent
 - Inspecionar o Compose confirmando ausência de `ports:` em `redis` e no gateway
 - Rodar o healthcheck da trilha VPS com o sistema completo de pé (esperado: exit 0)
 - Varredura dos dois apps por credencial versionada
+- Configurar o destino de entrega sem `https` e confirmar a recusa; reverter em seguida
 
 ## Evidências
 
