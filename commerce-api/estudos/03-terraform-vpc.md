@@ -14,8 +14,11 @@ issue: 03
 - HCL, estado e drift
   - https://developer.hashicorp.com/terraform/docs
   - https://developer.hashicorp.com/terraform/cli/commands/plan
+- Valores por ambiente: bloco `variable`, `*.tfvars`, `-var` e `TF_VAR_`
+  - https://developer.hashicorp.com/terraform/language/values-variables
 
 **FIM:** sei explicar idempotência e drift.
+**FIM:** sei declarar `variable`, sobrepor valor com `tfvars`/`-var`/`TF_VAR_` e explicar por que laboratório e produção não compartilham o mesmo valor.
 
 ---
 
