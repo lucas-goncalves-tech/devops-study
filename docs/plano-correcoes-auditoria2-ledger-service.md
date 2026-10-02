@@ -400,7 +400,7 @@ for f in ledger-service/issues/*.md commerce-api/issues/*.md webhook-gateway/iss
   b=$(grep -c '^- \[x\]' "$f" || true)
   [ "$a" -eq "$b" ] || { echo "CHECKBOX ERRADO: $f mudou de estado ($a → $b)"; exit 1; }
 done
-out=$(git diff --name-only "$B0" HEAD | grep -Ec '^ledger-service/issues/|^ledger-service/AGENTS\.md$|^ledger-service/README\.md$|^commerce-api/issues/|^webhook-gateway/issues/|^docs/plano-correcoes-' || true)
+out=$(git diff --name-only "$B0" HEAD | grep -Evc '^ledger-service/issues/|^ledger-service/AGENTS\.md$|^ledger-service/README\.md$|^commerce-api/issues/|^webhook-gateway/issues/|^docs/plano-correcoes-' || true)
 [ "$out" -eq 0 ] || { echo "ESCOPO ERRADO: $out arquivos fora"; exit 1; }
 [ -z "$(git diff --name-only "$B0" HEAD -- BOARD.md)" ] || { echo "BOARD MUDOU: nesta rodada o board não é editado"; exit 1; }
 broken=0
