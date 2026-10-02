@@ -13,7 +13,7 @@ Hoje a stack usa a rede padrão do Compose: qualquer contêiner alcança qualque
 
 ## Objetivo
 
-Estado final: três redes separando fronteira, aplicação e dados; banco e Redis inacessíveis de fora; limites e reservas de CPU/memória declarados; e a stack voltando sozinha após reboot.
+Estado final: três redes separando fronteira, aplicação e dados; banco inacessível de fora; limites e reservas de CPU/memória declarados; e a stack voltando sozinha após reboot.
 
 ## Dependências
 
@@ -22,8 +22,8 @@ Estado final: três redes separando fronteira, aplicação e dados; banco e Redi
 
 ## Escopo
 
-- Três redes: pública (proxy), interna (API) e isolada (banco e Redis)
-- Sem publicação de porta para banco e Redis
+- Três redes: pública (proxy), interna (API) e isolada (banco)
+- Sem publicação de porta para o banco
 - Limites e reservas de CPU/memória anti-OOM
 - Política de restart e persistência de volume
 
@@ -56,9 +56,9 @@ Estado final: três redes separando fronteira, aplicação e dados; banco e Redi
 
 ## Requisitos
 
-- [ ] Separar as redes pública (proxy), interna (API) e isolada (banco e Redis)
+- [ ] Separar as redes pública (proxy), interna (API) e isolada (banco)
 - [ ] Declarar explicitamente as redes de cada serviço, sem depender da rede padrão
-- [ ] Blindar banco e Redis sem publicar porta para o host
+- [ ] Blindar o banco sem publicar porta para o host
 - [ ] Garantir que a API e o banco compartilham pelo menos uma rede, com o DNS do serviço `database` resolvendo
 - [ ] Preservar `depends_on` com `condition: service_healthy` e o healthcheck `pg_isready`
 - [ ] Preservar o volume nomeado `pg_data` montado em `/var/lib/postgresql/data`
@@ -68,7 +68,7 @@ Estado final: três redes separando fronteira, aplicação e dados; banco e Redi
 
 ## Critérios de aceitação
 
-- [ ] Banco e Redis não aceitam conexão a partir de fora da rede isolada
+- [ ] O banco não aceita conexão a partir de fora da rede isolada
 - [ ] Do host, apenas o portão do proxy aceita conexão externa
 - [ ] A API resolve o DNS `database` e inicia normalmente após a segmentação
 - [ ] Estouro de memória é contido pelo limite declarado, sem matar outros serviços
@@ -76,7 +76,7 @@ Estado final: três redes separando fronteira, aplicação e dados; banco e Redi
 
 ## Validação
 
-- Tentativa de conexão com banco e Redis vinda de fora da rede isolada, esperada recusada
+- Tentativa de conexão com o banco vinda de fora da rede isolada, esperada recusada
 - Varredura de portas do host mostrando apenas o proxy acessível
 - `docker compose up` completo seguido de requisição a `/actuator/health`
 - Teste de consumo de memória acima do limite declarado
@@ -84,7 +84,7 @@ Estado final: três redes separando fronteira, aplicação e dados; banco e Redi
 
 ## Evidências
 
-- Output do teste de inalcanhabilidade do banco e do Redis
+- Output do teste de inalcanhabilidade do banco
 - Lista de portas do host após a segmentação
 - Log de subida da stack com a API aguardando o healthcheck do banco
 - Comportamento observado durante o estouro de memória
