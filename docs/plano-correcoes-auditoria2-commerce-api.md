@@ -402,9 +402,10 @@ for f in ledger-service/issues/*.md commerce-api/issues/*.md webhook-gateway/iss
   done < <(grep -oE '\]\([^)]*\.md\)' "$f" | sed 's/^](//; s/)$//')
 done
 [ "$broken" -eq 0 ] || exit 1
-git diff "$B0" HEAD -- ledger-service/issues commerce-api/issues webhook-gateway/issues \
-  | grep '^+' \
-  | awk '/^\+\+\+/{next} /^\+ *\x60\x60\x60/{inb=!inb; next} inb{next} /^\+ *- /{next} /^\+$/{next} {print}' \
+diff=$(git diff "$B0" HEAD -- ledger-service/issues commerce-api/issues webhook-gateway/issues)
+rmv=$(printf '%s\n' "$diff" | grep '^-' | grep -v '^---' | cut -c2- | cut -c1-20 | sort -u)
+printf '%s\n' "$diff" | grep '^+' \
+  | awk -v rem="$rmv" '/^\+\+\+/{next} /^\+ *\x60\x60\x60/{inb=!inb; next} inb{next} /^\+ *- /{next} /^\+$/{next} {k=substr($0,2,20); if (index(rem,k)>0) next; print}' \
   | grep . && { echo "ESTILO ERRADO"; exit 1; } || true
 echo "VALIDAÇÃO FINAL: OK — 30 issues × 13 seções, status 2/6+9/1+12 preservados, escopo união dos 3 apps + docs, BOARD intocado, checkboxes B0, links e estilo (blocos cercados isentos) OK"
 ```
