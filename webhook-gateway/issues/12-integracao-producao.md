@@ -76,7 +76,8 @@ pagamento na API → ledger publica na Stream → consumidor lê → gateway ent
 - [ ] Serviço `webhook-gateway` na mesma stack e rede, apontando para o `redis` por nome de serviço
 - [ ] `REDIS_ENABLED=true` no ambiente da aplicação, com o healthcheck do `redis` condicionando a subida da aplicação
 - [ ] Caminho da imagem do gateway até a produção declarado nesta Issue — build no deploy a partir do `Dockerfile` do app ou imagem publicada pelo pipeline —, sem construção manual na VPS
-- [ ] Configuração do gateway (`REDIS_URL`, `WEBHOOK_SECRET`, destino de entrega) por ambiente, fora do repositório
+- [ ] Configuração do gateway (`REDIS_URL`, `WEBHOOK_SECRET`, destino de entrega) por ambiente, fora do repositório — o destino de entrega com `variável própria` declarada nesta Issue e `https` obrigatório em produção
+- [ ] `WEBHOOK_SECRET` compartilhado com o `receptor` do destino pelo mesmo canal de ambiente (fora do repositório), sustentando a verificação de HMAC do critério das três pontas
 - [ ] Gateway sem porta publicada: ele só fala como cliente, para o `redis` e para fora
 - [ ] Os arquivos alterados fora de `webhook-gateway/` são apenas os declarados em Escopo
 
@@ -116,3 +117,4 @@ pagamento na API → ledger publica na Stream → consumidor lê → gateway ent
 - Custo zero: `redis` e gateway rodam na VPS já provisionada pela trilha VPS
 - O contrato de payload da Stream é o mesmo provado na Issue 10 (`eventId`, `orderId`, `amount`, `currency`, `status`, `timestamp`) — o publisher Java já existe e fala esse formato; só falta ligá-lo
 - O `WEBHOOK_SECRET` precisa existir no ambiente da VPS: mesma semâthica das Issues 01 e 02 deste app, segredo fora do repositório
+- **Limite de evidência:** a `terceira ponta` das três pontas é provada contra o `destino de entrega` declarado; o consumidor do e-commerce segue `sem card` no `BOARD.md` (`BOARD.md:19`) e a fronteira de escopo não muda nesta Issue
