@@ -71,7 +71,7 @@ Estado final: uma pipeline própria deste app, com build, testes e varredura de 
 - [ ] Separar produção de staging por aprovação ou filtro de branch
 - [ ] Deploy via SSH com chave efêmera, sem senha ou chave em log
 - [ ] Declarar o `contrato de segredos de produção` antes do primeiro deploy: inventário com `JWT_SECRET` (geração de `256 bits`), `SPRING_DATASOURCE_PASSWORD`, a credencial do backup (Issue 05) e o token do canal de alerta (Issue 08); cada segredo vive fora do repositório — arquivo de ambiente da VPS com `permissão restrita` ou `environment` do CI —, com `geração` documentada e `rotação` definida; nenhum default de laboratório segue para produção
-- [ ] Healthcheck pós-deploy com rollback automático se falhar
+- [ ] Healthcheck pós-deploy com rollback automático se falhar — com a `compatibilidade de schema` entre a versão nova e a revertida declarada como pré-condição antes do primeiro rollback
 - [ ] Registrar versão, autor e timestamp de forma auditável
 
 ## Critérios de aceitação

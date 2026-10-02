@@ -97,6 +97,7 @@ Estado final: três redes separando fronteira, aplicação e dados; banco e Redi
   - `depends_on` com `condition: service_healthy` deve sobreviver à separação — sem isso a API sobe "no ar mas quebrada"
   - Banco não pode ganhar entrada `ports:` em nenhuma hipótese
   - `ledger-service/app/.env` continua obrigatório (`env_file`)
+- **Método de schema:** `ddl-auto=update` é o método de laboratório desta trilha — banco inacessível vira falha de boot (invariante acima); o método de produção são `migrações versionadas`, e trocar o método mexe no `app/`, construção do usuário — decisão registrada aqui como dívida, não como esquecimento
 - Esta Issue é a **última palavra sobre topologia de rede**: tudo que entra na stack antes dela (coletor, dashboard, Redis) já está coberto pelas três redes. Serviços adicionados depois precisam ser declarados nas redes corretas explicitamente
 - O Redis ainda não está na stack: quando ele entrar, pela [Issue 12 do `webhook-gateway`](../../webhook-gateway/issues/12-integracao-producao.md), deve cair na rede isolada
 - O Redis não pode ser publicado em `0.0.0.0` — acesso externo à Stream é exposição de evento de pagamento
