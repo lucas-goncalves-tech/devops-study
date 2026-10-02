@@ -128,6 +128,7 @@ se um arquivo recriado divergir do que esta tabela exige, vale a tabela.
 
 ## Limitações / notas
 
+- **Valores fixos são contrato desta Issue, não prática de produção:** `10.0.0.0/16`, os CIDRs das subnets, `sa-east-1` e o bucket `securepay-financial-reports` estão fixados porque o laboratório tem um único ambiente e os critérios conferem valores exatos. Produção parametriza — o bloco `variable`/`tfvars` é requisito da Issue 07 e a separação dev≠prod é da Issue 08. Nunca reaproveite valor de laboratório na AWS real sem passar pela parametrização
 - **Recomeço do zero:** a infraestrutura anterior foi apagada (histórico no git); esta Issue começa do zero em `commerce-api/infra/`
 - **Lab ≠ real:** sucesso de `init`, `validate`, `plan` e `apply` prova que o emulador aceitou os recursos; **não prova** que a semântica de rede, roteamento e segurança da AWS real foi reproduzida
 - O `commerce-api/infra/platform/compose-localstack.yaml` criado por esta Issue deverá declarar `SERVICES=s3,ec2,elbv2` e exigir `LOCALSTACK_AUTH_TOKEN` — qualquer automação que suba o emulador (inclusive o job de IaC da Issue 04) precisa respeitar essa configuração
