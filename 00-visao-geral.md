@@ -19,7 +19,7 @@ um pedaço de uma sequência global de 18 números.
 
 | App | Trilha | Estágio atual |
 |---|---|---|
-| [`ledger-service`](ledger-service/) | **VPS** — `linux → hardening → caddy → backups → isolamento → deploy` | `01`, `02` `done`; `03` é a próxima a entrar |
+| [`ledger-service`](ledger-service/) | **VPS** — `linux → hardening → caddy → backups → isolamento → deploy → incidente` | `01`, `02` `done`; `03` é a próxima a entrar |
 | [`commerce-api`](commerce-api/) | **AWS** — `linux → compose → terraform/LocalStack → CI → observabilidade → S3/EC2 → apply → deploy` | `01` a entrar; `06` `parked` |
 | [`webhook-gateway`](webhook-gateway/) | **DevSecOps** — `pipeline base → secrets → SAST → SCA → hardening → gates → DAST → mensageria → integração` | `01` a entrar |
 

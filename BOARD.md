@@ -21,8 +21,8 @@ tags: [tracker, board]
 
 ## ledger-service · trilha VPS
 
-> Java/Spring: `linux → hardening → caddy → backups → isolamento → deploy`.
-> **Estado final da trilha:** serviço endurecido numa VPS real, com entrada TLS única, rede segmentada, backup off-site provado, pipeline própria que barra teste quebrado e credencial, deploy por pipeline verde com rollback e tráfego sintético com alerta real.
+> Java/Spring: `linux → hardening → caddy → backups → isolamento → deploy → incidente`.
+> **Estado final da trilha:** serviço endurecido numa VPS real, com entrada TLS única, rede segmentada, backup off-site provado, pipeline própria que barra teste quebrado e credencial, deploy por pipeline verde com rollback e tráfego sintético com alerta real, e incidente com procedimento executável, escalonamento e análise sem culpa.
 
 - [x] [01 Linux Runtime](ledger-service/issues/01-linux-runtime.md) — a app vira serviço do sistema: sobe com o boot, responde healthcheck, morre sem cortar requisição
 - [x] [02 Docker Compose](ledger-service/issues/02-docker-compose.md) — tudo sobe com um comando, sem privilegiado, e a API espera o banco estar de pé
@@ -32,6 +32,7 @@ tags: [tracker, board]
 - [ ] [06 Compose Isolation](ledger-service/issues/06-compose-isolation.md) — serviço vizinho não alcança o banco; nada estoura a memória
 - [ ] [07 CI/CD VPS Deploy](ledger-service/issues/07-cicd-vps-deploy.md) — pipeline própria barra teste quebrado e credencial, merge vira produção sozinho e volta sozinho se doer
 - [ ] [08 Tráfego sintético e alertas](ledger-service/issues/08-trafego-sintetico-alertas.md) — tráfego agendado de ponta a ponta, medido e comparado ao baseline, com coleta e alerta próprios disparando
+- [ ] [09 Incidente e postmortem](ledger-service/issues/09-incidente-runbook-postmortem.md) — alerta entrega o procedimento a seguir, escalonamento declarado e exercitado, e todo incidente vira review sem culpa com causa raiz e ação com dono e prazo
 
 > **Dependências:** todas internas — cada Issue desta trilha requer apenas Issues da mesma trilha.
 

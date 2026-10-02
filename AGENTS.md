@@ -27,7 +27,7 @@ arquitetura, as variáveis de ambiente e o contrato de infra que este arquivo n�
 
 | App | Trilha (ordem da sequência) | Estágio |
 |---|---|---|
-| `ledger-service` · 8 Issues | VPS — `linux → hardening → caddy → backups → isolamento → deploy` | `01`,`02` `done`; `03` a entrar |
+| `ledger-service` · 9 Issues | VPS — `linux → hardening → caddy → backups → isolamento → deploy → incidente` | `01`,`02` `done`; `03` a entrar |
 | `commerce-api` · 10 Issues | AWS — `linux → compose → terraform → CI → observabilidade → S3/EC2 → apply → deploy` | `01` a entrar; `06` `parked` |
 | `webhook-gateway` · 12 Issues | DevSecOps — `pipeline → secrets → SAST → SCA → hardening → gates → DAST → mensageria → integração` | `01` a entrar |
 

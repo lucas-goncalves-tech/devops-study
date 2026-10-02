@@ -1,10 +1,11 @@
 # ledger-service — trilha VPS
 
 API de ledger (Spring Boot) que carrega a **trilha VPS** do monorepo:
-`linux → hardening → caddy → backups → isolamento → deploy`. Java 21, Postgres, Redis.
+`linux → hardening → caddy → backups → isolamento → deploy → incidente`. Java 21, Postgres, Redis.
 
 Estado final da trilha: serviço endurecido numa VPS real, com entrada TLS única, rede segmentada,
-backup off-site provado, deploy por pipeline verde com rollback e tráfego sintético com alerta real.
+backup off-site provado, deploy por pipeline verde com rollback e tráfego sintético com alerta real e
+incidente com procedimento executável, escalonamento e análise sem culpa.
 
 Antes de qualquer coisa neste app, as regras da casa (escopo de escrita, padrão de container,
 skills e roteamento) valem: leia o [`AGENTS.md` da raiz](../AGENTS.md). Metodologia e política de
@@ -26,6 +27,7 @@ fonte, então uma das duas está desatualizada se elas divergirem.
 | [06](issues/06-compose-isolation.md) | Compose em redes segmentadas com banco inacessível e limites anti-OOM | `todo` |
 | [07](issues/07-cicd-vps-deploy.md) | Deploy contínuo auditável na VPS só com pipeline verde | `todo` |
 | [08](issues/08-trafego-sintetico-alertas.md) | Tráfego sintético com k6 agendado e alerta real disparando na stack de produção | `todo` |
+| [09](issues/09-incidente-runbook-postmortem.md) | Incidente com runbook por alerta, escalonamento exercitado e post-incident review sem culpa | `todo` |
 
 **Próxima a entrar: `03`.** Quando for implementá-la, leia `## Dependências` da Issue — a trilha
 declara as dependências reais dentro do app, não pela numeração.
