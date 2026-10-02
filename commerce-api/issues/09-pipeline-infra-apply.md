@@ -81,7 +81,7 @@ merge em main → plan verde → aprovação → apply identificado → plan sem
 - [ ] Varredura do repositório não encontra `aws_access_key_id` nem `aws_secret_access_key` em nenhum arquivo versionado
 - [ ] O log da execução do `apply` não contém credencial
 - [ ] O `terraform plan -detailed-exitcode` logo após o `apply` retorna exit 0
-- [ ] Nenhum valor de ambiente (CIDR, tipo de instância, credencial) aparece literal no workflow: o YAML declara a origem do valor, não o valor
+- [ ] Nenhum valor de ambiente (CIDR, tipo de instância) aparece literal no workflow: o YAML declara a origem do valor, não o valor
 - [ ] O histórico da execução recupera commit, autor e horário da última mudança de infraestrutura
 
 ## Validação

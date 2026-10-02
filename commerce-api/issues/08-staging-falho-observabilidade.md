@@ -62,7 +62,7 @@ Estado final: um ambiente de staging claramente separado da produção, três fa
 ## Requisitos
 
 - [ ] Provisionar staging com URL, credencial de banco, volume e nome de ambiente próprios, a partir dos recursos da Issue 07
-- [ ] Provisionar o staging pela mesma declaração da produção, com os valores do ambiente vindo de `variable`/`tfvars` ou da separação da Issue 07 — nenhum arquivo `.tf` duplicado para criar o staging
+- [ ] Provisionar o staging pela mesma declaração de produção da Issue 07 — mesma raiz de módulo, valores do ambiente vindos de `variable`/`tfvars` ou da separação escolhida — nenhum arquivo `.tf` duplicado para criar o staging
 - [ ] Tornar o staging identificável de fora: nome de serviço, cabeçalho ou URL distintos, e nenhum recurso compartilhado com a produção
 - [ ] Injetar latência artificial por mecanismo declarado (variável de ambiente lida pelo app), com valor e duração registrados
 - [ ] Injetar esgotamento de pool de conexões por mecanismo declarado (limite de pool reduzido ou consulta lenta segurando conexão), com valor registrado

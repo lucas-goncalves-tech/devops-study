@@ -60,7 +60,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - [ ] Ativar locking contra `apply` concorrentes
 - [ ] Separar ambientes por workspace, prefixo ou `tfvars` por ambiente
 - [ ] Parametrizar com bloco `variable` tudo que muda entre ambientes: valor de laboratório nunca é o de produção e nenhum valor de ambiente fica hardcoded nos arquivos `.tf`
-- [ ] Antes do primeiro `apply` real, apontar o provider para a AWS remota: remover os `endpoints` de `http://localhost:4566`, as credenciais mock e os `skip_credentials_validation`/`skip_requesting_account_id` do laboratório
+- [ ] Antes do primeiro `apply` real, declarar o provider da AWS remota em diretório próprio de produção, sem editar `commerce-api/infra/provider.tf` — ele é contrato de saída da Issue 03 e o `plan` do gate da [Issue 04](04-github-actions.md) roda com ele; `endpoints` de `http://localhost:4566`, credenciais mock e `skip_credentials_validation`/`skip_requesting_account_id` ficam fora da declaração de produção
 - [ ] Estimar custo mensal antes de subir qualquer recurso
 - [ ] Provisionar computação mínima para API e banco
 - [ ] Desligar após validar, sem recursos órfãos
@@ -72,7 +72,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - [ ] Ambientes não escrevem na mesma chave de estado
 - [ ] O custo mensal estimado está documentado **antes** do primeiro `apply` de recursos pagos
 - [ ] Após `terraform destroy`, não resta cobrança de recurso
-- [ ] O provider da execução real não mantém nenhum resíduo do laboratório (`localhost:4566`, credencial mock, `skip_*`) — build to break: remover um e observar o `plan` falhar ou apontar para o lab
+- [ ] O provider da execução real não mantém nenhum resíduo do laboratório (`localhost:4566`, credencial mock, `skip_*`) — build to break: sem os `endpoints`, nenhuma chamada vai mais para `localhost:4566`; sem as credenciais mock (ou removido um `skip_*`), o `plan` falha por falta de credencial real
 - [ ] Os valores que diferem entre ambientes vêm de `variable`/`tfvars` ou da separação escolhida, nunca de valor fixo reaproveitado do laboratório
 
 ## Validação
