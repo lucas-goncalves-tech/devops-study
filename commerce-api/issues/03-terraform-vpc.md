@@ -31,7 +31,7 @@ Estado final: rede, roteamento, segurança de grupo e storage declarados em HCL 
 
 - Kubernetes, Helm, CloudWatch Logs avançado, EKS, esteiras de CI/CD
 - Foco exclusivo: HCL, provider local em `localhost:4566`, VPC multi-tier, roteamento explícito, SGs sem vazamento em `5432`, bucket privado, drift via `plan` e ALB com target group e health check
-- NAT Gateway, TLS/HTTPS no ALB, WAF, Multi-AZ e backup: fora desta Issue
+- NAT Gateway, WAF e Multi-AZ: fora desta Issue — a fronteira ALB/TLS e o backup do banco são da `Issue 07`
 
 ## Conhecimentos envolvidos
 

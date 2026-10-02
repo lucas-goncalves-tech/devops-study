@@ -64,6 +64,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - [ ] Estimar custo mensal antes de subir qualquer recurso
 - [ ] Provisionar computação mínima para API e banco
 - [ ] Provisionar a instância na subnet pública da VPC da Issue 03, com rota padrão para o IGW (sem NAT), bootstrap com Docker antes do primeiro deploy e entrada `22` restrita à variável `admin_cidr` — nunca `0.0.0.0/0`
+- [ ] Reativar o `elbv2` no provider de produção, com ALB na subnet pública, target group para a API na porta `3000` e listener `80`; quando houver domínio apontado: certificado ACM e redirect `80` para `443` (sem domínio, registrar a pendência em Limitações)
 - [ ] Provar o ciclo de vida (`destroy` sem cobrança residual) e deixar o ambiente re-provisionado ao final, sem recursos órfãos — a máquina viva é premissa das Issues 08 e 10
 
 ## Critérios de aceitação
@@ -76,6 +77,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - [ ] O provider da execução real não mantém nenhum resíduo do laboratório (`localhost:4566`, credencial mock, `skip_*`) — build to break: sem os `endpoints`, nenhuma chamada vai mais para `localhost:4566`; sem as credenciais mock (ou removido um `skip_*`), o `plan` falha por falta de credencial real
 - [ ] Os valores que diferem entre ambientes vêm de `variable`/`tfvars` ou da separação escolhida, nunca de valor fixo reaproveitado do laboratório
 - [ ] O plano real mostra a instância na subnet pública com rota para o IGW, entrada `22` limitada a `admin_cidr`, nenhuma porta `0.0.0.0/0` e o `docker pull` na instância nova conclui antes do deploy
+- [ ] O plano real mostra o ALB ativo, health check do target group `healthy`, entrada `3000` da API restrita ao SG do ALB e nenhuma regra com `0.0.0.0/0`
 
 ## Validação
 
@@ -86,6 +88,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - Rodar `destroy` e verificar a ausência de recursos remanescentes e de cobrança
 - Inspecionar o `provider.tf` usado no apply real confirmando ausência de endpoints locais e `skip_*`
 - Na instância provisionada, executar o bootstrap e confirmar `docker pull` e `ssh` pelo endereço restrito à CIDR de admin
+- Inspecionar o ALB: DNS responde, health check `healthy` e a API só é alcançável através dele
 
 ## Evidências
 
@@ -96,6 +99,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - Output do `destroy` sem recursos órfãos e do `apply` de re-provisionamento com a instância `running`
 - Trecho do `provider.tf` de produção sem endpoints locais nem credenciais mock
 - Saída do `docker pull` na instância nova e regra de ingress `22` com `admin_cidr`
+- DNS do ALB e estado `healthy` do target group
 
 ## Limitações / notas
 
@@ -104,3 +108,4 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - **FinOps:** o contrato de escopo em `00-visao-geral.md` declara FinOps fora de escopo por decisão. Aqui a estimativa de custo não é um programa de FinOps — é uma trava de segurança para não criar cobrança involuntária. Registrar essa distinção ao executar
 - Esta Issue só é atingível depois da Issue 03, que gera o estado local a ser migrado
 - Subnet pública por custo zero: a alternativa privada exigiria NAT/endpoint (custo recorrente); a fronteira é fechada por SG
+- Fronteira com pendência declarada: sem domínio registrado não há certificado ACM; declarar a pendência em vez de deixar a fronteira sem dono — o listener `80` existe mesmo sem domínio
