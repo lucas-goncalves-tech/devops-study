@@ -69,6 +69,7 @@ merge em main → plan verde → aprovação → apply identificado → plan sem
 - [ ] Configurar o job para obter credencial efêmera via `id-token`, sem access key estática em secret, arquivo ou variável
 - [ ] Restringir o job de `apply` a `main` e a um environment com aprovação declarada
 - [ ] Exigir o job de `plan` verde do mesmo commit antes do `apply`
+- [ ] Passar os valores de ambiente ao `plan` e ao `apply` por `-var`/`TF_VAR_` vindos do environment do repositório (segredo ou `vars.*`), sem valor literal colado no YAML da pipeline
 - [ ] Aplicar somente a infraestrutura já declarada na Issue 03 e estimada na Issue 07 — nenhum recurso novo
 - [ ] Rodar `terraform plan -detailed-exitcode` logo após o `apply`, com exit 0
 - [ ] Manter o caminho manual de `apply` da Issue 07 documentado e funcional — a pipeline não pode ser a única via de recuperação
@@ -80,6 +81,7 @@ merge em main → plan verde → aprovação → apply identificado → plan sem
 - [ ] Varredura do repositório não encontra `aws_access_key_id` nem `aws_secret_access_key` em nenhum arquivo versionado
 - [ ] O log da execução do `apply` não contém credencial
 - [ ] O `terraform plan -detailed-exitcode` logo após o `apply` retorna exit 0
+- [ ] Nenhum valor de ambiente (CIDR, tipo de instância, credencial) aparece literal no workflow: o YAML declara a origem do valor, não o valor
 - [ ] O histórico da execução recupera commit, autor e horário da última mudança de infraestrutura
 
 ## Validação
