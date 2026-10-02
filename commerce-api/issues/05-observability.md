@@ -60,8 +60,9 @@ Estado final: Prometheus coletando de `/metrics` (exposta pelo app com `prom-cli
 - [ ] Painel de p95/p99 de `/api/v1/orders/checkout`
 - [ ] Painel do pool do Postgres (conexões ativas, ociosas e pendentes de espera), expondo o limite real de `max: 10` do `src/db/connection.ts`
 - [ ] Painel de memória do processo (`process_resident_memory_bytes` e `process_heap_bytes` do `prom-client`)
-- [ ] Carga k6 de 50–100 VUs autenticados (token obtido em `/api/v1/auth/login`) contra `/api/v1/orders/checkout`, com `idempotencyKey` no corpo
+- [ ] Carga k6 de 50–100 VUs autenticados (token obtido em `/api/v1/auth/login`) contra `/api/v1/orders/checkout`, com `idempotencyKey` no corpo, sobre produtos semeados de teste com estoque alto — semeadura e limpeza declaradas nesta Issue
 - [ ] Validar `http_req_failed < 0.01` e `http_req_duration` p95 abaixo de 500ms, observando `connect_timeout: 10s` e `idle_timeout: 20s` do client `postgres`
+- [ ] Definir ao menos uma regra de alerta sobre as métricas coletadas (p95 ou taxa de erro), com PromQL, condição e `for`, ligada a um canal observável e registrar um disparo de teste
 
 ## Critérios de aceitação
 
@@ -69,6 +70,8 @@ Estado final: Prometheus coletando de `/metrics` (exposta pelo app com `prom-cli
 - [ ] Carga k6 termina com taxa de falha abaixo de 1% e p95 abaixo de 500ms
 - [ ] Nenhuma requisição falha por esgotamento de conexões do pool durante a carga
 - [ ] A distribuição de latência mostra cauda visível — não apenas média
+- [ ] A regra existe em arquivo com PromQL e `for` visíveis e um disparo real foi observado no canal durante a carga
+- [ ] A janela de carga não registra `409` de estoque esgotado e a carga não é reprovada por `http_req_failed` por falta de dados
 
 ## Validação
 
@@ -76,6 +79,7 @@ Estado final: Prometheus coletando de `/metrics` (exposta pelo app com `prom-cli
 - Dashboard do coletor mostrando as séries com valor
 - Execução do script de carga com os thresholds dentro do esperado
 - Inspecionar o painel do pool durante a carga confirmando que a fila de pendentes não cresce sem limite
+- Conferir na saída da carga a ausência de `409` e registrar a semeadura e a limpeza dos dados de teste
 
 ## Evidências
 
@@ -83,6 +87,8 @@ Estado final: Prometheus coletando de `/metrics` (exposta pelo app com `prom-cli
 - Captura ou exportação dos quatro painéis
 - Série de métricas do pool durante o pico de carga
 - Registro da latência p95/p99 medida
+- Regra de alerta em arquivo e registro do disparo no canal
+- Saída da carga sem `409` e registro da semeadura/limpeza
 
 ## Limitações / notas
 
