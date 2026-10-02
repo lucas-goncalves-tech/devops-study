@@ -64,7 +64,7 @@ Estado final: cada job opera com a menor permissão possível, ações de tercei
 ## Critérios de aceitação
 
 - [ ] Todo job declara explicitamente suas permissões e nenhuma tem `write` sem necessidade declarada
-- [ ] Nenhum job com permissão de escrita publica artefato
+- [ ] Os únicos jobs com permissão de escrita são os que publicam artefato — nenhum job sem publicação tem `write`
 - [ ] Toda ação de terceiros no workflow está referenciada por SHA de 40 caracteres
 - [ ] A auditoria falha de propósito quando uma tag mutável é introduzida
 - [ ] O procedimento de atualização de SHA existe e é executável

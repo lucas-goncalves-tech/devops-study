@@ -33,7 +33,7 @@ Estado final: dois gates de SCA rodando com piso de severidade declarado — `np
 - SAST sobre o código do app — [Issue 05](05-sast-semgrep.md)
 - Detecção de segredo — [Issue 04](04-secrets-hygiene.md)
 - Consolidação dos gates e medição de tempo — [Issue 08](08-devsecops-gates.md)
-- SBOM e assinatura de artefato: a imagem assinada é trabalho do pipeline endurecido, [Issue 07](07-pipeline-hardening.md)
+- SBOM e assinatura de artefato: não são entregues por nenhuma Issue desta trilha — limite registrado aqui; a imagem publicada é validada pelos gates de conteúdo, não assinada
 - Alertas sobre vulnerabilidade em runtime (imagem já em produção) — fora do gate de merge
 
 ## Conhecimentos envolvidos
