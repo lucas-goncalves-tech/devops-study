@@ -27,3 +27,12 @@ issue: 07
 
 **FIM:** sei estimar antes de aplicar.
 
+---
+
+### C — Valores por ambiente
+
+- Valores por ambiente: bloco `variable`, `*.tfvars`, `-var` e `TF_VAR_`
+  - https://developer.hashicorp.com/terraform/language/values/variables
+
+**FIM:** sei declarar `variable`, sobrepor valor com `tfvars`/`-var`/`TF_VAR_` e explicar por que laboratório e produção não compartilham o mesmo valor.
+
