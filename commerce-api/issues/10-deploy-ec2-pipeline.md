@@ -71,6 +71,7 @@ merge verde → imagem publicada com digest → pull na EC2 → healthcheck
 - [ ] Job da pipeline publica a imagem com tag derivada do commit e registra o digest
 - [ ] Deploy roda só em `main` com pipeline verde, usando chave SSH efêmera guardada em secret de environment
 - [ ] O deploy na máquina de destino é `pull` do digest declarado e subida pelo Compose — nenhum `build` na produção
+- [ ] Entregar os segredos de produção fora do repositório e fora de log: `JWT_SECRET` novo (32+ caracteres, distinto do valor de desenvolvimento), `DATABASE_URL` do banco da Issue 07 e `CORS_ORIGIN` restrito ao domínio real — os defaults do `.env.example` nunca chegam à máquina de destino
 - [ ] Healthcheck pós-deploy em `/health` exigindo HTTP 200 e `"status":"UP"`
 - [ ] Rollback automático para o digest anterior quando o healthcheck falha
 - [ ] Registro de auditoria com digest implantado, autor do merge e horário
@@ -81,6 +82,7 @@ merge verde → imagem publicada com digest → pull na EC2 → healthcheck
 - [ ] Pull request com pipeline vermelha não publica imagem nem deploya
 - [ ] Um deploy disparado manualmente fora de `main` não acontece pelo caminho de produção
 - [ ] Nenhum log de execução contém chave SSH ou senha
+- [ ] A máquina de destino não roda com valor de desenvolvimento: `JWT_SECRET` distinto do `.env.example` e `CORS_ORIGIN` sem `*` — build to break: apontar para o valor de dev e observar a diferença
 - [ ] Deploy de uma versão com `/health` falhando reverte sozinho para o digest anterior e a API volta a responder `200` `UP` — build to break
 - [ ] Deploy de uma versão saudável permanece em execução — build to defend
 - [ ] A versão implantada, o autor e o horário são recuperáveis em até 30 segundos
@@ -92,6 +94,7 @@ merge verde → imagem publicada com digest → pull na EC2 → healthcheck
 - Implantar deliberadamente uma versão com `/health` quebrado e observar o rollback automático; reverter
 - Implantar a versão saudável e confirmar que ela permanece
 - Varredura dos logs de execução procurando chave
+- Conferir na máquina de destino o `JWT_SECRET` e o `CORS_ORIGIN` em uso, sem valores de desenvolvimento
 - Consultar o registro de auditoria cronometrando a recuperação da versão, autor e horário
 - Conferir na máquina de destino que o código em execução é o da imagem puxada, não um build local
 
@@ -101,6 +104,7 @@ merge verde → imagem publicada com digest → pull na EC2 → healthcheck
 - Log do deploy com o digest implantado
 - Log do rollback automático com a versão revertida
 - Trecho de log de execução sem credencial
+- Configuração de ambiente da máquina de destino com segredos de produção e sem valores de dev
 - Registro de auditoria com digest, autor e horário
 - Comparação entre digest publicado e imagem em execução no destino
 
