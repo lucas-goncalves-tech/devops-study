@@ -69,6 +69,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 - [ ] Persistir a saída da execução em arquivo ou artefato, com o p95 legível no resumo do k6
 - [ ] Configurar ao menos um alerta sobre métrica desta stack (por exemplo p95 de requisição ou taxa de erro) com condição e tempo de espera
 - [ ] Ligar o alerta a um canal observável e capturar a evidência do disparo (log do canal ou captura de tela)
+- [ ] Cada regra de alerta declara o procedimento que o operador segue ao receber o disparo — o caminho do runbook e o primeiro comando a rodar — e a notificação entrega esse caminho junto da mensagem
 - [ ] Registrar, na mesma janela do teste, a saúde da aplicação e a ausência de erro 5xx no log do serviço
 - [ ] Declarar o impacto da carga sintética no banco de produção (o que ela cria) e registrar a limpeza do que foi criado
 - [ ] Declarar a exposição do coletor: ele entra nas redes da Issue 06, nenhuma porta nova fora do firewall da Issue 03, e o acesso externo ao painel é somente pelo Caddy da Issue 04 com autenticação
@@ -79,6 +80,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 - [ ] A regra de alerta é avaliada sobre métrica coletada desta stack: o scrape do `/actuator/prometheus` está ativo e a série é consultável
 - [ ] Uma degradação induzida faz o alerta disparar de verdade e o canal configurado mostra o disparo, com a evidência arquivada nesta Issue
 - [ ] A regra de alerta tem expressão de PromQL, condição e `for` visíveis na configuração, não apenas descrita em texto
+- [ ] Cada regra de alerta aponta, por anotação na configuração, para um arquivo de runbook que existe no repositório, e a regra não é considerada cumprida enquanto esse arquivo não existir
 - [ ] Nenhum requisito desta Issue depende de Issue de outro app: coleta, regra e canal nascem nesta trilha
 - [ ] Durante toda a janela do teste, `/actuator/health` responde `UP` e o healthcheck L4/L7 da `Issue 01` sai com 0
 - [ ] Nenhum erro 5xx de aplicação aparece no log do serviço durante a janela do teste
@@ -92,6 +94,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 - Executar o agendamento manualmente uma vez e conferir o horário e a saída persistida
 - Induzir a degradação que o alerta observa (limiar artificialmente baixo ou latência adicionada no caminho) e esperar o disparo no canal
 - Reverter a degradação e confirmar que o alerta volta ao estado normal
+- Abrir o alerta recebido sem saber por que disparou e conferir que o caminho do runbook chega na própria notificação
 - Consultar `/actuator/health` e rodar o healthcheck L4/L7 da `Issue 01` durante a janela do teste
 - Inspecionar o log do serviço procurando `5xx` no mesmo intervalo
 - Conferir no banco os registros criados pela carga e removê-los
@@ -104,6 +107,7 @@ Estado final: um script k6 agendado que autentica e transaciona contra o endpoin
 - Saída do k6 com o p95 da janela e o nome do thresholds avaliado
 - Evidência do disparo no canal (linha de log do canal de notificação ou captura de tela com horário)
 - Regra de alerta em arquivo, com PromQL e `for`
+- Trecho da configuração da regra mostrando a anotação do runbook e o arquivo referenciado
 - Saída de `/actuator/health` e do healthcheck L4/L7 da `Issue 01` durante a janela
 - Trecho do log do serviço sem erro 5xx no mesmo intervalo
 - Consulta ao banco com o que a carga criou e o registro da limpeza
