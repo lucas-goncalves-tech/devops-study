@@ -9,7 +9,7 @@ prioridade: alta
 
 ## Contexto
 
-Gates verdes provam que o repositório está limpo — não provam que o pipeline de verdade pega o que importa. A prova de um gate é a tentativa de passar por ele com algo que não deveria passar, e até aqui cada gate foi exercitado contra arquivo do repositório, nunca contra um ambiente inteiro montado errado. Some-se a isso a parte de mensageria: o consumidor deste app lê a Stream `payment-events`, cria o consumer group `webhook-dispatcher-group` e valida assinatura HMAC-SHA256 com `crypto.timingSafeEqual` (`src/signer.ts`), e nenhuma dessas garantias foi testada contra Redis fora do ar, stream atrasada ou assinatura inválida. Este ambiente é deliberadamente falho, é público no repositório e nunca toca a stack de produção.
+Gates verdes provam que o repositório está limpo — não provam que o pipeline de verdade pega o que importa. A prova de um gate é a tentativa de passar por ele com algo que não deveria passar, e até aqui cada gate foi exercitado contra arquivo do repositório, nunca contra um ambiente inteiro montado errado. Some-se a isso a parte de mensageria: o consumidor deste app lê a Stream `payment-events`, cria o consumer group `webhook-dispatcher-group` e valida assinatura HMAC-SHA256 com `crypto.timingSafeEqual` (`src/signer.ts`), e nenhuma dessas garantias foi testada contra Redis fora do ar, stream atrasada ou assinatura inválida. Este ambiente é deliberadamente falho, é público no repositório e nunca toca a stack da `Issue 10`.
 
 ## Objetivo
 
@@ -27,7 +27,7 @@ Estado final: um ambiente de staging separado da produção, com fraquezas propo
 
 ## Escopo
 
-- Ambiente de staging separado por credencial, dados, porta e URL, sem recurso compartilhado com a produção
+- Ambiente de staging separado por credencial, dados, porta e URL, sem recurso compartilhado com a stack da `Issue 10`
 - Fraquezas propositais registradas com o gate esperado para pegar cada uma
 - Matriz de detecção: fraqueza → gate → saída que mostra a reprovação
 - Rejeição documentada de cada tentativa de passar, com a evidência do gate acionado
@@ -67,9 +67,9 @@ Estado final: um ambiente de staging separado da produção, com fraquezas propo
 
 ## Requisitos
 
-- [ ] Provisionar staging com URL, porta, credencial de banco/Redis, volume e namespace próprios, sem recurso compartilhado com a produção
+- [ ] Provisionar staging com URL, porta, credencial de banco/Redis, volume e namespace próprios, sem recurso compartilhado com a stack da `Issue 10`
 - [ ] Injetar e documentar credencial fraca (segredo `WEBHOOK_SECRET` curto ou senha trivial no `.env` do staging)
-- [ ] Injetar e documentar porta exposta do serviço de staging em endereço público, com a exposição visível por varredura externa
+- [ ] Injetar e documentar porta exposta do serviço de staging em endereço público fornecido por túnel gratuito (cloudflared ou ngrok — custo zero, URL registrada nesta Issue), com a exposição visível por varredura externa
 - [ ] Injetar e documentar segredo real em artefato de build versionado (por exemplo string de conexão com segredo dentro de um arquivo que a imagem consome)
 - [ ] Injetar e documentar padrão inseguro no código do staging detectável por SAST (por exemplo comparação de HMAC que deixa de ser em tempo constante)
 - [ ] Injetar e documentar dependência com CVE alta no staging e verificar que o gate de SCA reprova
@@ -80,11 +80,11 @@ Estado final: um ambiente de staging separado da produção, com fraquezas propo
 - [ ] Provocar assinatura HMAC inválida: entregar payload com assinatura adulterada e confirmar a rejeição por `crypto.timingSafeEqual`
 - [ ] Registrar para cada incidente de mensageria: sintoma, métrica ou log que revelou, causa raiz, correção e resultado da reexecução
 - [ ] Declarar o baseline de atraso aceitável e o limite de reprocessamento, com o que acontece quando o atraso ultrapassa o limite
-- [ ] Confirmar que a stack de produção permaneceu intacta durante toda a exercitação (revisão de log e ausência de evento publicado na produção)
+- [ ] Confirmar que a stack da `Issue 10` permaneceu intacta durante toda a exercitação (revisão de log e ausência de evento publicado nela)
 
 ## Critérios de aceitação
 
-- [ ] O staging responde em URL e porta próprias, e nenhuma requisição nele toca recurso, credencial ou namespace da produção
+- [ ] O staging responde em URL e porta próprias, e nenhuma requisição nele toca recurso, credencial ou namespace da stack da `Issue 10`
 - [ ] Existe matriz de detecção versionada, com uma linha por fraqueza injetada, o gate responsável e o trecho de saída que a reprovou
 - [ ] Injetar o segredo no artefato reprova o gate de segredos; injetar o padrão inseguo reprova o SAST; injetar a dependência com CVE alta reprova o SCA — cada uma em job identificável e distinto
 - [ ] A fragilidade de pipeline do staging (tag mutável, permissão de escrita) é reprovada pela auditoria de hardening
@@ -95,22 +95,22 @@ Estado final: um ambiente de staging separado da produção, com fraquezas propo
 - [ ] Assinatura HMAC inválida é rejeitada, com o registro da rejeição e sem reprocessamento infinito do payload
 - [ ] Cada um dos três incidentes de mensageria tem reexecução registrada, com o comportamento esperado após a correção
 - [ ] Nenhum incidente de mensageria foi encerrado por reinício do serviço sem registro de causa
-- [ ] A stack de produção permaneceu intacta durante a exercitação, com log sem erro e sem evento de teste publicado nela
+- [ ] A stack da `Issue 10` permaneceu intacta durante a exercitação, com log sem erro e sem evento de teste publicado nela
 
 ## Validação
 
-- Consultar URL e porta do staging e da produção, confirmando a separação de dados e credencial
+- Consultar URL e porta do staging e da stack da `Issue 10`, confirmando a separação de dados e credencial
 - Para cada linha da matriz: reintroduzir a fraqueza, rodar o gate correspondente e conferir a reprovação
 - Rodar o gate consolidado com as fraquezas todas presentes e conferir que cada uma reprova em job separado
 - Varrer a porta do staging de fora e confirmar que responde publicamente (e registrar o dado)
 - Derrubar o Redis e observar o comportamento do consumidor e o log do app
 - Publicar evento sem consumidor e medir o atraso com `XINFO GROUPS` e `XPENDING`
 - Entregar payload com assinatura adulterada e observar a rejeição
-- Conferir o log da produção durante toda a janela, procurando erro ou evento de teste
+- Conferir o log da stack da `Issue 10` durante toda a janela, procurando erro ou evento de teste
 
 ## Evidências
 
-- URL e porta do staging e da produção lado a lado, com a prova de que não compartilham dado
+- URL e porta do staging e da stack da `Issue 10` lado a lado, com a prova de que não compartilham dado
 - Conteúdo do staging, com as fraquezas injetadas e comentadas
 - Matriz de detecção versionada, com o trecho de saída de cada gate
 - Saída de reprovação de cada gate, uma por fraqueza detectada
@@ -119,7 +119,7 @@ Estado final: um ambiente de staging separado da produção, com fraquezas propo
 - Três diagnósticos de incidente de mensageria, com sintoma, sinal, causa e correção
 - Saída de `XINFO GROUPS`/`XPENDING` com o atraso medido e o baseline
 - Log de rejeição do HMAC inválido, com a evidência de não haver retry infinito
-- Log da produção sem erro e sem evento de teste
+- Log da stack da `Issue 10` sem erro e sem evento de teste
 
 ## Limitações / notas
 
@@ -130,3 +130,4 @@ Estado final: um ambiente de staging separado da produção, com fraquezas propo
 - A assinatura HMAC inválida precisa ter destino: rejeitar e descartar é um caminho; rejeitar e reprocessar em loop é um incidente diferente, e é por isso que o limite de reprocessamento é declarado
 - Depois de concluída a matriz, este ambiente não deve ser promovido nem reaproveitado como pré-produção: a fraqueza é o produto dele
 - Adaptar esta prática para o `ledger-service` ou o `commerce-api` é repetir a matriz com as ferramentas do app (Semgrep `p/java`, SCA Maven, Trivy na imagem); o desenho é o mesmo
+- **Marcos de execução:** Esta é a Issue longa da trilha — os quatro blocos (I) staging + fraquezas + matriz, (II) varredura DAST, (III) forense dos três incidentes de mensageria, (IV) evidências finais são executáveis em etapas com validação própria; registrar o avanço por bloco. Regra de leitura: `Produção` nesta Issue é a stack da `Issue 10` — o que existe antes da integração real da `Issue 12`.
