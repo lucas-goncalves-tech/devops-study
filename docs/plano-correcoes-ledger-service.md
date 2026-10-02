@@ -209,7 +209,7 @@ git commit -m "docs(tracker): staging definido na trilha VPS e correção do car
 
 - [ ] **Step 5: Bateria final de validação**
 
-Executar **depois** dos commits (árvore limpa): escopo, estilo e `BOARD.md` ancoram em `B0=0a5356b..HEAD` — do ponto de branch até o tip, cobrindo também a correção da revisão final. O escopo admite `webhook-gateway/issues/` porque os dois planos compartilham branch e o plano irmão é quem porta esses arquivos estritamente (âncora `B2` dele); estilo e `BOARD.md` ficam restritos por path a `ledger-service` e `BOARD.md`, que o plano irmão nunca toca. O `[x]` de cada Issue é comparado contra `B0`: nenhum checkbox muda de estado. O `grep -cv` do escopo leva `|| true`: contagem zero sai com exit 1 e derrubaria o `set -e` silenciosamente.
+Executar **depois** dos commits (árvore limpa): escopo, estilo e `BOARD.md` ancoram em `B0=0a5356b..HEAD` — do ponto de branch até o tip, cobrindo também a correção da revisão final. O escopo é a união dos dois apps + `BOARD.md` + os planos: a correção da revisão tocou `ledger` e `webhook` no mesmo commit, então nenhum range separa por app — os gates de task fixam os tokens de cada task no arquivo dela como mitigação. Estilo e `BOARD.md` ficam restritos por path a `ledger-service` e `BOARD.md`, que o plano irmão nunca toca. O `[x]` de cada Issue é comparado contra `B0`: nenhum checkbox muda de estado. O `grep -cv` do escopo leva `|| true`: contagem zero sai com exit 1 e derrubaria o `set -e` silenciosamente.
 
 Run:
 ```bash
@@ -246,7 +246,7 @@ done
 [ "$broken" -eq 0 ] || exit 1
 git diff "$B0" HEAD -- ledger-service BOARD.md \
   | grep '^+' | grep -vE '^\+\+\+|^\+ *- |^\+$' && { echo "ESTILO ERRADO"; exit 1; } || true
-echo "VALIDAÇÃO FINAL: OK — 8 issues × 13 seções, status 2 done/6 todo, escopo/estilo/BOARD B0..HEAD (webhook estrito no plano irmão), BOARD exatamente 2 linhas ambas Staging, checkboxes B0, links e estilo OK"
+echo "VALIDAÇÃO FINAL: OK — 8 issues × 13 seções, status 2 done/6 todo, escopo em união e estilo/BOARD B0..HEAD filtrados por path, BOARD exatamente 2 linhas ambas Staging, checkboxes B0, links e estilo OK"
 ```
 Expected: `VALIDAÇÃO FINAL: OK — ...` e nenhuma linha de erro antes dela. Se falhar: corrigir, commitar o ajuste e reexecutar a bateria antes de considerar a planilha concluída.
 

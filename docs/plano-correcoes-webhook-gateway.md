@@ -169,7 +169,7 @@ git commit -m "docs(tracker): autenticação do redis de produção declarada na
 
 - [ ] **Step 6: Bateria final de validação**
 
-Executar **depois** dos commits (árvore limpa): a âncora é `B2=b03660a`, o commit imediatamente anterior à Task 1 deste plano (BASE registrado no ledger do plano) — `merge-base` não serve aqui: os dois planos compartilham branch e ele englobaria os commits do plano irmão. Ranges `B2..HEAD` crescem com commits de ajuste sem mudar de significado. O `[x]` de cada Issue é comparado contra `B2`: nenhum checkbox muda de estado. O `grep -cv` do escopo leva `|| true`: contagem zero sai com exit 1 e derrubaria o `set -e` silenciosamente.
+Executar **depois** dos commits (árvore limpa): a âncora é `B2=b03660a`, o commit imediatamente anterior à Task 1 deste plano (BASE registrado no ledger do plano) — `merge-base` não serve aqui: os dois planos compartilham branch e ele englobaria os commits do plano irmão. Ranges `B2..HEAD` crescem com commits de ajuste sem mudar de significado, com o escopo em união dos dois apps + `BOARD.md` + planos (a correção da revisão tocou os dois apps no mesmo commit — range por app não existe mais; os gates de task fixam os tokens por arquivo). O `[x]` de cada Issue é comparado contra `B2`: nenhum checkbox muda de estado. O `grep -cv` do escopo leva `|| true`: contagem zero sai com exit 1 e derrubaria o `set -e` silenciosamente.
 
 Run:
 ```bash
@@ -186,7 +186,7 @@ for f in webhook-gateway/issues/*.md; do
   b=$(grep -c '^- \[x\]' "$f" || true)
   [ "$a" -eq "$b" ] || { echo "CHECKBOX ERRADO: $f mudou de estado ($a → $b)"; exit 1; }
 done
-out=$(git diff --name-only "$B2" HEAD -- | grep -cv '^webhook-gateway/issues/\|^docs/plano-correcoes-' || true)
+out=$(git diff --name-only "$B2" HEAD -- | grep -cv '^webhook-gateway/issues/\|^ledger-service/issues/\|^BOARD.md$\|^docs/plano-correcoes-' || true)
 [ "$out" -eq 0 ] || { echo "ESCOPO ERRADO: $out arquivos fora"; exit 1; }
 broken=0
 for f in webhook-gateway/issues/*.md; do
@@ -199,7 +199,7 @@ done
 [ "$broken" -eq 0 ] || exit 1
 git diff "$B2" HEAD -- webhook-gateway \
   | grep '^+' | grep -vE '^\+\+\+|^\+ *- |^\+$' && { echo "ESTILO ERRADO"; exit 1; } || true
-echo "VALIDAÇÃO FINAL: OK — 12 issues × 13 seções, status 12 todo, escopo/estilo B2..HEAD, checkboxes B2, links e estilo OK"
+echo "VALIDAÇÃO FINAL: OK — 12 issues × 13 seções, status 12 todo, escopo em união e estilo B2..HEAD, checkboxes B2, links e estilo OK"
 ```
 Expected: `VALIDAÇÃO FINAL: OK — ...` e nenhuma linha de erro antes dela. Se falhar: corrigir, commitar o ajuste e reexecutar a bateria antes de considerar o plano concluído.
 
