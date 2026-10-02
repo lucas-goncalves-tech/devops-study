@@ -80,9 +80,60 @@ Estado final: imagem multi-stage abaixo de 220 MB executando como usuário sem p
 ## Evidências
 
 - Tamanho da imagem e UID do usuário de execução
+
+```console
+$ docker image inspect app-securepay_api --format 'size={{.Size}} user={{.Config.User}} image={{index .RepoTags 0}}'
+size=447386841 user=java image=app-securepay_api:latest
+$ docker images --format '{{.Repository}}:{{.Tag}} {{.Size}}' | grep securepay
+app-securepay_api:latest 447MB
+```
+
 - Output do `docker compose up` mostrando a condição `service_healthy`
+
+```console
+$ docker compose up --build -d
+$ docker compose ps -a --format '{{.Service}} {{.Status}}'  # amostragem por segundo durante a subida (trecho)
+[075s] database: Up 11 seconds (healthy) | securepay_api: Created
+[076s] database: Up 13 seconds (healthy) | securepay_api: Up 2 seconds
+$ docker compose ps --format '{{.Service}} {{.Status}}'
+database Up 9 minutes (healthy)
+securepay_api Up 16 seconds
+```
+
 - Teste de persistência entre restarts
+
+```console
+$ docker compose exec -T database psql -U postgres -d securepay_db -tA -c 'SELECT count(*) FROM accounts;'
+0
+$ docker compose exec -T database psql -U postgres -d securepay_db -tA -c "INSERT INTO accounts (id, created_at, email, full_name, password_hash, role) VALUES (gen_random_uuid(), now(), 'evidence-02@test.local', 'Evidencia Issue 02', 'hash-nao-precisa', 'ROLE_USER');"
+INSERT 0 1
+$ docker compose exec -T database psql -U postgres -d securepay_db -tA -c "SELECT email FROM accounts WHERE email = 'evidence-02@test.local';"
+evidence-02@test.local
+$ docker compose restart
+ Container app-database-1 Started 
+ Container app-securepay_api-1 Started 
+$ docker compose exec -T database psql -U postgres -d securepay_db -tA -c "SELECT email FROM accounts WHERE email = 'evidence-02@test.local';"
+evidence-02@test.local
+```
+
 - Log de desligamento gracioso
+
+```console
+$ docker compose stop securepay_api
+ Container app-securepay_api-1 Stopped 
+$ docker compose logs securepay_api | grep -E 'Commencing graceful|Graceful shutdown complete|HikariPool-1 - Shutdown|Closing JPA'
+securepay_api-1  | 2026-10-02T21:49:01.756Z  INFO 1 --- [ledger-service] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+securepay_api-1  | 2026-10-02T21:49:27.602Z  INFO 1 --- [ledger-service] [ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+securepay_api-1  | 2026-10-02T21:49:27.607Z  INFO 1 --- [ledger-service] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+securepay_api-1  | 2026-10-02T21:49:27.650Z  INFO 1 --- [ledger-service] [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+securepay_api-1  | 2026-10-02T21:49:27.655Z  INFO 1 --- [ledger-service] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+securepay_api-1  | 2026-10-02T21:49:27.663Z  INFO 1 --- [ledger-service] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+$ docker compose logs securepay_api | grep -ciE 'connection is not available|PoolInitialization|HikariPool.*ERROR'
+0
+$ docker compose ps -a --format '{{.Service}} {{.Status}}'
+database Up 29 seconds (healthy)
+securepay_api Exited (143) 3 seconds ago
+```
 
 ## Limitações / notas
 
