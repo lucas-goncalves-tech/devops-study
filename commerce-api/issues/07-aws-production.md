@@ -65,7 +65,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - [ ] Estimar custo mensal antes de subir qualquer recurso
 - [ ] Backup diário do banco para o bucket securepay-financial-reports da Issue 03, com retenção declarada, e restore provado a partir do objeto fora da instância antes de encerrar
 - [ ] Provisionar computação mínima para API e banco
-- [ ] Provisionar a instância na subnet pública da VPC da Issue 03, com rota padrão para o IGW (sem NAT), bootstrap com Docker antes do primeiro deploy e entrada `22` restrita à variável `admin_cidr` — nunca `0.0.0.0/0`
+- [ ] Provisionar a instância na subnet pública da VPC da Issue 03, com rota padrão para o IGW (sem NAT), bootstrap com Docker antes do primeiro deploy e entrada `22` restrita à variável `admin_cidr` declarada na raiz de produção — nunca `0.0.0.0/0`
 - [ ] Reativar o `elbv2` no provider de produção, com ALB na subnet pública, target group para a API na porta `3000` e listener `80`; quando houver domínio apontado: certificado ACM e redirect `80` para `443` (sem domínio, registrar a pendência em Limitações)
 - [ ] Provar o ciclo de vida (`destroy` sem cobrança residual) e deixar o ambiente re-provisionado ao final, sem recursos órfãos — a máquina viva é premissa das Issues 08 e 10
 
@@ -80,8 +80,8 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - [ ] Os valores que diferem entre ambientes vêm de `variable`/`tfvars` ou da separação escolhida, nunca de valor fixo reaproveitado do laboratório
 - [ ] Um dump do banco existe no bucket (fora da instância) e o restore a partir dele devolve os dados — teste registrado nesta Issue
 - [ ] Reuso por instanciação, não por cópia: o apply de produção termina com `git diff` vazio em commerce-api/infra/ e o plan da raiz de produção não referencia localhost:4566
-- [ ] O plano real mostra a instância na subnet pública com rota para o IGW, entrada `22` limitada a `admin_cidr`, nenhuma porta `0.0.0.0/0` e o `docker pull` na instância nova conclui antes do deploy
-- [ ] O plano real mostra o ALB ativo, health check do target group `healthy`, entrada `3000` da API restrita ao SG do ALB e nenhuma regra com `0.0.0.0/0`
+- [ ] O plano real mostra a instância na subnet pública com rota para o IGW, entrada `22` limitada a `admin_cidr`, nenhuma porta da instância em `0.0.0.0/0` e o `docker pull` na instância nova conclui antes do deploy
+- [ ] O plano real mostra o ALB ativo, health check do target group `healthy`, entrada `3000` da API restrita ao SG do ALB e nenhuma regra com `0.0.0.0/0` nas security groups das instâncias — o ALB é a única entrada pública
 
 ## Validação
 
@@ -90,10 +90,12 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - Rodar o mesmo comando em dois ambientes e confirmar chaves distintas
 - Conferir a estimativa registrada antes do provisionamento
 - Rodar `destroy` e verificar a ausência de recursos remanescentes e de cobrança
+- Rodar o `apply` de re-provisionamento e conferir a instância `running` — destroy é prova intermediária
 - Inspecionar o `provider.tf` usado no apply real confirmando ausência de endpoints locais e `skip_*`
 - Na instância provisionada, executar o bootstrap e confirmar `docker pull` e `ssh` pelo endereço restrito à CIDR de admin
 - Inspecionar o ALB: DNS responde, health check `healthy` e a API só é alcançável através dele
 - Gerar o dump, restaurar uma cópia de teste a partir do objeto e conferir os dados
+- Conferir `git diff` vazio em `commerce-api/infra/` após o `apply` de produção e o `plan` da raiz sem `localhost:4566`
 
 ## Evidências
 
@@ -106,6 +108,7 @@ Estado final: estado remoto com versionamento e lock contra applies concorrentes
 - Saída do `docker pull` na instância nova e regra de ingress `22` com `admin_cidr`
 - DNS do ALB e estado `healthy` do target group
 - Saída do objeto de backup no bucket e do restore com os dados conferidos
+- Output do `git diff` vazio em `commerce-api/infra/` após o `apply` de produção
 
 ## Limitações / notas
 

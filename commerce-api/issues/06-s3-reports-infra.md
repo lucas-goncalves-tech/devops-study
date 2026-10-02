@@ -33,7 +33,7 @@ Estado final: bucket versionado, criptografado e com retenção; identidade IAM 
 - Gerar conteúdo de relatório
 - CI/CD — Issue 04
 - ALB — Issue 03 (carry-over condicionado a `elbv2`)
-- Backup de banco — [Issue 05 do `ledger-service`](../../ledger-service/issues/05-db-backups-s3.md)
+- Backup de banco — [Issue 07](07-aws-production.md) deste app
 - Criação de lanes de bugs no tracker
 
 ## Conhecimentos envolvidos
