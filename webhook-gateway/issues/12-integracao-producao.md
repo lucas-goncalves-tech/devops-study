@@ -27,8 +27,8 @@ Estado final: `redis` e `webhook-gateway` rodam dentro da stack de produção da
 
 ## Escopo
 
-- Serviço `redis` na stack de produção: healthcheck, sem porta publicada, rede interna
-- Serviço `webhook-gateway` na mesma stack, na rede interna, consumindo esse `redis`
+- Serviço `redis` na stack de produção: healthcheck, sem porta publicada, na rede isolada da topologia da `Issue 06` do `ledger-service`
+- Serviço `webhook-gateway` na mesma stack, na mesma rede do `redis` (rede isolada da `Issue 06`), consumindo esse `redis`
 - Ativação do publisher real do `ledger-service` (`REDIS_ENABLED=true`) sem quebrar a saúde da aplicação
 - Caminho declarado da imagem do gateway até a produção, sem construção manual na máquina
 - Configuração por ambiente, sem segredo versionado
@@ -125,4 +125,4 @@ pagamento na API → ledger publica na Stream → consumidor lê → gateway ent
 - O contrato de payload da Stream é o mesmo provado na Issue 10 (`eventId`, `orderId`, `amount`, `currency`, `status`, `timestamp`) — o publisher Java já existe e fala esse formato; só falta ligá-lo
 - O `WEBHOOK_SECRET` precisa existir no ambiente da VPS: mesma semâthica das Issues 01 e 02 deste app, segredo fora do repositório
 - **Limite de evidência:** a `terceira ponta` das três pontas é provada contra o `destino de entrega` declarado; o consumidor do e-commerce segue `sem card` no `BOARD.md` (`BOARD.md:19`) e a fronteira de escopo não muda nesta Issue
-- **Decisão de autenticação:** a decisão declarada é senha própria em produção — rede interna sozinha `não basta` —, na mesma semântica do staging da [Issue 11](11-staging-inseguro.md)
+- **Decisão de autenticação:** a decisão declarada é senha própria em produção — rede isolada sozinha `não basta` —, na mesma semântica do staging da [Issue 11](11-staging-inseguro.md)

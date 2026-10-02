@@ -65,7 +65,7 @@ Estado final: a sequência de build e teste mora em scripts versionados que roda
 - [ ] Escrever o workflow da pipeline do app contendo apenas checkout, versão do Node, cache e chamada aos scripts, sem `npm ci`/`npm test`/`tsc` em linha
 - [ ] Executar o mesmo script de teste no runner da GitHub e num runner Linux genérico, colando as duas saídas lado a lado
 - [ ] Registrar no README do app (ou no próprio script) o comando local equivalente à pipeline
-- [ ] Configurar proteção de branch no branch padrão do repositório (Rulesets/branch protection), exigindo o check `build` verde antes do merge — vale para pull request e para push direto
+- [ ] Configurar proteção de branch no branch padrão do repositório (Rulesets/branch protection), exigindo o check `build` verde antes do merge (o job da pipeline é nomeado `build`, e cada check de gate que as Issues 04–08 criarem também é obrigatório) — vale para pull request e para push direto
 
 ## Critérios de aceitação
 
@@ -75,7 +75,7 @@ Estado final: a sequência de build e teste mora em scripts versionados que roda
 - [ ] A saída do mesmo `scripts/test.sh` no runner da GitHub e no runner Linux genérico é idêntica no resultado (mesmo número de testes passando, mesmo código de saída) e o script não foi editado entre as execuções
 - [ ] O script falha de forma não silenciosa quando uma dependência não está instalada ou o lockfile está fora de sincronia com o `package.json`
 - [ ] O README do app (ou o cabeçalho do script) traz o comando local que reproduz a pipeline
-- [ ] Um pull request com o check `build` pendente ou vermelho não merge e um push direto ao branch padrão é recusado
+- [ ] Um pull request com o check `build` pendente ou vermelho não merge e um push direto ao branch padrão é recusado; o mesmo vale para os checks de gate das Issues 04–08
 
 ## Validação
 
