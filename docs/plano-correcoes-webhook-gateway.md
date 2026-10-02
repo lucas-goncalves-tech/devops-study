@@ -169,18 +169,19 @@ git commit -m "docs(tracker): autenticação do redis de produção declarada na
 
 - [ ] **Step 6: Bateria final de validação**
 
-Executar **depois** dos 3 commits (árvore limpa): o range `HEAD~3` cobre exatamente as 3 tasks — âncora relativa, independente do base do branch.
+Executar **depois** dos commits (árvore limpa): os ranges ancoram em `B=$(git merge-base main HEAD)` — o ponto de branch —, imunes a commits de ajuste entre a primeira e a reexecução. O `grep -cv` do escopo leva `|| true`: contagem zero sai com exit 1 e derrubaria o `set -e` silenciosamente.
 
 Run:
 ```bash
 set -euo pipefail
-[ -z "$(git status --porcelain)" ] || { echo "ÁRVORE SUJA: execute após os 3 commits"; exit 1; }
+[ -z "$(git status --porcelain)" ] || { echo "ÁRVORE SUJA: execute após os commits"; exit 1; }
+B=$(git merge-base main HEAD)
 for f in webhook-gateway/issues/*.md; do
   [ "$(grep -c '^## ' "$f")" -eq 13 ] || { echo "SEÇÃO ERRADA: $f"; exit 1; }
 done
 [ "$(grep -h '^status:' webhook-gateway/issues/*.md | grep -c '^status: todo$')" -eq 12 ] \
   || { echo "STATUS ERRADO (esperado 12 todo)"; exit 1; }
-out=$(git diff --name-only HEAD~3 HEAD -- | grep -cv '^webhook-gateway/issues/')
+out=$(git diff --name-only "$B" HEAD -- | grep -cv '^webhook-gateway/issues/' || true)
 [ "$out" -eq 0 ] || { echo "ESCOPO ERRADO: $out arquivos fora"; exit 1; }
 broken=0
 for f in webhook-gateway/issues/*.md; do
@@ -191,7 +192,7 @@ for f in webhook-gateway/issues/*.md; do
   done < <(grep -oE '\]\([^)]*\.md\)' "$f" | sed 's/^](//; s/)$//')
 done
 [ "$broken" -eq 0 ] || exit 1
-git diff HEAD~3 HEAD -- webhook-gateway \
+git diff "$B" HEAD -- webhook-gateway \
   | grep '^+' | grep -vE '^\+\+\+|^\+ *- ' && { echo "ESTILO ERRADO"; exit 1; } || true
 echo "VALIDAÇÃO FINAL: OK — 12 issues × 13 seções, status 12 todo, diff só em issues, links e estilo OK"
 ```

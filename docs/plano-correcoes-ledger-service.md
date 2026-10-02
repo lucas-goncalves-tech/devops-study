@@ -209,12 +209,13 @@ git commit -m "docs(tracker): staging definido na trilha VPS e correção do car
 
 - [ ] **Step 5: Bateria final de validação**
 
-Executar **depois** dos 4 commits (árvore limpa): os ranges são `HEAD~4` (as 4 tasks) e `HEAD~1` (só a Task 4, dona da linha do `BOARD.md`) — âncoras relativas, independentes do base do branch.
+Executar **depois** dos commits (árvore limpa): os ranges ancoram em `B=$(git merge-base main HEAD)` — o ponto de branch —, imunes a commits de ajuste feitos entre a primeira e a reexecução. O `grep -cv` do escopo leva `|| true`: contagem zero sai com exit 1 e derrubaria o `set -e` silenciosamente.
 
 Run:
 ```bash
 set -euo pipefail
-[ -z "$(git status --porcelain)" ] || { echo "ÁRVORE SUJA: execute após os 4 commits"; exit 1; }
+[ -z "$(git status --porcelain)" ] || { echo "ÁRVORE SUJA: execute após os commits"; exit 1; }
+B=$(git merge-base main HEAD)
 for f in ledger-service/issues/*.md; do
   [ "$(grep -c '^## ' "$f")" -eq 13 ] || { echo "SEÇÃO ERRADA: $f"; exit 1; }
 done
@@ -222,9 +223,9 @@ done
   || { echo "STATUS ERRADO (esperado 2 done)"; exit 1; }
 [ "$(grep -h '^status:' ledger-service/issues/*.md | grep -c '^status: todo$')" -eq 6 ] \
   || { echo "STATUS ERRADO (esperado 6 todo)"; exit 1; }
-out=$(git diff --name-only HEAD~4 HEAD -- | grep -cv '^ledger-service/issues/\|^BOARD.md$\|^docs/plano-correcoes-')
+out=$(git diff --name-only "$B" HEAD -- | grep -cv '^ledger-service/issues/\|^BOARD.md$\|^docs/plano-correcoes-' || true)
 [ "$out" -eq 0 ] || { echo "ESCOPO ERRADO: $out arquivos fora"; exit 1; }
-[ "$(git diff --unified=0 HEAD~1 HEAD -- BOARD.md | grep -E '^[+-][^+-]' | grep -vc 'Staging')" -eq 0 ] \
+[ "$(git diff --unified=0 "$B" HEAD -- BOARD.md | grep -E '^[+-][^+-]' | grep -vc 'Staging')" -eq 0 ] \
   || { echo "BOARD ERRADO: linha fora da seção Staging alterada"; exit 1; }
 broken=0
 for f in ledger-service/issues/*.md; do
@@ -235,7 +236,7 @@ for f in ledger-service/issues/*.md; do
   done < <(grep -oE '\]\([^)]*\.md\)' "$f" | sed 's/^](//; s/)$//')
 done
 [ "$broken" -eq 0 ] || exit 1
-git diff HEAD~4 HEAD -- ledger-service BOARD.md \
+git diff "$B" HEAD -- ledger-service BOARD.md \
   | grep '^+' | grep -vE '^\+\+\+|^\+ *- ' && { echo "ESTILO ERRADO"; exit 1; } || true
 echo "VALIDAÇÃO FINAL: OK — 8 issues × 13 seções, status 2 done/6 todo, diff só em issues+BOARD+planos desta branch, BOARD só na linha Staging, links e estilo OK"
 ```
