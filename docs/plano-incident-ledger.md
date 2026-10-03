@@ -313,6 +313,8 @@ Esperado: `Task 2 gate: OK` antes do commit; o commit contém **um** arquivo nov
 
 - [ ] **Step 1: escrever o gate da task**
 
+Duas armadilhas já corrigidas aqui, ambas da execução real: a numeração de Issue **reinicia por app**, então contar `^- \[ \] \[09 ` no board dá 3 (ledger, commerce e webhook) e não 1 — o gate escopa pelo título; e as linhas do board são item de lista com link, não linha de tabela, então o checkbox se extrai por regex.
+
 ```bash
 cat > "$WS/task-3-gate.sh" <<'EOF'
 set -euo pipefail
@@ -324,13 +326,19 @@ f=ledger-service/issues/09-incidente-runbook-postmortem.md
 grep -qF '09-incidente-runbook-postmortem.md' "$b"
 grep -qF '09-incidente-runbook-postmortem.md' "$l"
 grep -qF '| `ledger-service` · 9 Issues |' "$a"
-[ "$(grep -c '→ incidente' "$b")" -ge 1 ]
-[ "$(grep -c '→ incidente' "$a")" -ge 1 ]
-[ "$(grep -c '→ incidente' "$g")" -ge 1 ]
-[ "$(grep -c '→ incidente' "$l")" -ge 1 ]
-[ "$(grep -c '^- \[ \] \[09 ' "$b")" -eq 1 ]
 ! grep -qF '| `ledger-service` · 8 Issues |' "$a"
-grep -qF "$(grep -m1 '^status:' "$f")" <(grep -F '[09 Incidente' "$b")
+for x in "$b" "$a" "$g" "$l"; do
+  [ "$(grep -c '→ incidente' "$x")" -ge 1 ] || { echo "SEM PASSO DE INCIDENTE: $x"; exit 1; }
+done
+# a numeração reinicia por app: existe exatamente uma Issue 09 em cada app que tem 09
+[ "$(grep -cE '^- \[[ x]\] \[09 ' "$b")" -eq 3 ] || { echo "CONTAGEM DE LINHAS 09 NO BOARD"; exit 1; }
+line=$(grep -F '[09 Incidente e postmortem]' "$b")
+if ! printf '%s' "$line" | grep -qE '^- \[ \] \[09 '; then
+  echo "CHECKBOX DO BOARD ERRADO: $line"; exit 1
+fi
+grep -F '[09](issues/09-incidente-runbook-postmortem.md)' "$l" | grep -qF '| `todo` |' || { echo "LINHA DA TABELA DO APP ERRADA"; exit 1; }
+[ "$(grep -m1 '^status:' "$f")" = "status: todo" ] || { echo "STATUS DA 09"; exit 1; }
+grep -c 'Próxima a entrar: `03`' "$l" | grep -qx 1 || { echo "PRÓXIMA ISSUE MUDOU"; exit 1; }
 echo "Task 3 gate: OK"
 EOF
 bash "$WS/task-3-gate.sh"
