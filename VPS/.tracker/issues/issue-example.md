@@ -53,6 +53,12 @@ dizer, ao final da issue, se o objetivo foi atingido sem perguntar para ninguém
 desta. Liste pelo id/nome e explique em uma frase o que cada uma entrega e o que esta
 issue assume dela. Se não houver dependência, escreva "Nenhuma — issue de partida".
 
+**Regra dura:** toda dependência listada aqui DEVE virar uma linha de pré-condição no
+início de `## Critérios de aceitação`, com um comando que **comprove** que o item anterior
+existe (ex.: "Pré-condição: `virsh snapshot-list` contém `base` — sem ele, pare aqui").
+Assim é impossível marcar o checklist X sem A ter existido: o checklist nunca começa no
+meio. Issue de partida (sem dependências) usa a pré-condição de que o ambiente base existe.
+
 **Exemplo:**
 
 > - Requer `01-nucleo/15-projeto-base` — o projeto multi-módulo e o perfil por ambiente
