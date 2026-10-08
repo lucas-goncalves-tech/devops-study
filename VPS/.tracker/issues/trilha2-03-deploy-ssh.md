@@ -35,6 +35,8 @@ mudança de app **não** derruba a stack (pull de tag igual é no-op).
 - **pré-condição verificável:** imagem `ghcr.io/...:<sha>` publicada **e** `docker
   compose ps` 4×healthy na VM.
 
+- **estudo par:** `estudos/trilha2-03-deploy-ssh.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - Job `deploy` no workflow, `needs: [test, build]`, com

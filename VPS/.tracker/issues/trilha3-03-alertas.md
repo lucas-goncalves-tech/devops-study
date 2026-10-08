@@ -33,6 +33,8 @@ app sobe de novo.
 - **pré-condição verificável:** targets `UP` e dashboard populado (dados fluindo) antes
   de qualquer regra.
 
+- **estudo par:** `estudos/trilha3-03-alertas.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - `alert_rules.yml` versionado: ao menos 3 regras — `up == 0` (alvo caído, `for: 1m`),

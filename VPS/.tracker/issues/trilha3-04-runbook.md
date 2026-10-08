@@ -33,6 +33,8 @@ acessível por loopback/tunnel.
 - **pré-condição verificável:** as 3 regras da T3-03 `health: ok` e um ciclo firing/
   resolved já entregue (evidência da issue anterior).
 
+- **estudo par:** `estudos/trilha3-04-runbook.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - `RUNBOOK.md` na raiz do repo (ou `docs/runbooks/`): um procedimento por alerta da

@@ -36,6 +36,8 @@ justificativa e data de revisão**.
 - **pré-condição verificável:** run com job `build` verde e `docker pull` da imagem
   GHCR funcionando + gate de vazamento verde (T4-02).
 
+- **estudo par:** `estudos/trilha4-03-supply-chain.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - Trivy no CI: `trivy image` na imagem buildada (GHCR ou local antes do push — declarar

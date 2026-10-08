@@ -30,6 +30,8 @@ sobe no boot, e `journalctl -u` conta a história com timestamps.
   restart é lido depois de `systemctl` operar.
 - **pré-condição verificável:** login por chave ok + `ufw status` ativo (Issues 02–03).
 
+- **estudo par:** `estudos/trilha0-04-systemd.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - Script `/usr/local/bin/lab-heartbeat.sh` (loop que loga e sai com código ≠ 0 a cada N

@@ -30,6 +30,8 @@ autoassinado (ou Caddy local) gerado e visível no `curl -v`.
 - **pré-condição verificável:** `docker compose ps` com os três serviços healthy e a
   resposta `200` no health direto (estado final da Issue 02).
 
+- **estudo par:** `estudos/trilha1-03-proxy-tls.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - Serviço `proxy` (Caddy — escolhido por gerar certificado com menos ceremony; Nginx é a

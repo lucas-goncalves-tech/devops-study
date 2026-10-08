@@ -34,6 +34,8 @@ e a app responde `200` no `/api/v1/actuator/health` — tudo sem tocar em `src/`
 - **pré-condição verificável:** `kvm-ok`/`/dev/kvm` ok, `docker compose version` no host,
   `ufw status` ativo na VM e `lab-backup.timer` listado (estado Trilha 0 inteira).
 
+- **estudo par:** `estudos/trilha1-01-dockerfile.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - Dockerfile multi-stage: estágio `build` com Maven (só para compilar), estágio `runtime`

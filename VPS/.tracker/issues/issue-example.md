@@ -59,6 +59,11 @@ existe (ex.: "Pré-condição: `virsh snapshot-list` contém `base` — sem ele,
 Assim é impossível marcar o checklist X sem A ter existido: o checklist nunca começa no
 meio. Issue de partida (sem dependências) usa a pré-condição de que o ambiente base existe.
 
+**Sempre, no fim desta seção:** a linha do estudo par, amarrando issue↔estudo por nome:
+
+> - **estudo par:** `estudos/<mesmo-nome-da-issue>.md` — ler antes de executar (é o
+>   currículo desta issue)
+
 **Exemplo:**
 
 > - Requer `01-nucleo/15-projeto-base` — o projeto multi-módulo e o perfil por ambiente

@@ -33,6 +33,8 @@ regra explícita** (nada aberto por acidente) e `5432/6379` seguem recusados de 
   `ufw status` ativo na VM com só 22 (Trilha 0 feita). As duas pontas precisam estar
   prontas antes do cabo.
 
+- **estudo par:** `estudos/trilha1-04-publica-vm.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - Docker Engine **na VM** (repo oficial, não o snap — discutido no estudo) e usuário `lab`

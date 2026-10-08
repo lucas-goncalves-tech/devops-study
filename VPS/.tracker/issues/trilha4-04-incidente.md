@@ -39,6 +39,8 @@ faltou (vira nota/issue).
 - **pré-condição verificável:** runbook com 3+ procedimentos + ciclo de alerta entregue
   + todos os gates (vazamento, Trivy) verdes.
 
+- **estudo par:** `estudos/trilha4-04-incidente.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - Escolha de **1 cenário** (justificar no estudo), ex.:

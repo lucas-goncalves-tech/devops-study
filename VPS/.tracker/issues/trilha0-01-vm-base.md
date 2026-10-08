@@ -28,6 +28,8 @@ devolve ao estado limpo — provado por revert real, não por confiança.
 - Pré-requisito do **host**: KVM + virt-manager instalados e o usuário do host no grupo
   `libvirt` (`groups | grep libvirt`). Sem isso não existe esta Issue.
 
+- **estudo par:** `estudos/trilha0-01-vm-base.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - VM com qcow2 (descartável, copy-on-write), 2 vCPU, 2–4 GB RAM, disco ≥ 20 GB

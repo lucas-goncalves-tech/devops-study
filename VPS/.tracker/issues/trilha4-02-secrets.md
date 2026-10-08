@@ -36,6 +36,8 @@ antiga invalidada, com o procedimento escrito.
 - **pré-condição verificável:** `deploy-ssh-verde` + `.env` com 600 na VM + T3-03 com
   receiver configurado (secret do receiver vivo).
 
+- **estudo par:** `estudos/trilha4-02-secrets.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - Inventário versionado (sem valores!): nome, onde é usado (arquivo/serviço), onde está

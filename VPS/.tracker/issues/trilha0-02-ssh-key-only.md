@@ -29,6 +29,8 @@ depois do hardening (a ordem importa: testar antes de trancar).
   não começa.
 - **pré-condição verificável:** `virsh snapshot-list lab-vm` contém `base`.
 
+- **estudo par:** `estudos/trilha0-02-ssh-key-only.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - Par de chaves no host (`ed25519`), pública instalada em `~/.ssh/authorized_keys` da VM

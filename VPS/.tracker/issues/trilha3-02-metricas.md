@@ -34,6 +34,8 @@ gerados por tráfego do teste.
   o Prometheus entra como serviço **da mesma** composição (rede interna, porta só local).
 - **pré-condição verificável:** `log-rotacao-declarada` na VM + deploy verde + 4×healthy.
 
+- **estudo par:** `estudos/trilha3-02-metricas.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - Serviço `prometheus` no `compose.yaml` da VM: scrape config declarada (arquivo de

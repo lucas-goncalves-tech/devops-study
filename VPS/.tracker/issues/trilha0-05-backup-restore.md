@@ -34,6 +34,8 @@ comprovado**: restaurar num diretório limpo no host e `diff -r` bater com o ori
 - **pré-condição verificável:** `systemctl is-enabled lab-heartbeat` → `enabled` e
   `ssh lab@<ip> 'ssh -o BatchMode=yes <host> true'` → exit 0 (o push tem para onde ir).
 
+- **estudo par:** `estudos/trilha0-05-backup-restore.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - Script `lab-backup.sh` na VM: `tar` de `/etc` + diretório de dados de exemplo, com data

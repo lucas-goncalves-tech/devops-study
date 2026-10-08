@@ -33,6 +33,8 @@ reproduzido também por `act` ou re-run local, não só uma vez.
   criá-lo e pushar é o **primeiro passo desta Issue** (pré-condição declarada aqui, não
   produto da Trilha 1).
 
+- **estudo par:** `estudos/trilha2-01-ci-build.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - Workflow `.github/workflows/ci.yml`: trigger `push` + `pull_request` na main

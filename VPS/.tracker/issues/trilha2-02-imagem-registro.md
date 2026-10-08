@@ -30,6 +30,8 @@ que construiu e na VM que roda.
   `workflow-ci` funcionando, não há onde embutir o build de imagem.
 - **pré-condição verificável:** run `ci` verde no último push.
 
+- **estudo par:** `estudos/trilha2-02-imagem-registro.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - Step `docker/build-push-action` (ou `docker build` + `push`) no workflow, após os

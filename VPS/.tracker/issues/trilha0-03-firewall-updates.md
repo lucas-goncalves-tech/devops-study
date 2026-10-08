@@ -31,6 +31,8 @@ upgrade`, zero pacotes pendentes.
 - **pré-condição verificável:** `ssh -o BatchMode=yes lab@<ip> 'echo ok'` → `ok` (chave
   funcionando) **e** snapshot `base` presente (rede de segurança).
 
+- **estudo par:** `estudos/trilha0-03-firewall-updates.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - `ufw default deny incoming`, `default allow outgoing`, allow `22/tcp` (e `22/tcp` só)

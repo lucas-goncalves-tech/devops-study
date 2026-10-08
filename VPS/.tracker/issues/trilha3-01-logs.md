@@ -33,6 +33,8 @@ nível significativamente durante o teste.
 - **pré-condição verificável:** último deploy verde na main (`run` com job `deploy`
   success) e `docker compose ps` 4×healthy na VM.
 
+- **estudo par:** `estudos/trilha3-01-logs.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - `daemon.json` na VM: `max-size` + `max-file` para o driver `json-file` (default do

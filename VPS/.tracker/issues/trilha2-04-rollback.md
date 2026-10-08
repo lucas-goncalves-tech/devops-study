@@ -31,6 +31,8 @@ consertado).
 - **pré-condição verificável:** último deploy vermelho→verde na main com health `200`
   registrado no log (o fluxo feliz da 03 existe antes de tratar o infeliz).
 
+- **estudo par:** `estudos/trilha2-04-rollback.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - `scripts/deploy.sh` estendido: **antes** da troca, ler e gravar o `Image` atual da VM

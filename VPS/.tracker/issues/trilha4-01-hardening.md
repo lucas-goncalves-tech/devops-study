@@ -34,6 +34,8 @@ desnecessários ajustados conforme o que a auditoria apontou.
 - **pré-condição verificável:** `RUNBOOK.md` rastreado + drill registrado + 6 serviços
   healthy na VM.
 
+- **estudo par:** `estudos/trilha4-01-hardening.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - Baseline: `lynis audit system` na VM **antes** de mexer (score e achados guardados)

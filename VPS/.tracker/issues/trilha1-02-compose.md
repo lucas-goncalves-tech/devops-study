@@ -32,6 +32,8 @@ porta de banco publicada na host (`ss -tlnp` sem `:5432`), e config lida do ambi
 - **pré-condição verificável:** `docker images notes-api` existe e
   `docker inspect ... Healthcheck` não é nulo.
 
+- **estudo par:** `estudos/trilha1-02-compose.md` — ler antes de executar (é o currículo desta issue)
+
 ## Escopo
 
 - `compose.yaml` com serviços: `app` (imagem local da Issue 01), `db` (Postgres 15),
