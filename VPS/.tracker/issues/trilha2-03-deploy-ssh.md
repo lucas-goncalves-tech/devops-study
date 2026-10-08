@@ -15,7 +15,11 @@ sem saber. CD (Entrega Contínua) aqui é o fim da frase: o merge **é** o deplo
 autentica na VM por SSH, puxa a tag do commit e troca a stack, com o healthcheck da
 Trilha 1 dizendo se a troca deu certo. É o fluxo que toda vaga chama de "CI/CD" e que só
 faz sentido nessa ordem: primeiro o build confiável, depois a imagem rastreável, agora o
-cabo entre os dois.
+cabo entre os dois. Só que o cabo tem um obstáculo de rede: a VM está atrás do NAT do
+libvirt (a Trilha 1-04 já avisou que "ninguém de fora alcança") e o runner hospedado do
+GitHub não faz `ssh` para dentro da sua LAN. A saída sem abrir borda nenhuma é trazer o
+runner para perto: um **self-hosted runner no host**, que fala com o GitHub só por conexão
+outbound e com a VM pela rede local.
 
 ## Objetivo
 
@@ -33,7 +37,14 @@ mudança de app **não** derruba a stack (pull de tag igual é no-op).
 
 ## Escopo
 
-- Job `deploy` no workflow, `needs: [test, build]`, só na `main` (não em PR)
+- Job `deploy` no workflow, `needs: [test, build]`, com
+  `if: github.ref == 'refs/heads/main' && github.event_name == 'push'` — o repo é
+  **público** e este é o único job que roda no runner de baixo (fork/PR nunca o agenda)
+- Self-hosted runner no **host** como serviço systemd: download do runner, token de
+  registro do repo e `./svc.sh install` (sobe no boot do host); o job de deploy usa
+  `runs-on: [self-hosted]`, `test`/`build-push` seguem no runner hospedado. Motivo: o NAT
+  do libvirt (Trilha 1-04) — o runner do host está na mesma LAN que a VM e conecta ao
+  GitHub **só por outbound**, sem porta nova e sem regra de ufw
 - Chave SSH dedicada **sem senha** (deploy key do lab) em `SSH_PRIVATE_KEY` (secret do
   repo); known_hosts com o host key da VM pinado (não `StrictHostChecking no`)
 - `docker login ghcr.io` na VM **se** o pacote for privado (PAT de leitura como credencial
@@ -45,7 +56,7 @@ mudança de app **não** derruba a stack (pull de tag igual é no-op).
   é a Issue 04)
 - **assume pronto:** `tag-por-sha`, `compose-puxa-imagem` — da Issue 02;
   `stack-na-vm` — da Trilha 1-04
-- **entrega:** `job-deploy`, `ssh-secret`, `deploy-script`
+- **entrega:** `job-deploy`, `ssh-secret`, `deploy-script`, `runner-self-hosted`
 
 ## Fora de escopo
 
@@ -78,7 +89,14 @@ mudança de app **não** derruba a stack (pull de tag igual é no-op).
 
 ## Requisitos
 
-- Job `deploy` com `needs:` dos jobs anteriores e `if: github.ref == 'refs/heads/main'`
+- Job `deploy` com `needs:` dos jobs anteriores e
+  `if: github.ref == 'refs/heads/main' && github.event_name == 'push'` (só push na main
+  agenda o runner — repo público)
+- Runner self-hosted registrado no repo e instalado como serviço systemd **no host**
+  (`systemctl is-enabled actions.runner.*` → `enabled`); `deploy` com
+  `runs-on: [self-hosted]`, `test`/`build-push` permanecem em runner hospedado
+- Nenhum job além do `deploy` usa o runner do host (na LAN só passa o que veio de push na
+  main própria)
 - Chave SSH em secret do repo; **zero** ocorrência de chave/senha no repo
   (`grep -r "BEGIN OPENSSH" .` → vazio)
 - `known_hosts` com host key da VM pinado no repo ou gerado no job via
@@ -105,6 +123,13 @@ mudança de app **não** derruba a stack (pull de tag igual é no-op).
       (idempotência — stack não restarta com mudança de docs... ou se restartar por
       tag nova, declarar: o requisito é **não falhar** e não derrubar)
 - [ ] Re-run do job `deploy` no mesmo SHA → verde de novo (2ª execução = no-op saudável)
+- [ ] Runner do host: `systemctl is-enabled actions.runner.<repo>.*` → `enabled` no host
+      **e** o runner `online` no repo; o log do `deploy` mostra o runner do host como
+      executor (`runs-on: [self-hosted]`)
+- [ ] `grep -A1 'runs-on' .github/workflows/*` → `deploy` com `[self-hosted]`;
+      `test`/`build-push` permanecem no runner hospedado
+- [ ] PR aberto → o run do CI roda no hospedado e **nenhum** job `deploy` é agendado no
+      runner do host (`github.event_name == 'push'` segura — repo público)
 - [ ] Rollback manual testado: `scripts/deploy.sh <sha-anterior>` (ou comando documentado)
       → VM volta para o SHA anterior e health `200`
 
@@ -139,3 +164,9 @@ mudança de app **não** derruba a stack (pull de tag igual é no-op).
   aceitável no lab; zero-downtime (blue-green) é estágio futuro
 - O deploy **só** atualiza a app; mudança de `.env`/compose (estrutura) continua sendo
   leva manual do repo para a VM — o pipeline carrega binário, não configuração de host
+- Host desligado no momento do merge → o job de `deploy` fica `pending` até a máquina
+  voltar — aceito no lab e declarado aqui; com VPS pública no futuro, a volta ao runner
+  hospedado é trocar `runs-on`, uma linha
+- Repo público + self-hosted é a clássica mina: quem abrir PR executaria código na sua
+  LAN com o grupo `docker`. Por isso este job é restrito a push da main própria — e
+  nenhum outro job pode ganhar `runs-on: [self-hosted]` enquanto o repo for aberto

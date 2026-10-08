@@ -149,8 +149,8 @@
   jobs:
     deploy:
       needs: [test, build-push]
-      if: github.ref == 'refs/heads/main'
-      runs-on: ubuntu-latest
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      runs-on: [self-hosted]      # runner do host (T2-03) — só ele alcança a VM
       steps:
         - uses: actions/checkout@v4
         - name: Deploy com health gate

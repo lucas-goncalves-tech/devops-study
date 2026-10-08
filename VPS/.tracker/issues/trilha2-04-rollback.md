@@ -38,7 +38,8 @@ consertado).
   novo poll → sair com código ≠ 0
 - Timeout declarado no poll (ex.: 60s com intervalo) — declarado, não "espera eterna"
 - Passo de rollback no workflow com `if: failure()` **após** o deploy (ou dentro do
-  script — decidir e declarar onde mora a lógica)
+  script — decidir e declarar onde mora a lógica); seja step ou job, ele roda no mesmo
+  runner self-hosted do deploy (T2-03) — a lógica de volta mora na mesma LAN
 - Simulação controlada de falha: tag boa publicada mas app quebrada (ex.: env inválida
   injetada no run de teste do rollback) para **provar** o caminho infeliz
 - **assume pronto:** `job-deploy`, `deploy-script`, `ssh-secret` — da Issue 03

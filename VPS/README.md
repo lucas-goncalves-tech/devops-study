@@ -36,7 +36,7 @@ desenvolvido. A partir daqui, `src/` e `pom.xml` são intocados — tudo que mud
 |---|---|---|
 | **0 — Fundação da máquina** | Ubuntu Server na VM, SSH key-only, sudo, ufw, systemd, backup | máquina com hardening e reprodutível |
 | **1 — Containerizar e expor** | Dockerfile (non-root), compose (app+PG+Redis, healthcheck), reverse proxy + TLS | app no ar, porta fechada, HTTPS |
-| **2 — Entrega contínua** | GitHub Actions: build, imagem, deploy via SSH, rollback | push → deploy sem mão |
+| **2 — Entrega contínua** | GitHub Actions: build, imagem, deploy via SSH (self-hosted no host — a VM está atrás de NAT), rollback | push → deploy sem mão |
 | **3 — Operar** | logs, Prometheus + Grafana (scrape no que já está instrumentado), alertas, runbook | dashboards e alertas funcionando |
 | **4 — Hardening** | hardening, secrets, resposta a incidentes | checklist de segurança aplicado |
 
@@ -45,5 +45,7 @@ OWASP NodeGoat/JuiceShop — estes, instrumentados só na borda, nunca no códig
 
 ## Requisitos locais
 
-Docker, JDK 17+, e as variáveis de ambiente do `.env.example` exportadas (`set -a; . ./.env; set +a`)
-— a app não tem default para `JWT_SECRET` e a suíte falha sem ele.
+KVM + virt-manager com o usuário no grupo `libvirt` (Trilha 0), Docker, JDK 17+, `gh` CLI
+(evidências de branch protection/runner) e as variáveis de ambiente do `.env.example`
+exportadas (`set -a; . ./.env; set +a`) — a app não tem default para `JWT_SECRET` e a suíte
+falha sem ele.

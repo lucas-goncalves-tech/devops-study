@@ -40,8 +40,8 @@ jobs:
     ...
   deploy:
     needs: [test, build]   # sem os dois verdes, este job nem aparece
-    if: github.ref == 'refs/heads/main'   # PR não dispara deploy
-    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: [self-hosted]   # só o runner do host alcança a VM (NAT do libvirt)
     steps:
       - uses: actions/checkout@v4
       - name: deploy
@@ -50,17 +50,20 @@ jobs:
 
 Cadeia de causa: `needs:` diz "só roda depois" (a UI do Actions desenha a seta); `if:` na
 `main` diz "branch de PR nunca toca a VM" — deployar código que ainda vai mudar é trocar a
-produção por um rascunho. Somando com a *branch protection* da Issue 01 (check obrigatório),
-quem decide o que chega à VM passa a ser a revisão do PR: **o merge é o deploy**, e revisar
-um PR é revisar um deploy.
+produção por um rascunho — e `event_name == 'push'` fecha a segunda porta: repo é público,
+e o runner da LAN só aceita push da main própria. Somando com a *branch protection* da
+Issue 01 (check obrigatório), quem decide o que chega à VM passa a ser a revisão do PR:
+**o merge é o deploy**, e revisar um PR é revisar um deploy.
 
 - **Exemplo no lab:** o cabamento novo é `runner → lab-vm`, e ele é físico: `lab-vm` mora
   atrás do NAT do libvirt (`192.168.122.0/24`, lease em `virsh net-dhcp-leases default` —
   Trilha 0-01), então o `runs-on: ubuntu-latest` do GitHub **não alcança** a VM por rede.
-  No lab o cabo é um runner self-hosted (`runs-on: [self-hosted]`, registrado na própria VM
-  ou no laptop) ou um teste executado de máquina da mesma rede — a decisão é declarada na
-  evidência da Issue. Com VPS pública (estágio AWS) o hosted alcança direto e o `ubuntu-latest`
-  volta a ser a escolha óbvia.
+  A decisão da Issue 03 é o self-hosted no **host**: registrado no repo, instalado como
+  serviço systemd, na mesma LAN que a VM — enquanto build/teste continuam no runner
+  hospedado. O runner do host só faz conexão **outbound** para o GitHub (o NAT de casa
+  não atrapalha quem puxa, só quem empurra) e, como o repo é público, agenda apenas push
+  da main própria. Com VPS pública (estágio futuro) o hosted alcança direto e o
+  `ubuntu-latest` volta a ser a escolha óbvia — é uma linha no workflow.
 - **Fronteira entre Issues:** **CI verde** continua sendo Issue 01 e **imagem com tag SHA**
   Issue 02 — esta Issue só monta o cabo entre as duas (pré-condição: `ghcr.io/...:<sha>`
   publicada e stack 4×healthy, Trilha 1-04). Notificação de deploy é Trilha 3; ambientes
@@ -332,6 +335,44 @@ proxy; e o `200` é checado de **fora**, no mesmo `https://<ip>` que o mundo usa
   container** que ordena a subida do `db` é da Trilha 1-02 — não confunda: o do compose
   cuida da dependência interna, o do gate cuida da resposta ao mundo.
 
+## Self-hosted runner: a máquina que o GitHub manda rodar na sua LAN
+
+O runner hospedado é uma máquina efêmera do GitHub: nasce quando o job agenda e some
+quando termina. O self-hosted é o contrário — um programa **na sua máquina**, registrado
+num repo com um token, que fica em loop perguntando "tem trabalho pra mim?". É essa
+direção do fio que resolve o NAT da Trilha 1-04.
+
+- **Por que importa:** o hospedado *recebe* trabalho (o GitHub agenda máquina dele); o
+  self-hosted **puxa** por conexão outbound — sai da sua rede como todo tráfego normal,
+  zero ingress, zero regra de ufw, zero túnel. A VM atrás do NAT do libvirt fica
+  alcançável porque quem executa o job está *do lado de dentro* (o host), e o
+  `ssh lab@<ip-da-vm>` dele é tráfego de LAN. Quem pergunta "como o GitHub chega na minha
+  VM?" está perguntando a direção errada: ninguém chega, quem sai é o runner.
+- **Mecanismo:** registro e instalação são dois comandos, e o serviço é o que faz o
+  runner sobreviver ao reboot — mesma semântica de `WantedBy`/`Restart` que a Trilha 0-04
+  ensinou, agora para uma unit chamada `actions.runner.*`:
+
+```bash
+# no host — Actions → Settings → Runners → New self-hosted runner (copiar o token)
+./config.sh --url https://github.com/<owner>/<repo> --token <TOKEN>
+sudo ./svc.sh install && sudo ./svc.sh start     # vira serviço do systemd
+systemctl is-enabled actions.runner.<owner>-<repo>-lab  # enabled = sobe no boot
+```
+
+Com o runner `online`, o job só muda de endereço: `runs-on: [self-hosted]`. E é aí que
+aparece o preço da escolha — tudo que mora na sua máquina cobra na sua máquina:
+
+- **Repo público exige restrição:** qualquer pessoa abre PR no seu repo, e um job com
+  `runs-on: [self-hosted]` disparado por `pull_request` de fork executa o código do
+  autor **na sua LAN**, com as permissões do runner (grupo `docker` incluso). A regra
+  está no `if:` desta Issue: self-hosted só em `push` da main própria — nunca mais um
+  job com esse label fora dessa condição.
+- **Host desligado = job `pending`:** o merge acontece, o job espera a máquina ligar.
+  Em lab é aceito e declarado; em produção isso se chama "fila de deploy" e é feature.
+- **Fronteira:** com VPS pública (estágio futuro) o hosted alcança a VM por IP, o
+  self-hosted desliga e `runs-on: ubuntu-latest` volta — o custo de saída da decisão de
+  hoje é uma linha no workflow.
+
 ## Como iniciar o modo teach-anything
 
 - "Me ensina CI vs CD com o `.github/workflows/ci.yml` deste lab: por que `needs:` e `if:
@@ -346,3 +387,6 @@ proxy; e o `200` é checado de **fora**, no mesmo `https://<ip>` que o mundo usa
 - "Me ensina health gate usando o poll do `scripts/deploy.sh` contra
   `https://<ip-da-vm>/api/v1/actuator/health`: por que `200` pelo proxy é a única prova de
   deploy bem-sucedido e o que é 'falhar feio' com `exit 1`"
+- "Me ensina self-hosted runner com o `if:` e o `runs-on: [self-hosted]` deste `ci.yml`:
+  por que o NAT do libvirt obriga o deploy a rodar no host, o que o `svc.sh install` faz
+  no systemd e por que um repo público proíbe `pull_request` nesse runner"

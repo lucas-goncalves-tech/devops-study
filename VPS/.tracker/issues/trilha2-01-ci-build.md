@@ -56,8 +56,9 @@ reproduzido também por `act` ou re-run local, não só uma vez.
 ## Conhecimentos envolvidos
 
 - O que CI é (e o que CD é) — fronteira do termo
-- Runner: máquina efêmera do GitHub, o que ela tem e o que ela não tem (sem `.env`, sem
-  Docker state, sem cache até a primeira vez)
+- Runner: a máquina efêmera do GitHub no que ela tem e no que ela não tem (sem `.env`, sem
+  Docker state, sem cache até a primeira vez) — build/teste só; o deploy da Issue 03 já
+  usa outro modelo (self-hosted no host, por causa do NAT da VM)
 - Jobs, steps, triggers — anatomia de um workflow
 - Cache: o que acelera, o que invalida, e por que cache é aceleração não correção
 - Branch protection + required check: onde o "verde obrigatório" é imposto
