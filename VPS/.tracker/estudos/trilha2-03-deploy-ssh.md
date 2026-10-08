@@ -191,7 +191,7 @@ regra é investigar antes de limpar.
   22` da Trilha 0-03 é quem mantém a porta aberta); a checagem de host key em si é conceito
   de SSH, cobrado aqui só porque o runner a obriga a ser declarada. Certificado de host
   gerenciado (CA de host keys) e `known_hosts` com faixa de IP do GitHub para restringir
-  origem do `authorized_keys` (`from=`) são endurecimento de Trilha 4.
+  origem do `authorized_keys` (`from=`) são hardening de Trilha 4.
 
 ## Deploy idempotente: rodar duas vezes é o caso normal, não o acidente
 

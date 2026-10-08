@@ -12,7 +12,7 @@ prioridade: alta
 A app compila no meu Maven e roda no meu terminal — isso é ambiente, não entrega. A imagem
 Docker é o contrato que diz "nesta máquina, com estes bytes, sobe assim" — é ela que o CI
 da Trilha 2 vai buildar e que a VPS vai rodar; sem ela, "funciona na minha máquina" é a
-única evidência. E como a VPS é pública depois da Trilha 0 endurecida, o processo dentro
+única evidência. E como a VPS é pública depois da Trilha 0 com hardening, o processo dentro
 do container **não pode herdar root**: root dentro do container vira root na prática
 quando há falha de escape ou config errada de volume — privilégio mínimo é o mesmo
 princípio da Issue 02 da Trilha 0 (quem autentica), aplicado a quem executa.

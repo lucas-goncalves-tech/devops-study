@@ -41,7 +41,7 @@ devolve ao estado limpo — provado por revert real, não por confiança.
 ## Fora de escopo
 
 - SSH key-only, firewall, atualizações — Issue 02 e 03 (o acesso inicial é por senha, é o
-  que a Issue 02 endurece)
+  que a Issue 02 aplica hardening)
 - systemd, backups, qualquer serviço — Issues 04 e 05
 - Rede bridge/host-only, máquinas múltiplas, cloud — Trilha 1+ e estágio AWS
 
@@ -106,5 +106,5 @@ devolve ao estado limpo — provado por revert real, não por confiança.
   disco do host morre, tudo morre junto. Backup de verdade é a Issue 05
 - NAT do libvirt atribui IP por DHCP da rede `default` — anotar o IP; se a rede for
   recriada, o IP pode mudar ( ISSUE 02 fixa o acesso por chave, não por IP)
-- O snapshot `base` deve ser tirado **antes** de qualquer endurecimento: ele é o estado
+- O snapshot `base` deve ser tirado **antes** de qualquer hardening: ele é o estado
   que as Issues 02–05 revertem quando um experimento fecha a porta errada

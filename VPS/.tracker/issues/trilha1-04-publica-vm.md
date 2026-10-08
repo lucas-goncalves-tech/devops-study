@@ -5,7 +5,7 @@ status: todo
 prioridade: alta
 ---
 
-# Issue 04 — Publicação: a stack sai do host e vai para a VM endurecida
+# Issue 04 — Publicação: a stack sai do host e vai para a VM com hardening
 
 ## Contexto
 
@@ -27,7 +27,7 @@ regra explícita** (nada aberto por acidente) e `5432/6379` seguem recusados de 
 ## Dependências
 
 - **Requer Trilha1-01..03** — é a imagem, o compose e o proxy de lá que vão para cá;
-- **Requer Trilha0-01..05** — a VM endurecida é o destino, o ufw é a régua, o snapshot é
+- **Requer Trilha0-01..05** — a VM com hardening é o destino, o ufw é a régua, o snapshot é
   a saída de emergência.
 - **pré-condição verificável:** `docker compose ps` 4×healthy no host (Trilha 1 feita) +
   `ufw status` ativo na VM com só 22 (Trilha 0 feita). As duas pontas precisam estar
@@ -65,7 +65,7 @@ regra explícita** (nada aberto por acidente) e `5432/6379` seguem recusados de 
 ## Estado atual
 
 - Stack completa mas só no host (4 serviços healthy no laptop)
-- VM `lab-vm` no ar, endurecida, com só a 22 aberta e **sem Docker**
+- VM `lab-vm` no ar, com hardening, com só a 22 aberta e **sem Docker**
 - `ss` na VM: nenhuma porta de serviço (nada roda lá)
 - Host continua sendo o único lugar onde a app existe
 

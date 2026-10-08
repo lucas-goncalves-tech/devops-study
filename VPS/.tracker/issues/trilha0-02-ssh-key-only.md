@@ -20,7 +20,7 @@ custa um `snapshot-revert`, não uma reinstalação.
 
 Estado final: de qualquer máquina, `ssh lab@<ip>` autentica **só** com chave SSH; senha,
 root e login sem chave são recusados na porta 22 — e o acesso por chave continua funcionando
-depois do endurecimento (a ordem importa: testar antes de trancar).
+depois do hardening (a ordem importa: testar antes de trancar).
 
 ## Dependências
 

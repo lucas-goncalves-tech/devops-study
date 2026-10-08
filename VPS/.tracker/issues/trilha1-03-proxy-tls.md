@@ -47,7 +47,7 @@ autoassinado (ou Caddy local) gerado e visível no `curl -v`.
 ## Fora de escopo
 
 - Domínio real, Let's Encrypt/renovação automática — estágio futuro (com VPS real)
-- WAF, rate limit de borda, HSTS preload — Trilha 4 (endurecer)
+- WAF, rate limit de borda, HSTS preload — Trilha 4 (hardening)
 - Cache de estáticos, compressão — otimização sem valor de estudo aqui
 - Conta em provedor Cloud/DNS — estágio AWS
 

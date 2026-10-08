@@ -160,7 +160,7 @@ e não um `disable`, que a VPS pública vai herdar.
   Repetir o padrão inteiro da Trilha 0: regra explícita → teste de fora → negativo também
   testado.
 - **Fronteira entre Issues:** filtrar o que o Docker encaminha (cadeia `DOCKER-USER`),
-  rate limit na borda e endurecimento de borda (HSTS, entre outros) são Trilha 4; domínio +
+  rate limit na borda e hardening de borda (HSTS, entre outros) são Trilha 4; domínio +
   porta 80 para o Let's Encrypt é estágio futuro com VPS real; abrir 5432 para o mundo
   jamais é destas Issues.
 

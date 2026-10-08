@@ -47,7 +47,7 @@ reproduzido também por `act` ou re-run local, não só uma vez.
 
 - Build/push de imagem Docker — Issue 02
 - Deploy, SSH, secrets de infra — Issues 03–04
-- Qualidade de código (lint, SAST) — Trilha 4 (endurecer)
+- Qualidade de código (lint, SAST) — Trilha 4 (hardening)
 - Multi-branch, release automation, semver — estágio futuro
 
 ## Conhecimentos envolvidos

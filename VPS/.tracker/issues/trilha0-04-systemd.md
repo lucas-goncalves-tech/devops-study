@@ -26,7 +26,7 @@ sobe no boot, e `journalctl -u` conta a história com timestamps.
 ## Dependências
 
 - **Requer Trilha0-01 (VM), Trilha0-02 (SSH) e Trilha0-03 (firewall)** — o serviço é
-  instalado via SSH numa VM com acesso por chave e base endurecida; o journal que prova o
+  instalado via SSH numa VM com acesso por chave e base com hardening; o journal que prova o
   restart é lido depois de `systemctl` operar.
 - **pré-condição verificável:** login por chave ok + `ufw status` ativo (Issues 02–03).
 

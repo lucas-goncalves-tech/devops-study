@@ -161,7 +161,7 @@ na camada `COPY`.
 **Por que importa.** Toda imagem base sobe como uid 0 por padrão, e root dentro do container é
 mais poderoso do que parece: escreve em volume montado (arquivo com dono root na **host**),
 lê tudo o que está dentro da imagem, e numa falha de escape ou montagem errada é o degrau para
-a máquina — que depois da Trilha 0 endurecida é justamente o que não pode acontecer. É o mesmo
+a máquina — que depois da Trilha 0 com hardening é justamente o que não pode acontecer. É o mesmo
 princípio de menor privilégio da Trilha 0 aplicado a quem *executa*, não a quem autentica.
 
 **Mecanismo — a ordem importa**, porque o `USER` é um interruptor que não volta atrás:
@@ -266,7 +266,7 @@ do healthcheck, é ele trabalhando.
 | multi-stage, `.dockerignore`, `USER` não-root, `HEALTHCHECK` | Issue 01 (esta) |
 | compose, ordenação por saúde, `env_file`, portas do banco fechadas | Issue 02 |
 | proxy, TLS, exposição pública | Issue 03 |
-| build e transferência da stack para a VM endurecida | Issue 04 |
+| build e transferência da stack para a VM com hardening | Issue 04 |
 | build/push de imagem no CI | Trilha 2 |
 
 ## Como iniciar o modo teach-anything

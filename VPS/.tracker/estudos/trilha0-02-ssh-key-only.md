@@ -75,7 +75,7 @@ atacam a repetição da tentativa) são da Issue 03/04.
 
 ## Cada diretiva do sshd_config e o que ela deixa sem porta
 
-O `sshd_config` é uma lista de alavancas; endurecer é decidir quais derrubar e saber o que
+O `sshd_config` é uma lista de alavancas; hardening é decidir quais derrubar e saber o que
 cada uma protege (e o que não protege). Três diretivas fazem o trabalho desta Issue:
 
 | Diretiva | Causa → efeito | Protege contra | Não protege contra |
@@ -112,7 +112,7 @@ dedicadas e forced commands são assunto de infraestrutura mais adiante.
 
 O erro clássico é uma linha só: editar a config, reiniciar o sshd e descobrir que digitou
 errado — sem sessão, sem porta, sem como voltar. A ordem operacional existe porque o
-endurecimento tem uma propriedade perigosa: **quase todo erro dele te deixa fora, e o
+hardening tem uma propriedade perigosa: **quase todo erro dele te deixa fora, e o
 sintoma só aparece na próxima conexão.**
 
 A sequência segura, causa → efeito:
@@ -127,7 +127,7 @@ A sequência segura, causa → efeito:
 4. **`reload`, nunca `restart`, na primeira aplicação.** `restart` mata as sessões ativas
    (inclusive a de manutenção); `reload` preserva.
 5. **Prova em sessão nova:** `ssh -o BatchMode=yes lab@<ip> 'echo ok'` → `ok`. Enquanto não
-   houver `ok` numa sessão recém-criada, o endurecimento não está feito — sessão velha não
+   houver `ok` numa sessão recém-criada, o hardening não está feito — sessão velha não
    prova nada.
 6. **Só então** `sudo systemctl reboot` pra confirmar que a config persiste (arquivo, não
    runtime). Se o reboot não voltar, aí sim o `snapshot-revert` da Issue 01 é acionado —

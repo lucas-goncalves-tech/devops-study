@@ -238,7 +238,7 @@ gh api repos/:owner/:repo/branches/main/protection \
   com revisão humana: ele automatiza a régua mecânica, não o julgamento.
 - **Fronteira entre Issues:** **impor o verde** nesta Issue (`check-obrigatorio`); exigir
   qualidade além de "testes verdes" (cobertura mínima, lint, SAST, aprovação de revisor) é
-  Trilha 4 — endurecer. E a proteção é da `main` deste repo: proteger branches de release
+  Trilha 4 — hardening. E a proteção é da `main` deste repo: proteger branches de release
   ou automação de semver é estágio futuro, fora do escopo da Issue 01.
 
 ## Fronteira: CI prova o build, CD move a VM — e esta Issue para na primeira metade

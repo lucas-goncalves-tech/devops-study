@@ -104,7 +104,7 @@ curl -kv https://127.0.0.1/api/v1/actuator/health 2>&1 | grep -E 'SSL|certificat
   (domínio + Let's Encrypt), nunca manter `-k`.
 - **Fronteira entre Issues:** esta Issue entrega o **mecanismo** (handshake visível,
   `-k` consciente, warning entendido); a confiança pública com renovação automática é estágio
-  futuro (ver `Limitações` da Issue 03). HSTS, preload e pinning são Trilha 4 (endurecer) —
+  futuro (ver `Limitações` da Issue 03). HSTS, preload e pinning são Trilha 4 (hardening) —
   não treine esses agora.
 
 ## Caddy ou Nginx: o trade-off é ceremony vs. controle, não "o melhor"
