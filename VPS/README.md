@@ -1,66 +1,48 @@
-# NoteMaster - Backend API
+# Lab DevOps — NoteMaster na VPS
 
-Esta é a API RESTful em Java 17 + Spring Boot 3.5.11 que suporta o NoteMaster.
+Laboratório de estudos de **infra/DevOps júnior**: colocar este backend Java dentro de uma
+VPS (Ubuntu Server — VM primeiro, provedo real depois), aplicando os conceitos que o mercado
+cobra. O app é a **carga fixa do laboratório**: ele existe para ser operado, não para ser
+desenvolvido. A partir daqui, `src/` e `pom.xml` são intocados — tudo que muda é infra.
 
-## 🚀 Quick Start
+> Por que este recorte? Ver a pesquisa que embasa o lab em
+> [`.tracker/pesquisas/`](.tracker/pesquisas/) — vagas (01), Reddit (02), roadmap.sh (03).
 
-**1. Instale o Banco de Dados e Redis**
-Para facilitar o ecossistema e Rate Limiting, utilize o Docker Compose da raiz do projeto:
-```bash
-docker compose up -db
-```
+## O que este repositório contém
 
-**2. Compile e Inicie a API**
-```bash
-# Baixa as dependências e roda os testes
-mvn clean install
+- **`src/` + `pom.xml`** — API Spring Boot 3.5 (Java 17) com PostgreSQL, Redis (rate limit),
+  JWT, Flyway e **observabilidade já instrumentada** (Actuator + Micrometer →
+  `/api/v1/actuator/prometheus`, readiness cai com o banco, liveness não). O que sobe na VPS
+  é isto.
+- **`.tracker/`** — o sistema de estudo:
+  - `issues/` — o que fazer, em ordem ([formato](.tracker/issues/issue-example.md));
+  - `estudos/` — o que entender antes de fazer ([formato](.tracker/estudos/estudos.example.md)),
+    com o fecho de perguntas que disparam a skill `teach-anything`;
+  - `pesquisas/` — a pesquisa de mercado que define as trilhas.
+- **Ausente de propósito:** `Dockerfile` e `compose.yaml`. Construí-los é entrega das issues,
+  não cópia pronta.
 
-# Roda o servidor na porta 8080 (O contexto padrão é /api/v1)
-mvn spring-boot:run
-```
+## Como usar
 
-## ✨ Features do Backend
+1. Leia a issue em `issues/` (a ordem é o número).
+2. Antes de executar, leia o estudo correspondente em `estudos/`.
+3. Quando algo não fizer sentido, chame a `teach-anything` com uma das perguntas do fim do estudo.
+4. Execute a issue; cole as evidências exigidas; só então passe para a próxima.
 
-- **Autenticação JWT:** Validação robusta de Tokens com `java-jwt` da Auth0.
-- **Armazenamento Seguro:** Acesso e escrita a dados no PostgreSQL, orquestrado e migrado via Flyway.
-- **Bucket4J Rate Limiting:** Limita requisições abusivas centralizando caches de limite via Jedis.
-- **Documentação de API OpenAPI (Swagger):** Auto-gerada e acessível nativamente.
+## Trilhas
 
-## ⚙️ Configuração
+| Trilha | Tema | Entrega visível |
+|---|---|---|
+| **0 — Fundação da máquina** | Ubuntu Server na VM, SSH key-only, sudo, ufw, systemd, backup | máquina endurecida e reprodutível |
+| **1 — Containerizar e expor** | Dockerfile (non-root), compose (app+PG+Redis, healthcheck), reverse proxy + TLS | app no ar, porta fechada, HTTPS |
+| **2 — Entrega contínua** | GitHub Actions: build, imagem, deploy via SSH, rollback | push → deploy sem mão |
+| **3 — Operar** | logs, Prometheus + Grafana (scrape no que já está instrumentado), alertas, runbook | dashboards e alertas funcionando |
+| **4 — Endurecer** | hardening, secrets, resposta a incidentes | checklist de segurança aplicado |
 
-A configuração reside em `application.yml`. Caso deseje sobreescrever:
+**Fora do lab (estágio futuro):** AWS + IaC (Terraform/Ansible) + DevSecOps com alvos tipo
+OWASP NodeGoat/JuiceShop — estes, instrumentados só na borda, nunca no código deles.
 
-| Variável | Descrição | Default |
-|----------|-------------|---------|
-| `SERVER_PORT` | Porta de rodízio da API | 8080 |
-| `SPRING_DATASOURCE_URL` | URL JDBC da database | jdbc:postgresql://localhost:5432/notes_db |
-| `SPRING_REDIS_HOST` | Host do Rate Limiter Caching | localhost |
-| `JWT_SECRET` | Chave secreta de assinar os Tokens | `secret` |
+## Requisitos locais
 
-## 📚 API Reference
-
-**URL Base:** `http://localhost:8080/api/v1`
-
-### Rotas de Autenticação (`/auth`)
-- `POST /auth/register`: Cria uma nova conta de usuário. Retorna tokens de acesso e refresh.
-- `POST /auth/login`: Autentica o usuário existente. 
-- `POST /auth/refresh`: Consome um refresh token valido e emite um novo par JWT de acesso.
-
-### Rotas de Notas (`/notes`) - *Requer Token Automático JWT (Bearer)*
-- `GET /notes`: Lista todas as anotações encadeadas ao usuário.
-- `GET /notes/{id}`: Recupera métricas e o payload de uma nota específica.
-- `POST /notes`: Registra uma nova nota.
-- `PATCH /notes/{id}`: Modifica uma nota persistente (conteúdo, título ou finalização).
-- `DELETE /notes/{id}`: Exclui irrevogavelmente a nota.
-
-## 🗃 Containerização e Testes
-O projeto usa o `TestContainers` para testar repositórios limpos sem poluir sua máquina real. Testes são rodados e validados no ciclo do Maven usando Junit Jupiter.
-
-```bash
-# Executando um único teste
-mvn test -Dtest=NoteControllerTest
-```
-
-## 📄 Licença
-
-Aberto sob GPL-3.0 License.
+Docker, JDK 17+, e as variáveis de ambiente do `.env.example` exportadas (`set -a; . ./.env; set +a`)
+— a app não tem default para `JWT_SECRET` e a suíte falha sem ele.
