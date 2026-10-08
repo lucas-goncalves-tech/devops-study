@@ -14,7 +14,7 @@
 
 | # | Área | Pasta | Estado | Próximo marco |
 |---|------|-------|--------|---------------|
-| 1 | Infraestrutura — Junior | `VPS/` | **em andamento** — trilhas 0–4 com material pronto (21 issues + 21 estudos), execução 0/21 | executar a Trilha 0; criar trilhas das lacunas |
+| 1 | Infraestrutura — Junior | `VPS/` | **em andamento** — trilhas 0–7 com material pronto (27 issues + 27 estudos), execução 0/27 | executar a Trilha 0 |
 | 2 | Cloud — Junior → Pleno | `AWS/` (futura) | não iniciado | nasce após a área 1 |
 | 3 | DevOps — Pleno | `DEVOPS/` (futura) | não iniciado | refaz a área 2 com IaC |
 | 4 | Cloud Security — Pleno/Sênior | `SECURITY/` (futura) | não iniciado | endurece tudo que existir |
@@ -40,23 +40,26 @@ são **refeitos do zero** no novo contexto:
 |--------|--------|----------|----------|
 | 0 — Fundação Linux | VM/KVM, SSH, firewall+updates, systemd, backup/restore | 5/5 issues + estudos | 0/5 |
 | 1 — Containers e borda | Dockerfile, Compose, reverse proxy+TLS, publicação | 4/4 | 0/4 |
-| 2 — Git e CI/CD | CI build, registro, deploy, rollback | 4/4 | 0/4 |
+| 2 — Git e CI/CD | CI build, registro, deploy, rollback, git avançado (merge/rebase/tag) | 5/5 | 0/5 |
 | 3 — Observabilidade | logs, métricas, alertas, runbook | 4/4 | 0/4 |
 | 4 — Hardening | hardening, secrets, supply chain, incidente | 4/4 | 0/4 |
-| 5+ — Lacunas da área 1 | a criar: redes, troubleshooting, bash/cron, mounts, LB, Nginx/Apache, git avançado | — | — |
+| 5 — Redes | fundamentos: OSI/TCP-IP, IPv4, subnetting/CIDR, TCP/UDP, DNS/DHCP | 1/1 | 0/1 |
+| 6 — Linux profundo | bash scripting + cron, filesystems/mounts/LVM | 2/2 | 0/2 |
+| 7 — Troubleshooting | drills de sistema (CPU/mem/disco/processo), de rede (porta/DNS/camadas) | 2/2 | 0/2 |
 
-**Progresso geral: 0/21 issues executadas · 21/21 com material pronto.**
+**Progresso geral: 0/27 issues executadas · 27/27 com material pronto.**
 
 ## Cobertura dos tópicos
 
-- Linux: Trilhas 0–4 cobrem na prática SSH, systemd, logs, usuários, packages e env vars;
-  **faltam** bash scripting, cron, filesystems/mounts (trilha nova)
-- Redes: quase toda a categoria é **trilha nova** (Trilha 5) — só firewall/proxy/TLS
-  aparecem na prática (T0-03, T1-03)
+- Linux: Trilhas 0–4 na prática (SSH, systemd, logs, usuários, packages, env vars) +
+  Trilha 6 (bash/cron, filesystems/mounts)
+- Redes: fundamentos na Trilha 5 (teoria + exercícios + leitura na VM); **para a Área 2**
+  (console AWS dá contexto): routing, ARP, DHCP, NAT, IPv6
 - Servidores: VM, VPS, reverse proxy, SSH hardening, backup e monitoramento prontos;
-  **faltam** Nginx/Apache, load balancer e bare metal (teoria, sem hardware no lab)
-- Git: branch, PR, SSH keys e .gitignore na prática (T2); **faltam** merge/rebase/tags
-- Troubleshooting: diagnóstico exercitado dentro das Trilhas 3–4; **falta** trilha dedicada
+  **para a Área 2**: Nginx/Apache (reprática na EC2), load balancer (com alvo real),
+  LVM (vira EBS); bare metal fica como teoria (sem hardware no lab)
+- Git: branch, PR, SSH keys e .gitignore na prática (T2) + merge/rebase/tags (T2-05)
+- Troubleshooting: trilha dedicada na Trilha 7 (drills provocado → diagnóstico → prova)
 
 ### Linux
 
@@ -582,6 +585,10 @@ destino provisória — confirmar na hora de executar.
 | Ambientes múltiplos (staging/prod), blue-green, canary | T2-03, T2-04 |
 | OIDC/short-lived credentials do GitHub → cloud | T2-03 |
 | Deploy com instâncias efêteras (modelo cloud) | T2-03 |
+| Redes avançadas: routing, ARP, DHCP, NAT, IPv6 | Trilha 5 (decisão de escopo) |
+| Nginx/Apache (reprática do proxy na EC2) | T1-03 (Caddy escolhido no lugar) |
+| Load balancer com alvo real (ALB / nginx upstream) | ROADMAP (área 1, sem trilha) |
+| LVM com resize (vira EBS volume) | T0-01 (particionamento padrão) |
 
 ## Área 3 — DevOps (IaC e observabilidade avançada)
 

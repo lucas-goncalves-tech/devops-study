@@ -60,7 +60,7 @@ Quando a sessão for ensinar no contexto do tracker (gatilho `teach-anything` /
 "me ensina"):
 
 - Achar a próxima issue com `status: todo` — ignorar `issue-example.md` (é template,
-  não issue; são **21** issues, não 22)
+  não issue; são **27** issues, não 28)
 - O currículo são os tópicos do estudo par (`estudos/<mesmo nome>.md`): primeiro bloco =
   primeiro tópico do estudo, avançar tópico a tópico, e cada bloco desemboca no
   comando/critério correspondente da issue (porquê = estudo, prova = evidência)
