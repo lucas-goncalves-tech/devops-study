@@ -192,7 +192,7 @@ Use one of these forms:
 - Compare: "Qual é a diferença entre X e Y?"
 - Apply: "Como isso se conecta ao que já vimos?"
 
-Ask one verification question at a time, tied to the current block's main idea. Do not turn every step into a quiz.
+Ask ONLY one verification question at a time, tied to the current block's main idea. Do not turn every step into a quiz.
 
 Alternatives such as A/B/C/D may appear only after the learner has attempted an open-ended answer and is still stuck, or when the learner explicitly asks for choices. They are a fallback, not the default verification format.
 
