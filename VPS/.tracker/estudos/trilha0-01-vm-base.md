@@ -198,7 +198,7 @@ onde a VM ganha IP "de verdade" da rede física, é outro desenho de rede — fo
 acesso por **chave**, que sobrevive a IP mudando; firewall (o que entra e o que não entra,
 independente de NAT) é a Issue 03; bridge/múltiplas VMs é Trilha 1+ e estágio AWS.
 
-## Perguntas para o modo teach-anything
+## Como iniciar o modo teach-anything
 
 - "Me ensina hipervisor tipo 1 vs 2 e onde o KVM se encaixa, usando `ls /dev/kvm` e
   `virsh capabilities` do host do lab"

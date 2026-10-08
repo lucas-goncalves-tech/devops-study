@@ -269,7 +269,7 @@ do healthcheck, é ele trabalhando.
 | build e transferência da stack para a VM endurecida | Issue 04 |
 | build/push de imagem no CI | Trilha 2 |
 
-## Perguntas para o modo teach-anything
+## Como iniciar o modo teach-anything
 
 - "Me ensina multi-stage com o Dockerfile da notes-api: o que atravessa do estágio `build` para
   o `runtime` e por que o Maven fica para trás"

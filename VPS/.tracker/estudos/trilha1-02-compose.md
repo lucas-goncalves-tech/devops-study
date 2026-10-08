@@ -296,7 +296,7 @@ caro de limpar — e o lab já ensinou o porquê na leitura do README.
   (`networks:` nomeadas, isolamento entre grupos de serviços) e `container_name`/`links`
   (depreciado) estão fora desta Issue — modo simples apenas.
 
-## Perguntas para o modo teach-anything
+## Como iniciar o modo teach-anything
 
 - "Me ensina a diferença entre `depends_on` simples e `condition: service_healthy`
   usando o `compose.yaml` desta stack e o Flyway da `notes-api` quebrando na subida"

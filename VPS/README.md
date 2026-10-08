@@ -17,7 +17,7 @@ desenvolvido. A partir daqui, `src/` e `pom.xml` são intocados — tudo que mud
 - **`.tracker/`** — o sistema de estudo:
   - `issues/` — o que fazer, em ordem ([formato](.tracker/issues/issue-example.md));
   - `estudos/` — o que entender antes de fazer ([formato](.tracker/estudos/estudos.example.md)),
-    com o fecho de perguntas que disparam a skill `teach-anything`;
+    com o fecho de gatilhos de entrada para a skill `teach-anything`;
   - `pesquisas/` — a pesquisa de mercado que define as trilhas.
 - **Ausente de propósito:** `Dockerfile` e `compose.yaml`. Construí-los é entrega das issues,
   não cópia pronta.
@@ -26,7 +26,8 @@ desenvolvido. A partir daqui, `src/` e `pom.xml` são intocados — tudo que mud
 
 1. Leia a issue em `issues/` (a ordem é o número).
 2. Antes de executar, leia o estudo correspondente em `estudos/`.
-3. Quando algo não fizer sentido, chame a `teach-anything` com uma das perguntas do fim do estudo.
+3. Quando algo não fizer sentido, chame a `teach-anything` com um dos gatilhos do fim do
+   estudo (a skill gera as próprias perguntas durante a sessão, adaptando ao seu nível).
 4. Execute a issue; cole as evidências exigidas; só então passe para a próxima.
 
 ## Trilhas

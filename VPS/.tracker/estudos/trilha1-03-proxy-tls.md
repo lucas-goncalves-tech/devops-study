@@ -179,7 +179,7 @@ curl -ki https://127.0.0.1/api/v1/actuator/health                             # 
   mTLS interno não são desta Issue; a cadeia de dependência (`docker compose stop db` → app
   `unhealthy` → proxy `502`) é a mesma da Trilha 0-04, agora com um nível a mais.
 
-## Perguntas para o modo teach-anything
+## Como iniciar o modo teach-anything
 
 - "Me ensina por que o TLS termina na borda e não na app, mostrando o `compose.yaml` deste lab com o `ports:` removido da `app`"
 - "Me ensina o handshake TLS e o que um certificado autoassinado declara, lendo a saída do `curl -kv https://127.0.0.1/api/v1/actuator/health`"

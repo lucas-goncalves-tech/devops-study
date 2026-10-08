@@ -259,7 +259,7 @@ until ssh -o BatchMode=yes lab@<ip-da-vm> 'docker compose ps'; do sleep 3; done 
   estágio com VPS real, e o deploy via SSH automatizado é a **Trilha 2** — aqui o SSH é
   operação humana, um comando por vez.
 
-## Perguntas para o modo teach-anything
+## Como iniciar o modo teach-anything
 
 - "Me ensina Docker Engine vs Docker Desktop vs snap instalando o repo oficial do Docker na `lab-vm` e conferindo `apt policy docker-ce`"
 - "Me ensina `docker context` remoto vs build dentro da VM com o `compose.yaml` e a `notes-api` deste repo"

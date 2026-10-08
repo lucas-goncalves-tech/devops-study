@@ -203,7 +203,7 @@ executou alguma coisa agora; `journalctl` prova que **o systemd** agiu sozinho. 
 de eventos entram junto com o backend real. Aqui se usa o journal como instrumento de
 observação do ciclo de vida, nada mais.
 
-## Perguntas para o modo teach-anything
+## Como iniciar o modo teach-anything
 
 - "Me ensina a diferença entre processo de terminal e serviço systemd usando o
   lab-heartbeat.service e o `systemctl status lab-heartbeat` desta VM"

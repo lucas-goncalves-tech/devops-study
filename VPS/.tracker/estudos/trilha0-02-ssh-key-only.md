@@ -193,7 +193,7 @@ agent é explicitamente o **próximo degrau** (nota da Issue), e a chave sem pas
 resolve a força bruta desta entrega. Passphrase protege contra roubo de arquivo; proteger
 a máquina inteira (keystroke logger, host comprometido) não é escopo de SSH nenhum.
 
-## Perguntas para o modo teach-anything
+## Como iniciar o modo teach-anything
 
 - "Me ensina o par de chaves SSH (pública vs privada, assinatura com desafio) usando os
   arquivos `~/.ssh/id_ed25519` e `authorized_keys` deste lab"

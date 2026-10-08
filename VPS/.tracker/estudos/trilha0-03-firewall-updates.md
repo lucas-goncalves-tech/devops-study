@@ -160,7 +160,7 @@ sudo apt update && sudo apt upgrade -y        # fecha a janela; o log mostra qua
   Trilha 1+ também não são daqui. Esta Issue entrega o piso: deny por padrão + rotina de
   atualização com evidência.
 
-## Perguntas para o modo teach-anything
+## Como iniciar o modo teach-anything
 
 - "Me ensina política default deny e regras explícitas usando o `ufw` do lab"
 - "Me ensina como o ufw se traduz em regras de iptables/nftables, com `ufw status verbose` e `nft list ruleset` lado a lado"

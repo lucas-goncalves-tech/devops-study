@@ -204,7 +204,7 @@ find ~/backups -name 'lab-backup-*.tar.gz' -mtime +7 | wc -l   # 0 = a retençã
   rotação de log do próprio journal (`journald`) também não é desta — é assunto da
   Trilha 1.
 
-## Perguntas para o modo teach-anything
+## Como iniciar o modo teach-anything
 
 - "Me ensina restore drill com `tar` e `diff -r` usando `/etc` e o diretório de dados deste lab"
 - "Me ensina a diferença entre snapshot, mirror e backup com o `virsh snapshot-revert lab-vm base` como exemplo de perda"

@@ -43,12 +43,17 @@ aqui substitui os Critérios de aceitação — e nenhum deles é copiado pra c�
 
 **Fecho obrigatório — o gancho com a teach-anything:**
 
-- Última seção sempre `## Perguntas para o modo teach-anything`, com uma pergunta aberta
+- Última seção sempre `## Como iniciar o modo teach-anything`, com um gatilho de entrada
   por tópico, no formato `"Me ensina <tópico> ..."` apontando para o código/app reais.
-- São o ponto de partida do ensino: cada pergunta vira uma sequência bloco → explicação →
-  verificação → próximo bloco, na ordem dos tópicos do arquivo.
-- Uma pergunta que não pode ser respondida com um bloco demonstrado no chat (só com
-  arquivo alterado) não entra — a teach-anything é somente leitura.
+- **O que essa seção É:** os gatilhos para *começar* a sessão de ensino — o mapa do que o
+  estudo cobre, em forma de pedido. Basta falar um deles (ou equivalente com suas palavras)
+  para a sessão começar por este material.
+- **O que essa seção NÃO é:** as perguntas da sessão. A teach-anything gera as próprias
+  perguntas ao vivo, em cada bloco, a partir do que acabou de ensinar e da sua resposta —
+  se você disser "não sei", ela retrocede e ensina um nível abaixo com uma pergunta nova.
+  Nada disso é pré-escrito aqui; só a porta de entrada é.
+- Uma pergunta de entrada que não pode ser respondida com um bloco demonstrado no chat
+  (só com arquivo alterado) não entra — a teach-anything é somente leitura.
 
 ## Exemplo completo
 
@@ -161,7 +166,7 @@ suíte (Issue 04) já roda: primeiro o comportamento observável, depois a regra
 | 08 | feature `admin` (rotas de operador) |
 | 10 | feature `sessão`: sessões, refresh, revogação |
 
-## Perguntas para o modo teach-anything
+## Como iniciar o modo teach-anything
 
 - "Me ensina package-by-feature usando o `src/` deste app"
 - "Me ensina a regra de dependência entre camadas com exemplos do domínio de compra"
