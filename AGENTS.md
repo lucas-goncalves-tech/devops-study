@@ -12,6 +12,8 @@ só para desbloquear a suíte de testes.
 
 ## Layout
 
+- `ROADMAP.md` (raiz) — painel único do que está feito × o que vem: 4 áreas do currículo
+  (VPS → AWS → DEVOPS → SECURITY), regra de reprática e backlog do futuro
 - `VPS/` — app Maven único (Spring Boot 3.5, Java 17) + `.tracker/` (sistema de estudo)
 - `VPS/.tracker/issues/` — o que fazer, em ordem de trilha; formato em `issues/issue-example.md`
 - `VPS/.tracker/estudos/` — material de estudo 1:1 por issue (mesmo nome de arquivo);
@@ -49,6 +51,8 @@ o profile `test` desliga o bucket4j, então a suíte não precisa de Redis nem d
   `"Me ensina <tópico> ..."` apontando para código real)
 - `Dockerfile` e `compose.yaml` não existem no repo de propósito — criá-los é a entrega
   da Trilha 1, não uma melhoria espontânea
+- Ao passar uma issue para `status: done`, marcar o checkmark correspondente no
+  `ROADMAP.md` na mesma sessão (manutenção manual, sem script)
 
 ## Fluxo de ensino (teach-anything)
 
