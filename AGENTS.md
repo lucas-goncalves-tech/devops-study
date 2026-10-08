@@ -50,6 +50,19 @@ o profile `test` desliga o bucket4j, então a suíte não precisa de Redis nem d
 - `Dockerfile` e `compose.yaml` não existem no repo de propósito — criá-los é a entrega
   da Trilha 1, não uma melhoria espontânea
 
+## Fluxo de ensino (teach-anything)
+
+Quando a sessão for ensinar no contexto do tracker (gatilho `teach-anything` /
+"me ensina"):
+
+- Achar a próxima issue com `status: todo` — ignorar `issue-example.md` (é template,
+  não issue; são **21** issues, não 22)
+- O currículo são os tópicos do estudo par (`estudos/<mesmo nome>.md`): primeiro bloco =
+  primeiro tópico do estudo, avançar tópico a tópico, e cada bloco desemboca no
+  comando/critério correspondente da issue (porquê = estudo, prova = evidência)
+- O ciclo do tracker (ler issue → estudo → executar → colar evidências) **não é matéria
+  de aula**: preâmbulo de uma frase, no máximo — a sessão começa ensinando a matéria
+
 ## Convenções de git
 
 - Conteúdo e commits em português, estilo conventional commits com escopo
