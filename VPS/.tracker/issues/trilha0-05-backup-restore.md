@@ -27,8 +27,12 @@ comprovado**: restaurar num diretório limpo no host e `diff -r` bater com o ori
 
 - **Requer Trilha0-04** — o agendamento é um `lab-backup.timer`, a mesma mecânica de unit
   que acabou de ser aprendida; sem `servico-lab-heartbeat` confirmado, o timer aqui é chute.
+- Pré-requisito do **host**: o host aceita `scp`/`rsync` vindos da VM (sshd ativo e chave
+  da VM autorizada) — o destino é fora da VM e o fluxo declarado no Escopo é push da VM
+  para cá. Alternativa válida (declarar na execução): inverter e deixar o host **puxar**
+  via `rsync` — aí nenhum prereq novo no host, mas o agendamento teria que morar no host.
 - **pré-condição verificável:** `systemctl is-enabled lab-heartbeat` → `enabled` e
-  `systemctl list-timers` existe como conceito exercitado.
+  `ssh lab@<ip> 'ssh -o BatchMode=yes <host> true'` → exit 0 (o push tem para onde ir).
 
 ## Escopo
 
@@ -83,8 +87,9 @@ comprovado**: restaurar num diretório limpo no host e `diff -r` bater com o ori
 
 ## Critérios de aceitação
 
-- [ ] Pré-condição: `systemctl is-enabled lab-heartbeat` → `enabled` (Issue 04) — sem
-      ele, a mecânica de unit/timer é chute e esta Issue não começa
+- [ ] Pré-condição: `systemctl is-enabled lab-heartbeat` → `enabled` (Issue 04) **e** o
+      host aceita push da VM (`ssh lab@<ip> 'ssh -o BatchMode=yes <host> true'` → 0) —
+      sem os dois, pare aqui
 - [ ] `systemctl list-timers lab-backup.timer` → linha com `NEXT` ≤ 24h e `last` datado
       (ou `lab-backup.service` com `ExecStart` comprovado se ainda não executou)
 - [ ] No **host**: existe `lab-backup-<data>.tar.gz` com `tar -tzf` listando `/etc` +

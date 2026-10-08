@@ -30,9 +30,9 @@ antiga invalidada, com o procedimento escrito.
 
 - **Requer Trilha3-03** — a credencial do receiver de alerta é o secret mais novo do
   lab; sem a T3-03 feita, o inventário já nasce incompleto.
-- **Requer Trilha2-03** — rotação de `JWT_SECRET` exige caminho de deploy: o segredo novo
-  chega à VM pelo fluxo que existe (push/`.env` na VM), não por edição manual fora do
-  processo.
+- **Requer Trilha2-03** — o caminho declarado para a VM já existe (deploy e comandos via
+  SSH); a rotação em si é **transporte manual** do `.env` novo + restart — o pipeline da
+  T2-03 carrega binário, não configuração, então a troca de segredo não é "só merge".
 - **pré-condição verificável:** `deploy-ssh-verde` + `.env` com 600 na VM + T3-03 com
   receiver configurado (secret do receiver vivo).
 
@@ -42,7 +42,8 @@ antiga invalidada, com o procedimento escrito.
   guardado (`.env` da VM, chave SSH, GHCR), rotina de troca e "quem avisa quem"
 - Gate de vazamento no CI: `grep`/trufflehog/gitleaks (escolher e declarar) varrendo
   histórico ou diff — **falhando** o job em achado (não warning)
-- Rotação real do `JWT_SECRET`: gerar novo, aplicar via fluxo da T2-03, verificar que
+- Rotação real do `JWT_SECRET`: gerar novo, aplicar via transporte declarado (scp do
+  `.env` na VM + restart — não é o fluxo do pipeline, que carrega binário), verificar que
   liveness/health ficam verdes e token antigo é recusado (401)
 - Procedimento de rotação escrito (passos copiáveis) — a rotação é o "backup testado"
   dos secrets: só existe quando já fez uma vez
@@ -94,7 +95,8 @@ antiga invalidada, com o procedimento escrito.
 - Scan de vazamento **no CI** (job que bloqueia, com evidência de falha em teste) — não
   só comando manual local
 - Varredura do histórico git feita e resultado registrado (achado → revogação/aceite)
-- Rotação do `JWT_SECRET` de ponta a ponta: novo valor → fluxo de deploy → app saudável
+- Rotação do `JWT_SECRET` de ponta a ponta: novo valor → `.env` novo na VM (scp) +
+  restart da stack → app saudável
   → **prova** de quebra do token antigo e funcionamento do novo
 - Sem segredo literal em nenhum arquivo rastreado (`grep` final do repo)
 - App intocado: rotação usa `set -a; . ./.env`/restart — zero mudança em `src/`

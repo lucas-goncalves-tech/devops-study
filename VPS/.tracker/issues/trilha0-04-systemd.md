@@ -47,7 +47,7 @@ sobe no boot, e `journalctl -u` conta a história com timestamps.
 
 - O backend Java como serviço (é a Trilha 1 — aqui se aprende com um script minúsculo)
 - Timer/cron de backup — Issue 05
-- journald persistente/rotação de log — Trilha 1 (quando houver serviços reais)
+- journald persistente/rotação de log — Trilha 3-01 (quando houver serviços reais)
 - Gerenciamento de múltiplos serviços/depends complexos — estágio AWS
 
 ## Conhecimentos envolvidos
@@ -121,4 +121,4 @@ sobe no boot, e `journalctl -u` conta a história com timestamps.
 - `Restart=on-failure` não reinicia em `exit 0` nem em sinal de `stop` — se o script morrer
   "limpo", o systemd fica parado. Essa distinção é o coração do requisito e aparece no estudo
 - Journal é volátil por padrão neste Ubuntu (storage=persistent varia) — sobrevive a reboot
-  no mesmo boot; retenção/rotação é assunto da Trilha 1 quando houver serviços reais
+  no mesmo boot; retenção/rotação é assunto da Trilha 3-01 quando houver serviços reais

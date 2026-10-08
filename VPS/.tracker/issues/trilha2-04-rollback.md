@@ -50,7 +50,7 @@ consertado).
 - Auto-heal por métrica (Prometheus decide o rollback) — Trilha 3 dá a base, automação
   por sinal é futuro
 - Feature flags / kill switch — estágio futuro
-- Rollback de migração de banco (Flyway undo) — assunto de Trilha 3+, discutido no estudo
+- Rollback de migração de banco (Flyway undo) — estágio futuro, discutido no estudo
 
 ## Conhecimentos envolvidos
 
@@ -134,13 +134,13 @@ consertado).
   boa não conhece, voltar o código não volta o schema — é a fronteira clássica entre
   "deploy de app" e "deploy de dado". Neste lab as migrações da app são aditivas, mas a
   regra vale para o futuro: evolução de schema pensada para compatibilidade (expand/
-  contract) é assunto de Trilha 3
+  contract) é estágio futuro — fora do tracker
 - Simular falha exige uma tag publicada que não sobe — a forma escolhida vai para
   Limitações da execução (env inválida × imagem propositalmente errada); o que importa é
   que a falha seja **real**, não mockada no script
 - Rollback automático conserta indisponibilidade, não **dados** corrompidos — app que
   gravou errado antes de falhar deixou rastro que só backup resolve (Trilha 0-05 já deu o
-  hábito; o backup de banco é Trilha 3)
+  hábito; o backup de banco é estágio futuro — fora do tracker)
 - `if: failure()` vs. lógica dentro do script: ter os dois (passo no workflow **e**
   tratamento no script) duplica caminho — a issue pede **decidir e declarar** um; o
   estudo compara as duas posições

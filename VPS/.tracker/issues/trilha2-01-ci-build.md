@@ -29,7 +29,9 @@ reproduzido também por `act` ou re-run local, não só uma vez.
 - **Requer Trilha1-01..04** — a mesma app que a CI builda é a que está publicada na VM;
   a pré-condição é o estado final da Trilha 1.
 - **pré-condição verificável:** `ssh lab@<ip-vm> 'docker compose ps'` → 4 healthy (stack
-  viva) e repositório GitHub com o código atual (push da Trilha 1).
+  viva) e repositório GitHub com a main pushada — se o repo ainda não existir no GitHub,
+  criá-lo e pushar é o **primeiro passo desta Issue** (pré-condição declarada aqui, não
+  produto da Trilha 1).
 
 ## Escopo
 
@@ -47,7 +49,8 @@ reproduzido também por `act` ou re-run local, não só uma vez.
 
 - Build/push de imagem Docker — Issue 02
 - Deploy, SSH, secrets de infra — Issues 03–04
-- Qualidade de código (lint, SAST) — Trilha 4 (hardening)
+- Qualidade de código (lint, SAST) — estágio futuro (DevSecOps); a Trilha 4 cobre
+  segredos e imagem (T4-02/T4-03), não análise do código
 - Multi-branch, release automation, semver — estágio futuro
 
 ## Conhecimentos envolvidos

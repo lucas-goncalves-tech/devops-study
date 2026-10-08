@@ -50,7 +50,8 @@ porta de banco publicada na host (`ss -tlnp` sem `:5432`), e config lida do ambi
 
 - Valkey/RabbitMQ (não existem neste app) e qualquer serviço além dos 3
 - Reverse proxy, TLS, exposição pública — Issue 03
-- Backup do banco (o drill da Trilha 0-05 é de arquivos; `pg_dump` é Trilha 3)
+- Backup do banco (o drill da Trilha 0-05 é de arquivos; `pg_dump` fica para o estágio
+  futuro — nenhuma issue do tracker o cobre)
 - `docker compose` com `deploy:`/swarm — modo simples apenas
 
 ## Conhecimentos envolvidos

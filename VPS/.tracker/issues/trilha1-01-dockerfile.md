@@ -28,8 +28,11 @@ e a app responde `200` no `/api/v1/actuator/health` — tudo sem tocar em `src/`
 - **Requer Trilha0-01..05** — a base (VM, SSH, firewall, systemd, backup) está confirmada;
   esta Issue acontece no **host** de build, mas o artefato construído aqui é o que a
   Issue 04 levará para a VM.
-- **pré-condição verificável:** `kvm-ok`/`/dev/kvm` ok, `ufw status` ativo na VM e
-  `lab-backup.timer` listado (estado Trilha 0 inteira).
+- Pré-requisito do **host**: Docker Engine + plugin Compose v2 instalados
+  (`docker --version` **e** `docker compose version` respondem) — mesma classe do KVM
+  na Trilha 0-01: é da máquina de desenvolvimento, não do lab.
+- **pré-condição verificável:** `kvm-ok`/`/dev/kvm` ok, `docker compose version` no host,
+  `ufw status` ativo na VM e `lab-backup.timer` listado (estado Trilha 0 inteira).
 
 ## Escopo
 
@@ -86,8 +89,8 @@ e a app responde `200` no `/api/v1/actuator/health` — tudo sem tocar em `src/`
 ## Critérios de aceitação
 
 - [ ] Pré-condição: Trilha 0 completa — `ssh -o BatchMode=yes lab@<ip> 'sudo ufw status |
-      head -1'` → `Status: active` **e** `virsh snapshot-list lab-vm` contém `base` —
-      sem os dois, pare aqui
+      head -1'` → `Status: active` **e** `virsh snapshot-list lab-vm` contém `base` **e**
+      `docker compose version` no host responde — sem os três, pare aqui
 - [ ] `docker build -t notes-api .` → `EXIT 0` a partir de um diretório **limpo**
       (`git status` sem sujeira de build)
 - [ ] `docker run -d --name probe notes-api ...` → `docker exec probe id -u` → valor ≠ `0`

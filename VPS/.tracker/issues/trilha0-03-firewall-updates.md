@@ -123,5 +123,5 @@ upgrade`, zero pacotes pendentes.
   loopback não passa pelas regras; quem fizer isso e colar como evidência está medindo o
   erro
 - `unattended-upgrades` padrão do Ubuntu só cobre as seeds principais; repos de terceiros
-  (como o do Docker, Trilha 1) **não** entram nessa automação — fica para a Issue de
-  atualizações da Trilha 1
+  (como o do Docker, Trilha 1) **não** entram nessa automação — fica como dívida
+  declarada e o estado de updates volta a ser auditado no hardening da Trilha 4-01

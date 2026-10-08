@@ -36,6 +36,9 @@ mudança de app **não** derruba a stack (pull de tag igual é no-op).
 - Job `deploy` no workflow, `needs: [test, build]`, só na `main` (não em PR)
 - Chave SSH dedicada **sem senha** (deploy key do lab) em `SSH_PRIVATE_KEY` (secret do
   repo); known_hosts com o host key da VM pinado (não `StrictHostChecking no`)
+- `docker login ghcr.io` na VM **se** o pacote for privado (PAT de leitura como credencial
+  da VM, fora do git); pacote público → `pull` anônimo. **Declarar qual** o lab usa — a
+  T2-02 deixou essa pendência anotada nas notas dela
 - Script de deploy no repo (`scripts/deploy.sh`): pull da tag `${GITHUB_SHA}` → `up -d`
   → espera `200` no health via proxy → imprime SHA implantado
 - Rollback manual declarado: `docker compose pull <sha anterior> && up -d` (o automatizado
