@@ -1,0 +1,43 @@
+.idea/
+.worktree/
+.superpowers
+.env
+
+# Java
+target/
+build/
+.gradle/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+hs_err_pid*
+
+# IDEs
+.classpath
+.project
+.settings/
+.vscode/
+
+# Terraform / OpenTofu
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+*_override.tf
+*_override.tf.json
+override.tf
+override.tf.json
+*.tfvars
+*.tfvars.json
+
+# Ansible
+*.retry
+.vault_pass
+
+# Pulumi local state
+.pulumi/
+
